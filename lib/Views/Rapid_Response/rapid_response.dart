@@ -4,10 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:one_context/one_context.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:rapid_response/Controller/incident_call_contoller.dart';
 import 'package:rapid_response/Controller/user_athentication_controller.dart';
 import 'package:rapid_response/Model/bottom_navbar_model.dart';
 import 'package:rapid_response/Model/item_model.dart';
 import 'package:rapid_response/SizeConfig/size_config.dart';
+import 'package:rapid_response/Views/Chat/doccotor_message.dart';
 import 'package:rapid_response/Views/Constants/colors.dart';
 import 'package:rapid_response/Views/Dispatch_Screen/dispatch_screen.dart';
 import 'package:rapid_response/Views/GoogleMap/google_map_Screen.dart';
@@ -25,7 +27,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'Components/rappid_response_dialog.dart';
 
 class RapidResponseScreen extends StatefulWidget {
-  const RapidResponseScreen({Key key}) : super(key: key);
+  RapidResponseScreen({Key key, this.isRespospoding}) : super(key: key);
+  bool isRespospoding;
 
   static String tag = 'signup-page';
 
@@ -40,8 +43,11 @@ class _RapidResponseScreenState extends State<RapidResponseScreen>
   ];
   UserAthenticationController userAthenticationController =
       Get.find<UserAthenticationController>();
+
   TabController tabController;
   int selectedIndex = 0;
+  bool isAvalailable = false;
+  String avaliableStatus = "";
 
   @override
   void initState() {
@@ -299,17 +305,78 @@ class _RapidResponseScreenState extends State<RapidResponseScreen>
                                 //SizedBox(height: 16.0),
                                 const SizedBox(height: 10.0),
 
-                                const Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 12.0, right: 12.0),
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text('Responding to:',
-                                          style: TextStyle(
-                                              color: MyColors.secondary,
-                                              fontWeight: FontWeight.bold)),
-                                    )),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Padding(
+                                        padding: EdgeInsets.only(
+                                            left: 2.0, right: 0.0),
+                                        child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text('Responding to:',
+                                              style: TextStyle(
+                                                  color: MyColors.secondary,
+                                                  fontWeight: FontWeight.bold)),
+                                        )),
+                                    widget.isRespospoding
+                                        ? const Text(
+                                            "Please Confirm your Availability",
+                                            style: TextStyle(
+                                                color: MyColors.primary,
+                                                fontWeight: FontWeight.bold))
+                                        : SizedBox()
+                                  ],
+                                ),
                                 const SizedBox(height: 10.0),
+                                isAvalailable && widget.isRespospoding
+                                    ? Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                              "($avaliableStatus) you can go for a chat"),
+                                          Container(
+                                            height:
+                                                5 * SizeConfig.heightMultiplier,
+                                            width:
+                                                25 * SizeConfig.widthMultiplier,
+                                            child: ProgressButton(
+                                              color: MyColors.primary,
+                                              defaultWidget: Container(
+                                                child: Text(
+                                                  "Go for Chat",
+                                                  textAlign: TextAlign.right,
+                                                  style: TextStyle(
+                                                      fontSize: 1.6 *
+                                                          SizeConfig
+                                                              .textMultiplier,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white),
+                                                ),
+                                              ),
+                                              progressWidget:
+                                                  const SmartButtonIndicatorWidget(),
+                                              borderRadius: 12,
+                                              type: ProgressButtonType.Flat,
+                                              height: 56,
+                                              onPressed: () async {
+                                                Get.to(() => DoctorMessage());
+                                                // OneContext().showDialog(builder:
+                                                //     (BuildContext context) {
+                                                //   return RapidResponseDialog(
+                                                //       blur: false);
+                                                // });
+                                                //Get.to(() => const FacilityCode());
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    : SizedBox(),
+                                const SizedBox(height: 10.0),
+
                                 Container(child: list()),
                                 SizedBox(
                                     height: 10 * SizeConfig.widthMultiplier),
@@ -421,7 +488,11 @@ class _RapidResponseScreenState extends State<RapidResponseScreen>
                                         type: ProgressButtonType.Flat,
                                         height: 56,
                                         onPressed: () async {
-                                          // userAthenticationController
+                                          print(
+                                              "Event creater id is ${userAthenticationController.eventCreatorId}");
+                                          print(
+                                              "chat id is ${userAthenticationController.broadCastCChatId}");
+
                                           //     .googleSignout();
                                           //Get.to(() => const FacilityCode());
                                         },
@@ -664,6 +735,9 @@ class _RapidResponseScreenState extends State<RapidResponseScreen>
                           setState(() {
                             itemData.selected = true;
                             itemData.selectedItem = itemData.list[index];
+                            avaliableStatus = itemData.selectedItem;
+                            isAvalailable = true;
+                            //print(itemData.selectedItem);
                           });
                         },
                         child: Container(

@@ -70,7 +70,7 @@ class _RapidResponseDialogState extends State<RapidResponseDialog> {
                     child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Align(
+                    const Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "Medical",
@@ -83,7 +83,7 @@ class _RapidResponseDialogState extends State<RapidResponseDialog> {
                           //Get.back();
                           OneContext().popDialog();
                         },
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.clear,
                           color: MyColors.grey,
                         ))
@@ -93,18 +93,18 @@ class _RapidResponseDialogState extends State<RapidResponseDialog> {
                     child: Row(
                   children: [
                     Container(
-                      margin: EdgeInsets.only(right: 4),
+                      margin: const EdgeInsets.only(right: 4),
                       height: 20,
                       width: 20,
                       alignment: Alignment.center,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                           color: MyColors.primary, shape: BoxShape.circle),
-                      child: Text(
+                      child: const Text(
                         '6',
                         style: TextStyle(color: MyColors.white),
                       ),
                     ),
-                    Text(
+                    const Text(
                       "Responders",
                     )
                   ],
@@ -163,100 +163,88 @@ class _RapidResponseDialogState extends State<RapidResponseDialog> {
                           setState(() {
                             print(newValue);
                             _frequencyValue = newValue;
-                            userAthenticationController
-                                .sendAlertDialog(_frequencyValue);
                           });
                         }
+                        userAthenticationController
+                            .sendAlertDialog(_frequencyValue);
                       },
                     ),
-                    //  DropdownButton<String>(
-                    //   borderRadius: BorderRadius.circular(10),
-                    //   isExpanded: true,
-                    //   value: dropdownValue,
-                    //   icon: const Icon(Icons.keyboard_arrow_down_outlined),
-                    //   iconSize: 24,
-                    //   elevation: 16,
-                    //   underline: SizedBox(),
-                    //   // style: const TextStyle(color: Colors.deepPurple),
-                    //   // underline: Container(
-                    //   //   width: 50,
-                    //   //   height: 5,
-                    //   //   color: Colors.black,
-                    //   // ),
-                    //   onChanged: (String newValue) {
-                    //     setState(() {
-                    //       dropdownValue = newValue;
-                    //     });
-                    //   },
-                    //   items: <String>[
-                    //     'All',
-                    //     'Residenct',
-                    //     'Guard',
-                    //     'Comitee memebers'
-                    //   ].map<DropdownMenuItem<String>>((String value) {
-                    //     return DropdownMenuItem<String>(
-                    //       value: value,
-                    //       child: Text(value),
-                    //     );
-                    //   }).toList(),
-                    // ),
                   ),
                 ),
-                // MyTextField(
-                //   isPass: false,
-                //   validator: (value) {
-                //     if (value.isEmpty || value == null) {
-                //       return "Required";
-                //     }
-                //     //  else if (!GetUtils.isEmail(value)) {
-                //     //   return "Invalid Email";
-                //     // }
-                //     else {
-                //       return null;
-                //     }
-                //   },
-                //   // controller:
-                //   //     userAthenticationController.signupUnitCodeController,
-                //   hintText: "Send to all",
-                //   icon: Icons.qr_code,
-                //   isNumberField: false,
-                // ),
 
                 const SizedBox(
                   height: 10,
                 ),
                 Form(
                   key: _formKey,
-                  child: TextFormField(
-                    validator: (value) {
-                      if (value.isEmpty || value == null) {
-                        return "Required";
-                      }
-                      //  else if (!GetUtils.isEmail(value)) {
-                      //   return "Invalid Email";
-                      // }
-                      else {
-                        return null;
-                      }
-                    },
-                    controller: userAthenticationController
-                        .dialogNotifiactionController,
-                    autofocus: false,
-                    minLines: 6,
-                    keyboardType: TextInputType.text,
-                    maxLines: null,
-                    decoration: const InputDecoration(
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey, width: 0.4),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey, width: 0.4),
-                      ),
-                      labelText: 'Description',
-                      contentPadding:
-                          EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        MyTextField(
+                          isPass: false,
+                          validator: (value) {
+                            if (value.isEmpty || value == null) {
+                              return "Required";
+                            }
+                            //  else if (!GetUtils.isEmail(value)) {
+                            //   return "Invalid Email";
+                            // }
+                            else {
+                              return null;
+                            }
+                          },
+                          controller: userAthenticationController
+                              .dialogNotifiactionTitelController,
+                          hintText: "Title",
+                          icon: null,
+                          isNumberField: false,
+                        ),
+                        SizedBox(
+                          height: 1.5 * SizeConfig.heightMultiplier,
+                        ),
+                        TextFormField(
+                          validator: (value) {
+                            if (value.isEmpty || value == null) {
+                              return "Required";
+                            }
+                            //  else if (!GetUtils.isEmail(value)) {
+                            //   return "Invalid Email";
+                            // }
+                            else {
+                              return null;
+                            }
+                          },
+                          controller: userAthenticationController
+                              .dialogNotifiactionController,
+                          autofocus: false,
+                          minLines: 6,
+                          keyboardType: TextInputType.text,
+                          maxLines: null,
+                          decoration: const InputDecoration(
+                            focusedBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.grey, width: 2.0),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.grey, width: 2.0),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: MyColors.primary, width: 2.0),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: MyColors.primary, width: 2.0),
+                            ),
+                            labelText: 'Description',
+                            contentPadding:
+                                EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                          ),
+                          onChanged: (value) {},
+                        ),
+                      ],
                     ),
-                    onChanged: (value) {},
                   ),
                 ),
 

@@ -12,8 +12,19 @@ import 'package:rapid_response/Model/user_model.dart';
 import 'package:rapid_response/Views/Authentication/role_define_screen.dart';
 import 'package:rapid_response/Views/Authentication/sign_screen.dart';
 import 'package:rapid_response/Views/Rapid_Response/rapid_response.dart';
+import 'package:intl/intl.dart';
 
 class UserAthenticationController extends GetxController {
+  @override
+  void onInit() {
+    //sendAlertto(333);
+    firebaseUser.bindStream(auth.authStateChanges());
+    //googleSignInAccounts.bindStream(googleSignIn..s);
+    print("user is $googleSignInAccount");
+    //googleSignInAccount.
+    super.onInit();
+  }
+
   //TextEditingController for SignUp
   TextEditingController signupEmailController = TextEditingController();
   TextEditingController signupPasswordController = TextEditingController();
@@ -25,24 +36,45 @@ class UserAthenticationController extends GetxController {
   TextEditingController email = TextEditingController();
   TextEditingController editname = TextEditingController();
   TextEditingController dialogNotifiactionController = TextEditingController();
+  TextEditingController dialogNotifiactionTitelController =
+      TextEditingController();
 
+  //Sign in Controller
+  TextEditingController signinEmailController = TextEditingController();
+  TextEditingController signinPasswordController = TextEditingController();
+
+//edit profile Controller
+  TextEditingController editmail = TextEditingController();
+  TextEditingController editPhonenumber = TextEditingController();
+  //Message controller
+  TextEditingController messageController = TextEditingController();
+
+  // Firebase
+  final auth = FirebaseAuth.instance;
+  final firebaseFirestore = FirebaseFirestore.instance;
+  GoogleSignIn googleSignIn = GoogleSignIn(scopes: ['email']);
+  Rxn<User> firebaseUser = Rxn<User>();
+  User get users => firebaseUser.value;
+
+// assigning role  and definig role variable
   int assignNumber = 0;
   String defineRole = "";
   String roleImage;
+  //Controller loading variabae
+  RxBool isSignUpLoading = false.obs;
+  RxBool isSignInLoading = false.obs;
+  RxBool isProfileChange = false.obs;
+  String broadCastCChatId;
 
-  TextEditingController editmail = TextEditingController();
-
-  TextEditingController editPhonenumber = TextEditingController();
-  GoogleSignIn googleSignIn = GoogleSignIn(scopes: ['email']);
-
-  Rxn<User> firebaseUser = Rxn<User>();
-  User get users => firebaseUser.value;
   File image;
+  String eventCreatorId;
+  String chatID;
+
+  //Send notificaiton to User list
   Rx<List<String>> sendNotifocationto = Rx<List<String>>([]);
   List<String> get sendNotifoactions => sendNotifocationto.value;
-
-  Rx<List<String>> getIdfornotificaiton = Rx<List<String>>([]);
-  List<String> get getUserTogetNotification => getIdfornotificaiton.value;
+  //Rx<List<String>> getIdfornotificaiton = Rx<List<String>>([]);
+  //List<String> get getUserTogetNotification => getIdfornotificaiton.value;
 
   Rxn<GoogleSignInAccount> googleSignInAccounts = Rxn<GoogleSignInAccount>();
   GoogleSignInAccount get googleSignInAccount => googleSignInAccounts.value;
@@ -50,9 +82,67 @@ class UserAthenticationController extends GetxController {
     googleSignInAccounts.value = name;
   }
 
+  void configOneSignel() {
+    print("onedignal congigured");
+    OneSignal.shared.setLogLevel(OSLogLevel.verbose, OSLogLevel.none);
+
+    OneSignal.shared.setAppId("4917de9f-6a26-43c2-92f6-92c83653d49e");
+
+// The promptForPushNotificationsWithUserResponse function will show the iOS push notification prompt. We recommend removing the following code and instead using an In-App Message to prompt for notification permission
+    // OneSignal.shared.promptUserForPushNotificationPermission().then((accepted) {
+    //   print("Accepted permission: $accepted");
+    // });
+    OneSignal.shared.setNotificationWillShowInForegroundHandler(
+        (OSNotificationReceivedEvent event) {
+      print("my event data is ${event.notification.additionalData}");
+      eventCreatorId = event.notification.additionalData["eventCreatorId"];
+      chatID = event.notification.additionalData["broadCastChatID"];
+
+      print("Notificaiton Received");
+      DateTime now = DateTime.now();
+      String formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(now);
+
+      firebaseFirestore
+          .collection("Users")
+          .doc(users.uid)
+          .collection("Notifications")
+          .add({
+        "notificationBody": event.notification.body,
+        "notificationtitle": event.notification.title,
+        "responders": 0,
+        "date": formattedDate
+      });
+      //Get.to(() => ConfirmClients());
+      // Will be called whenever a notification is received in foreground
+      // Display Notification, pass null param for not displaying the notification
+      event.complete(event.notification);
+    });
+    OneSignal.shared
+        .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
+      print("i am here");
+      //Get.to(() => ConfirmClients());
+      // Will be called whenever a notification is opened/button pressed.
+    });
+    OneSignal.shared.setPermissionObserver((OSPermissionStateChanges changes) {
+      // Will be called whenever the permission changes
+      // (ie. user taps Allow on the permission prompt in iOS)
+    });
+    OneSignal.shared
+        .setSubscriptionObserver((OSSubscriptionStateChanges changes) {
+      // Will be called whenever the subscription changes
+      // (ie. user gets registered with OneSignal and gets a user ID)
+    });
+    OneSignal.shared.setEmailSubscriptionObserver(
+        (OSEmailSubscriptionStateChanges emailChanges) {
+      // Will be called whenever then user's email subscription changes
+      // (ie. OneSignal.setEmail(email) is called and the user gets registered
+    });
+  }
+
   Rx<UserModel> usermodel = UserModel().obs;
   UserModel get user => usermodel.value;
   set user(UserModel value) => usermodel.value = value;
+//get user data
 
   getUser() async {
     try {
@@ -68,38 +158,23 @@ class UserAthenticationController extends GetxController {
     }
   }
 
-  @override
-  void onInit() {
-    //sendAlertto(333);
-    firebaseUser.bindStream(auth.authStateChanges());
-    //googleSignInAccounts.bindStream(googleSignIn..s);
-    print("user is $googleSignInAccount");
-    //googleSignInAccount.
-    super.onInit();
+// Broadcast Methode
+  void sendMessage(String txtMessage) {
+    firebaseFirestore
+        .collection("Users")
+        .doc(eventCreatorId)
+        .collection("BroadcastChat")
+        .doc(chatID)
+        .collection("Conversation")
+        .add({"txtMessage": txtMessage}).then((value) {
+      messageController.clear();
+      print("message sent");
+    }).catchError((e) {
+      print("message not send error is $e");
+    });
   }
 
-  //TextEditingController for Sign in
-
-  TextEditingController signinEmailController = TextEditingController();
-  TextEditingController signinPasswordController = TextEditingController();
-
-  RxBool isSignUpLoading = false.obs;
-  RxBool isSignInLoading = false.obs;
-  RxBool isProfileChange = false.obs;
-
-  final auth = FirebaseAuth.instance;
-  final firebaseFirestore = FirebaseFirestore.instance;
-  //GoogleSignInAccount googleSignInAccount;
-  //GoogleSignIn googleSignIn = GoogleSignIn();
-
-  void googleSignInn() async {
-    final GoogleSignInAccount googleUser = await googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-    final AuthCredential credential = GoogleAuthProvider.credential(
-        idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
-  }
-
+  //Google sign In Methode
   void googleLogin() async {
     final GoogleSignInAccount googleUser = await googleSignIn.signIn();
     final GoogleSignInAuthentication googleAuth =
@@ -127,107 +202,65 @@ class UserAthenticationController extends GetxController {
           .doc(authResult.user.uid)
           .set(userdata)
           .then((value) async {
-        // Get.find<UserController>().user   =
-        //     await DatabaseServices().getUser(auth.u.uid);
-        //  FirebaseFirestore.instance.collection("Users").
-        //  doc(authResult.user.uid).set(userdata).then((value) {
-        //    for(int i=0; i<5; i++){
-        //      FirebaseFirestore.instance.collection("Users")
-        //          .doc(authResult.user.uid).collection(ADS_COLLECTION)
-        //          .doc(i.toString()).set({
-        //        ADS_UPDATE_TIME:_updateTime.toString()
-        //      });
-        //    }
-
-        //    Get.offAll(WelcomeScreen());
-        //  } );
-        // Get.offAll(WelcomeScreen());
         Get.to(SigninScreen());
       });
     } else {
-      Get.offAll(const RapidResponseScreen());
+      Get.offAll(RapidResponseScreen(
+        isRespospoding: false,
+      ));
     }
   }
-  // void getU(String number)
-  // {
 
-  // }
+  //add notifiaction data to firebase
+  void addNotification() {}
+
+  // Send Notification methode
   sendNotification() {
+    print("title is ${dialogNotifiactionTitelController.text}");
     // print("user token is${userController.userToken}");
     //for(int i = 0; i<userAthenticationController.herlperList.length; i++){}
-    OneSignal.shared
-        .postNotification(OSCreateNotification(
-      additionalData: {
-        'data': 'this is our data',
-      },
-      subtitle: 'Flutter in depth',
-      playerIds: sendNotifoactions,
-      content: dialogNotifiactionController.text,
-    ))
-        .then((value) {
-      for (int i = 0; i < getUserTogetNotification.length; i++) {
+
+    firebaseFirestore
+        .collection("Users")
+        .doc(users.uid)
+        .collection("BroadcastChat")
+        .add({"eventTitle": dialogNotifiactionTitelController.text}).then(
+            (value) {
+      broadCastCChatId = value.id;
+      OneSignal.shared
+          .postNotification(OSCreateNotification(
+        additionalData: {
+          'data': 'this is our data',
+          "eventCreatorId": users.uid,
+          "broadCastChatID": broadCastCChatId
+        },
+        heading: dialogNotifiactionTitelController.text,
+        // subtitle: dialogNotifiactionTitelController.text,
+        playerIds: sendNotifoactions,
+        content: dialogNotifiactionController.text,
+      ))
+          .then((value) {
         firebaseFirestore
             .collection("Users")
-            .doc(getUserTogetNotification[i])
-            .collection("Notifications")
-            .add({"notificatiton": dialogNotifiactionController.text});
-      }
-      dialogNotifiactionController.clear();
-
-      OneContext().popDialog();
-
-      print("back");
-      Get.back();
-    }).catchError((e) {
-      print(e);
+            .doc(users.uid)
+            .collection("BroadcastChat")
+            .doc(broadCastCChatId)
+            .collection("Conversation")
+            .add({"txtMessage": dialogNotifiactionController.text});
+      }).then((value) {
+        dialogNotifiactionController.clear();
+        dialogNotifiactionTitelController.clear();
+        OneContext().popDialog();
+      });
     });
+
+    print("back");
+    Get.back();
   }
 
   void sendAlertDialog(int assignumber) {
     sendNotifocationto.bindStream(sendAlertto(assignumber));
-    getIdfornotificaiton.bindStream(getIdtoSendNotificaiton(assignumber));
-  }
-
-  Stream<List<String>> getIdtoSendNotificaiton(int assignNumber) {
-    print("my Number ia $assignNumber");
-    print("enter in add function");
-    if (assignNumber != 0) {
-      return FirebaseFirestore.instance
-          .collection('Users')
-          .where("assignNumber", isEqualTo: assignNumber)
-          //.orderBy('time', descending: true)
-          .snapshots()
-          .map((QuerySnapshot query) {
-        print(query.docs.length);
-        List<String> retVal = List();
-        query.docs.forEach((element) {
-          print(element.id);
-
-          retVal.add(element.id);
-        });
-
-        print(' my  id  lenght is ${retVal.length}');
-        return retVal;
-      });
-    } else {
-      return FirebaseFirestore.instance
-          .collection('Users')
-          //.where("assignNumber", isEqualTo: assignNumber)
-          //.orderBy('time', descending: true)
-          .snapshots()
-          .map((QuerySnapshot query) {
-        print(query.docs.length);
-        List<String> retVal = List();
-        query.docs.forEach((element) {
-          print(element.id);
-
-          retVal.add(element.id);
-        });
-
-        print(' my  id  lenght is ${retVal.length}');
-        return retVal;
-      });
-    }
+    // getIdfornotificaiton.bindStream(getIdtoSendNotificaiton(assignumber));
   }
 
   Stream<List<String>> sendAlertto(int assignNumber) {
@@ -383,7 +416,9 @@ class UserAthenticationController extends GetxController {
         print("login Succesfully");
         isSignInLoading.value = false;
         clearSignInController();
-        Get.to(() => const RapidResponseScreen());
+        Get.to(() => RapidResponseScreen(
+              isRespospoding: false,
+            ));
         //getUser();
 
         // Get.to(BDObottomNaveBar());

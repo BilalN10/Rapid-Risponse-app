@@ -16,7 +16,9 @@ class Root extends StatelessWidget {
       },
       builder: (_) {
         if (Get.find<UserAthenticationController>().users != null) {
-          return const RapidResponseScreen();
+          return RapidResponseScreen(
+            isRespospoding: false,
+          );
         } else {
           return DefineRoleScreen();
         }
