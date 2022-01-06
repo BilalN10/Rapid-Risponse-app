@@ -9,6 +9,6 @@ class AuthBinding extends Bindings {
     //Get.put<AuthController>(AuthController(), permanent: true);
     Get.put<UserAthenticationController>(UserAthenticationController());
     Get.put<GuardsandMemberController>(GuardsandMemberController());
-    Get.put<IncidentCallController>(IncidentCallController());
+    //Get.put<IncidentCallController>(IncidentCallController());
   }
 }

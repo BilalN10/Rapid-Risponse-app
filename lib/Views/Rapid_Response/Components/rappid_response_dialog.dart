@@ -20,6 +20,11 @@ class RapidResponseDialog extends StatefulWidget {
 
 class _RapidResponseDialogState extends State<RapidResponseDialog> {
   final _formKey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    super.initState();
+    userAthenticationController.sendAlertDialog(0);
+  }
 
   final UserAthenticationController userAthenticationController =
       Get.find<UserAthenticationController>();

@@ -1,11 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class ChatScreen {
+class ChatModel {
   String txtMessage;
   String id;
-  ChatScreen({this.txtMessage});
-  ChatScreen.fromJason(DocumentSnapshot snapShotData) {
+  String senderId;
+  String name;
+  String satus;
+  ChatModel({this.txtMessage, this.senderId});
+  ChatModel.fromJason(DocumentSnapshot snapShotData) {
+    name = snapShotData.data()["senderName"] ?? "";
     id = snapShotData.id;
-    txtMessage = snapShotData.data()["txtMessage"];
+    txtMessage = snapShotData.data()["txtMessage"] ?? "";
+    senderId = snapShotData.data()["messageSenderID"] ?? "";
+    satus = snapShotData.data()["satus"] ?? "";
   }
 }

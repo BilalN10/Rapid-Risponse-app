@@ -52,17 +52,7 @@ class _MyAppState extends State<MyApp> {
               fontFamily: 'Montserrat',
             ),
             debugShowCheckedModeBanner: false,
-            home:
-                //DefineRoleScreen()
-
-                /// SignIN()
-                //GoogleMaps()
-                SplashScreen()
-            //HomePage()
-            //DateTimePiker()
-            //AlarmPage(),
-            //UploadFileToFireBase(),
-            );
+            home: SplashScreen());
       });
     });
   }

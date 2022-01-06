@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:one_context/one_context.dart';
 import 'package:rapid_response/Controller/incident_call_contoller.dart';
+import 'package:rapid_response/Controller/user_athentication_controller.dart';
 import 'package:rapid_response/Model/incident_calls_Model.dart';
 import 'package:rapid_response/SizeConfig/size_config.dart';
 import 'package:rapid_response/Views/Constants/colors.dart';
@@ -28,6 +29,8 @@ class _IncidentCallsScreenState extends State<IncidentCallsScreen> {
     }
   }
 
+  UserAthenticationController userAthenticationController =
+      Get.find<UserAthenticationController>();
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -77,7 +80,7 @@ class _IncidentCallsScreenState extends State<IncidentCallsScreen> {
                 alignment: Alignment.topCenter,
                 child: SafeArea(
                   child: GetX<IncidentCallController>(
-                      init: Get.find<IncidentCallController>(),
+                      init: Get.put(IncidentCallController()),
                       builder: (incidentCallController) {
                         if (incidentCallController != null &&
                             incidentCallController.getNotificationList !=
@@ -89,6 +92,17 @@ class _IncidentCallsScreenState extends State<IncidentCallsScreen> {
                               itemBuilder: (BuildContext context, int index) {
                                 return GestureDetector(
                                     onTap: () {
+                                      userAthenticationController.chatID =
+                                          incidentCallController
+                                              .getNotificationList[index]
+                                              .chatID;
+                                      print(userAthenticationController.chatID);
+                                      userAthenticationController
+                                              .eventCreatorId =
+                                          incidentCallController
+                                              .getNotificationList[index]
+                                              .eventCreatorId;
+
                                       OneContext().showDialog(
                                           builder: (BuildContext context) {
                                         return Dialog(
@@ -175,6 +189,10 @@ class _IncidentCallsScreenState extends State<IncidentCallsScreen> {
                                                           onTap: () {
                                                             OneContext()
                                                                 .popDialog();
+
+                                                            userAthenticationController
+                                                                .isResponding
+                                                                .value = true;
 
                                                             Get.offAll(() =>
                                                                 RapidResponseScreen(

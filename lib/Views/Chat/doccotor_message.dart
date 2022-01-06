@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:rapid_response/Controller/chat_controller.dart';
 import 'package:rapid_response/Controller/user_athentication_controller.dart';
 import 'package:rapid_response/SizeConfig/size_config.dart';
 import 'package:rapid_response/Views/Constants/colors.dart';
+import 'package:rapid_response/Views/Widgets/my_button.dart';
+import 'package:rapid_response/Views/Widgets/smart_button_indicator.dart';
 
 class DoctorMessage extends StatefulWidget {
+  final String availableStatus;
+  DoctorMessage({this.availableStatus});
+
   // final UserModel userModel;
   /// DoctorMessage({this.userModel});
   @override
@@ -14,12 +20,20 @@ class DoctorMessage extends StatefulWidget {
 class _messagesState extends State<DoctorMessage> {
   UserAthenticationController userAthenticationController =
       Get.find<UserAthenticationController>();
+  ChatController chatController = Get.put(ChatController());
+  @override
+  void initState() {
+    userAthenticationController.checkIsEventClosed();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
           appBar: AppBar(
+            centerTitle: true,
             backgroundColor: MyColors.primary,
             leading: GestureDetector(
               child: Icon(
@@ -30,145 +44,424 @@ class _messagesState extends State<DoctorMessage> {
                 Navigator.pop(context);
               },
             ),
-            title: Row(
-              children: [
-                CircleAvatar(
-                  radius: 20,
-                  backgroundImage: const AssetImage(
-                    "assets/images/account.png",
-                  ),
-                  child: Stack(
+            title: Text(
+              "Broadcast Chat",
+              //style:simplestyle()
+            ),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        chatController.isAvailable.value =
+                            !chatController.isAvailable.value;
+                      },
+                      child: Text(
+                        "Available",
+                        style: TextStyle(
+                            fontSize: 2 * SizeConfig.heightMultiplier,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+          body: Obx(() => userAthenticationController.isEventClose.value
+              ? Container(
+                  height: 90 * SizeConfig.heightMultiplier,
+                  width: 100 * SizeConfig.widthMultiplier,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Align(
-                        alignment: Alignment.bottomRight,
-                        child: CircleAvatar(
-                          radius: 5,
-                          backgroundColor: Colors.green,
+                      Text(
+                        "This Event is closed",
+                        style:
+                            TextStyle(fontSize: 3 * SizeConfig.textMultiplier),
+                      ),
+                      SizedBox(
+                        height: 2 * SizeConfig.heightMultiplier,
+                      ),
+                      Container(
+                        height: 5 * SizeConfig.heightMultiplier,
+                        width: 25 * SizeConfig.widthMultiplier,
+                        child: ProgressButton(
+                          color: MyColors.primary,
+                          defaultWidget: Container(
+                            child: Text(
+                              "GO Back",
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                  fontSize: 1.6 * SizeConfig.textMultiplier,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
+                            ),
+                          ),
+                          progressWidget: const SmartButtonIndicatorWidget(),
+                          borderRadius: 12,
+                          type: ProgressButtonType.Flat,
+                          height: 56,
+                          onPressed: () async {
+                            userAthenticationController.isResponding.value =
+                                false;
+                            Get.back();
+                            //userAthenticationController.closeEvent();
+                          },
                         ),
-                      )
+                      ),
                     ],
                   ),
-                ),
-                Container(
-                    margin: EdgeInsets.only(top: 10, left: 10),
-                    child: Text(
-                      "Tawfeeq Bahri",
-                      //style:simplestyle()
-                    ))
-              ],
-            ),
-          ),
-          body: Container(
-            child: Stack(
-              children: [
-                Container(
-                  height: MediaQuery.of(context).size.height,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Container(
-                          height: SizeConfig.screenHeight,
+                )
+              : Container(
+                  child: Stack(
+                    children: [
+                      Container(
+                        height: 90 * SizeConfig.heightMultiplier,
+                        child: Container(
+                          height: SizeConfig.heightMultiplier * 80,
                           width: SizeConfig.screenWidth,
-                          decoration: BoxDecoration(
-                              // color: Colors.amber
+                          child: GetX<ChatController>(
+                              init: Get.find<ChatController>(),
+                              builder: (chatController) {
+                                if (chatController != null &&
+                                    chatController.getchatList != null) {
+                                  return ListView.builder(
+                                      scrollDirection: Axis.vertical,
+                                      itemCount:
+                                          chatController.getchatList.length + 1,
+                                      itemBuilder: (context, index) {
+                                        if (index !=
+                                            chatController.getchatList.length) {
+                                          return Stack(
+                                            alignment:
+                                                userAthenticationController
+                                                            .users.uid ==
+                                                        chatController
+                                                            .getchatList[index]
+                                                            .senderId
+                                                    ? Alignment.centerRight
+                                                    : Alignment.centerLeft,
+                                            children: [
+                                              Column(
+                                                children: [
+                                                  // SizedBox(
+                                                  //   height: 6 *
+                                                  //       SizeConfig
+                                                  //           .heightMultiplier,
+                                                  // ),
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        userAthenticationController
+                                                                    .users
+                                                                    .uid ==
+                                                                chatController
+                                                                    .getchatList[
+                                                                        index]
+                                                                    .senderId
+                                                            ? CrossAxisAlignment
+                                                                .end
+                                                            : CrossAxisAlignment
+                                                                .start,
+                                                    children: [
+                                                      index == 0
+                                                          ? SizedBox(
+                                                              height: 7 *
+                                                                  SizeConfig
+                                                                      .heightMultiplier,
+                                                            )
+                                                          : SizedBox(),
+                                                      Container(
+                                                          decoration: BoxDecoration(
+                                                              color:
+                                                                  MyColors.grey,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10)),
+                                                          margin:
+                                                              EdgeInsets.all(
+                                                                  10),
+                                                          // alignment: userAthenticationController
+                                                          //             .users.uid ==
+                                                          //         chatController
+                                                          //             .getchatList[index]
+                                                          //             .senderId
+                                                          //     ? Alignment.centerRight
+                                                          //     : Alignment.centerLeft,
+                                                          constraints:
+                                                              BoxConstraints(
+                                                            maxWidth: 40 *
+                                                                SizeConfig
+                                                                    .widthMultiplier,
+                                                            // maxHeight: 8 *
+                                                            //     SizeConfig.heightMultiplier,
+                                                          ),
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(8.0),
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Text(
+                                                                    "${chatController.getchatList[index].name} (${chatController.getchatList[index].satus} )"),
+                                                                Text(chatController
+                                                                    .getchatList[
+                                                                        index]
+                                                                    .txtMessage),
+                                                              ],
+                                                            ),
+                                                          )),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                              userAthenticationController
+                                                              .eventCreaterUid
+                                                              .value ==
+                                                          userAthenticationController
+                                                              .users.uid &&
+                                                      index == 0
+                                                  ? Positioned(
+                                                      top: 1,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(10.0),
+                                                        child: Container(
+                                                          width: 90 *
+                                                              SizeConfig
+                                                                  .widthMultiplier,
+                                                          child: Column(
+                                                            children: [
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .spaceBetween,
+                                                                children: [
+                                                                  Text(
+                                                                      "Do you want to close this event "),
+                                                                  Container(
+                                                                    height: 5 *
+                                                                        SizeConfig
+                                                                            .heightMultiplier,
+                                                                    width: 25 *
+                                                                        SizeConfig
+                                                                            .widthMultiplier,
+                                                                    child:
+                                                                        ProgressButton(
+                                                                      color: MyColors
+                                                                          .primary,
+                                                                      defaultWidget:
+                                                                          Container(
+                                                                        child:
+                                                                            Text(
+                                                                          "Close Event",
+                                                                          textAlign:
+                                                                              TextAlign.right,
+                                                                          style: TextStyle(
+                                                                              fontSize: 1.6 * SizeConfig.textMultiplier,
+                                                                              fontWeight: FontWeight.bold,
+                                                                              color: Colors.white),
+                                                                        ),
+                                                                      ),
+                                                                      progressWidget:
+                                                                          const SmartButtonIndicatorWidget(),
+                                                                      borderRadius:
+                                                                          12,
+                                                                      type: ProgressButtonType
+                                                                          .Flat,
+                                                                      height:
+                                                                          56,
+                                                                      onPressed:
+                                                                          () async {
+                                                                        userAthenticationController
+                                                                            .closeEvent();
+                                                                      },
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              Divider()
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : const SizedBox(),
+                                            ],
+                                          );
+                                        } else {
+                                          return SizedBox(
+                                            height:
+                                                8 * SizeConfig.heightMultiplier,
+                                          );
+                                        }
+                                      });
+                                } else {
+                                  return CircularProgressIndicator();
+                                }
+                              }),
+                        ),
+                      ),
+                      Obx(() => chatController.isAvailable.value
+                          ? Container(
+                              height: 40 * SizeConfig.heightMultiplier,
+                              width: 100 * SizeConfig.widthMultiplier,
+                              decoration: BoxDecoration(color: MyColors.grey),
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    height: 3 * SizeConfig.heightMultiplier,
+                                  ),
+                                  Text(
+                                    "Availabel Responder",
+                                    style: TextStyle(
+                                      color: MyColors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 2 * SizeConfig.textMultiplier,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 2 * SizeConfig.heightMultiplier,
+                                  ),
+                                  GetX<ChatController>(
+                                      init: Get.find<ChatController>(),
+                                      builder: (chatController) {
+                                        return GridView.builder(
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          shrinkWrap: true,
+                                          gridDelegate:
+                                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 2,
+                                            crossAxisSpacing: 10.0,
+                                            mainAxisSpacing: 10,
+                                            //mainAxisExtent:
+                                          ),
+                                          itemCount: chatController
+                                              .grtAvailableRespoderList.length,
+                                          itemBuilder: (context, index) {
+                                            return Column(
+                                              children: [
+                                                Container(
+                                                  alignment: Alignment.center,
+                                                  height: 7 *
+                                                      SizeConfig
+                                                          .heightMultiplier,
+                                                  width: 40 *
+                                                      SizeConfig
+                                                          .widthMultiplier,
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10)),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: Text(
+                                                          "${chatController.grtAvailableRespoderList[index].responderName.toUpperCase()} has seleced  ${chatController.grtAvailableRespoderList[index].status}",
+                                                          maxLines: 3,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      }),
+                                ],
+                              ))
+                          : SizedBox()),
+                      Positioned(
+                        bottom: 1,
+                        child: Container(
+                          color: Colors.white,
+                          child: Row(
+                            children: [
+                              Container(
+                                  child: IconButton(
+                                      onPressed: () {},
+                                      icon: Icon(
+                                        Icons.file_present,
+                                        // color: kLightyellow,
+                                      ))),
+                              Container(
+                                  margin: EdgeInsets.only(left: 5),
+                                  child: IconButton(
+                                      onPressed: () {},
+                                      icon: Icon(
+                                        Icons.camera_alt_sharp,
+                                        // color: kLightyellow,
+                                      ))),
+                              Container(
+                                margin: EdgeInsets.only(left: 5),
+                                height:
+                                    MediaQuery.of(context).size.width * 0.07,
+                                width: MediaQuery.of(context).size.width * 0.6,
+                                child: TextFormField(
+                                  maxLines: null,
+                                  keyboardType: TextInputType.multiline,
+                                  controller: userAthenticationController
+                                      .messageController,
+                                  decoration: InputDecoration(
+                                      hintText: "Enter message",
+                                      contentPadding: const EdgeInsets.only(
+                                          top: 5, bottom: 5, left: 5),
+                                      isDense: true,
+                                      filled: true,
+                                      fillColor: Colors.grey[300],
+                                      enabledBorder: const OutlineInputBorder(
+                                          borderSide: BorderSide.none),
+                                      focusedBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                      )),
+                                ),
                               ),
-                        )
-
-                        // receiver(
-                        //   context,
-                        //   "assets/images/account.png",
-                        //   "Hello",
-                        //   MediaQuery.of(context).size.height * 0.047,
-                        //   MediaQuery.of(context).size.width * 0.2,
-                        // ),
-                        // senderMessage(
-                        //     context,
-                        //     "assets/images/account.png",
-                        //     "Hello Doctor?\nHow are you",
-                        //     MediaQuery.of(context).size.width * 0.3,
-                        //     MediaQuery.of(context).size.height * 0.08),
-                        // receiver(
-                        //     context,
-                        //     "assets/images/account.png",
-                        //     "Fine\nI hope you are doing well",
-                        //     MediaQuery.of(context).size.height * 0.07,
-                        //     MediaQuery.of(context).size.width * 0.5),
-                        // receiver(
-                        //     context,
-                        //     "assets/images/account.png",
-                        //     "  Don't forget about your next  \t\t appointment",
-                        //     MediaQuery.of(context).size.height * 0.08,
-                        //     MediaQuery.of(context).size.width * 0.51),
-                        // SizedBox(
-                        //     height: MediaQuery.of(context).size.height * 0.4),
-                      ],
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 1,
-                  child: Container(
-                    color: Colors.white,
-                    child: Row(
-                      children: [
-                        Container(
-                            child: IconButton(
-                                onPressed: () {},
-                                icon: Icon(
-                                  Icons.file_present,
-                                  // color: kLightyellow,
-                                ))),
-                        Container(
-                            margin: EdgeInsets.only(left: 5),
-                            child: IconButton(
-                                onPressed: () {},
-                                icon: Icon(
-                                  Icons.camera_alt_sharp,
-                                  // color: kLightyellow,
-                                ))),
-                        Container(
-                          margin: EdgeInsets.only(left: 5),
-                          height: MediaQuery.of(context).size.width * 0.07,
-                          width: MediaQuery.of(context).size.width * 0.6,
-                          child: TextFormField(
-                            controller:
-                                userAthenticationController.messageController,
-                            decoration: InputDecoration(
-                                hintText: "Enter message",
-                                contentPadding: const EdgeInsets.only(
-                                    top: 5, bottom: 5, left: 5),
-                                isDense: true,
-                                filled: true,
-                                fillColor: Colors.grey[300],
-                                enabledBorder: const OutlineInputBorder(
-                                    borderSide: BorderSide.none),
-                                focusedBorder: const OutlineInputBorder(
-                                  borderSide: BorderSide.none,
-                                )),
+                              Container(
+                                  margin: const EdgeInsets.only(left: 5),
+                                  child: IconButton(
+                                      onPressed: () {
+                                        if (userAthenticationController
+                                            .messageController
+                                            .text
+                                            .isNotEmpty) {
+                                          userAthenticationController
+                                              .sendMessage(
+                                                  userAthenticationController
+                                                      .messageController.text,
+                                                  widget.availableStatus);
+                                        }
+                                      },
+                                      icon: const Icon(
+                                        Icons.send,
+                                        //  color: kLightyellow,
+                                      ))),
+                            ],
                           ),
                         ),
-                        Container(
-                            margin: const EdgeInsets.only(left: 5),
-                            child: IconButton(
-                                onPressed: () {
-                                  if (userAthenticationController
-                                      .messageController.text.isNotEmpty) {
-                                    userAthenticationController.sendMessage(
-                                        userAthenticationController
-                                            .messageController.text);
-                                  }
-                                },
-                                icon: const Icon(
-                                  Icons.send,
-                                  //  color: kLightyellow,
-                                ))),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-          )),
+                ))),
     );
   }
 

@@ -319,62 +319,72 @@ class _RapidResponseScreenState extends State<RapidResponseScreen>
                                                   color: MyColors.secondary,
                                                   fontWeight: FontWeight.bold)),
                                         )),
-                                    widget.isRespospoding
+                                    //widget.isRespospoding
+                                    Obx(() => userAthenticationController
+                                            .isResponding.value
                                         ? const Text(
                                             "Please Confirm your Availability",
                                             style: TextStyle(
                                                 color: MyColors.primary,
                                                 fontWeight: FontWeight.bold))
-                                        : SizedBox()
+                                        : SizedBox()),
                                   ],
                                 ),
                                 const SizedBox(height: 10.0),
-                                isAvalailable && widget.isRespospoding
-                                    ? Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                              "($avaliableStatus) you can go for a chat"),
-                                          Container(
-                                            height:
-                                                5 * SizeConfig.heightMultiplier,
-                                            width:
-                                                25 * SizeConfig.widthMultiplier,
-                                            child: ProgressButton(
-                                              color: MyColors.primary,
-                                              defaultWidget: Container(
-                                                child: Text(
-                                                  "Go for Chat",
-                                                  textAlign: TextAlign.right,
-                                                  style: TextStyle(
-                                                      fontSize: 1.6 *
-                                                          SizeConfig
-                                                              .textMultiplier,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.white),
+                                Obx(
+                                  () => userAthenticationController
+                                              .isAvalailable.value &&
+                                          userAthenticationController
+                                              .isResponding.value
+                                      ? Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                                "($avaliableStatus) you can go for a chat"),
+                                            Container(
+                                              height: 5 *
+                                                  SizeConfig.heightMultiplier,
+                                              width: 25 *
+                                                  SizeConfig.widthMultiplier,
+                                              child: ProgressButton(
+                                                color: MyColors.primary,
+                                                defaultWidget: Container(
+                                                  child: Text(
+                                                    "Go for Chat",
+                                                    textAlign: TextAlign.right,
+                                                    style: TextStyle(
+                                                        fontSize: 1.6 *
+                                                            SizeConfig
+                                                                .textMultiplier,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.white),
+                                                  ),
                                                 ),
+                                                progressWidget:
+                                                    const SmartButtonIndicatorWidget(),
+                                                borderRadius: 12,
+                                                type: ProgressButtonType.Flat,
+                                                height: 56,
+                                                onPressed: () async {
+                                                  userAthenticationController
+                                                      .availabeResponderMthode(
+                                                          avaliableStatus);
+
+                                                  // OneContext().showDialog(builder:
+                                                  //     (BuildContext context) {
+                                                  //   return RapidResponseDialog(
+                                                  //       blur: false);
+                                                  // });
+                                                  //Get.to(() => const FacilityCode());
+                                                },
                                               ),
-                                              progressWidget:
-                                                  const SmartButtonIndicatorWidget(),
-                                              borderRadius: 12,
-                                              type: ProgressButtonType.Flat,
-                                              height: 56,
-                                              onPressed: () async {
-                                                Get.to(() => DoctorMessage());
-                                                // OneContext().showDialog(builder:
-                                                //     (BuildContext context) {
-                                                //   return RapidResponseDialog(
-                                                //       blur: false);
-                                                // });
-                                                //Get.to(() => const FacilityCode());
-                                              },
                                             ),
-                                          ),
-                                        ],
-                                      )
-                                    : SizedBox(),
+                                          ],
+                                        )
+                                      : SizedBox(),
+                                ),
                                 const SizedBox(height: 10.0),
 
                                 Container(child: list()),
@@ -463,72 +473,98 @@ class _RapidResponseScreenState extends State<RapidResponseScreen>
                                 ),
                                 SizedBox(
                                     height: 5 * SizeConfig.heightMultiplier),
+                                Obx(
+                                  () => userAthenticationController
+                                              .user.assignNumber ==
+                                          333
+                                      ? SizedBox()
+                                      : Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            userAthenticationController
+                                                        .user.assignNumber ==
+                                                    111
+                                                ? Container(
+                                                    width: 47 *
+                                                        SizeConfig
+                                                            .widthMultiplier,
+                                                    child: ProgressButton(
+                                                      color: MyColors.grey,
+                                                      defaultWidget: Container(
+                                                        child: Text(
+                                                          "General",
+                                                          textAlign:
+                                                              TextAlign.right,
+                                                          style: TextStyle(
+                                                              fontSize: 1.6 *
+                                                                  SizeConfig
+                                                                      .textMultiplier,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color:
+                                                                  Colors.white),
+                                                        ),
+                                                      ),
+                                                      progressWidget:
+                                                          const SmartButtonIndicatorWidget(),
+                                                      borderRadius: 12,
+                                                      type: ProgressButtonType
+                                                          .Flat,
+                                                      height: 56,
+                                                      onPressed: () async {
+                                                        print(
+                                                            "Event creater id is ${userAthenticationController.eventCreatorId}");
+                                                        print(
+                                                            "chat id is ${userAthenticationController.chatID}");
 
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      width: 47 * SizeConfig.widthMultiplier,
-                                      child: ProgressButton(
-                                        color: MyColors.grey,
-                                        defaultWidget: Container(
-                                          child: Text(
-                                            "General",
-                                            textAlign: TextAlign.right,
-                                            style: TextStyle(
-                                                fontSize: 1.6 *
-                                                    SizeConfig.textMultiplier,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white),
-                                          ),
+                                                        //     .googleSignout();
+                                                        //Get.to(() => const FacilityCode());
+                                                      },
+                                                    ),
+                                                  )
+                                                : SizedBox(),
+                                            Container(
+                                              width: 47 *
+                                                  SizeConfig.widthMultiplier,
+                                              child: ProgressButton(
+                                                color: MyColors.primary,
+                                                defaultWidget: Container(
+                                                  child: Text(
+                                                    "Responder",
+                                                    textAlign: TextAlign.right,
+                                                    style: TextStyle(
+                                                        fontSize: 1.6 *
+                                                            SizeConfig
+                                                                .textMultiplier,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.white),
+                                                  ),
+                                                ),
+                                                progressWidget:
+                                                    const SmartButtonIndicatorWidget(),
+                                                borderRadius: 12,
+                                                type: ProgressButtonType.Flat,
+                                                height: 56,
+                                                onPressed: () async {
+                                                  OneContext().showDialog(
+                                                      builder: (BuildContext
+                                                          context) {
+                                                    return RapidResponseDialog(
+                                                        blur: false);
+                                                  });
+                                                  //Get.to(() => const FacilityCode());
+                                                },
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        progressWidget:
-                                            const SmartButtonIndicatorWidget(),
-                                        borderRadius: 12,
-                                        type: ProgressButtonType.Flat,
-                                        height: 56,
-                                        onPressed: () async {
-                                          print(
-                                              "Event creater id is ${userAthenticationController.eventCreatorId}");
-                                          print(
-                                              "chat id is ${userAthenticationController.broadCastCChatId}");
+                                ),
 
-                                          //     .googleSignout();
-                                          //Get.to(() => const FacilityCode());
-                                        },
-                                      ),
-                                    ),
-                                    Container(
-                                      width: 47 * SizeConfig.widthMultiplier,
-                                      child: ProgressButton(
-                                        color: MyColors.primary,
-                                        defaultWidget: Container(
-                                          child: Text(
-                                            "Responder",
-                                            textAlign: TextAlign.right,
-                                            style: TextStyle(
-                                                fontSize: 1.6 *
-                                                    SizeConfig.textMultiplier,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white),
-                                          ),
-                                        ),
-                                        progressWidget:
-                                            const SmartButtonIndicatorWidget(),
-                                        borderRadius: 12,
-                                        type: ProgressButtonType.Flat,
-                                        height: 56,
-                                        onPressed: () async {
-                                          OneContext().showDialog(
-                                              builder: (BuildContext context) {
-                                            return RapidResponseDialog(
-                                                blur: false);
-                                          });
-                                          //Get.to(() => const FacilityCode());
-                                        },
-                                      ),
-                                    ),
-                                  ],
+                                SizedBox(
+                                  height: 5 * SizeConfig.heightMultiplier,
                                 ),
                                 //Text("hello"),
 
@@ -736,7 +772,8 @@ class _RapidResponseScreenState extends State<RapidResponseScreen>
                             itemData.selected = true;
                             itemData.selectedItem = itemData.list[index];
                             avaliableStatus = itemData.selectedItem;
-                            isAvalailable = true;
+                            userAthenticationController.isAvalailable.value =
+                                true;
                             //print(itemData.selectedItem);
                           });
                         },

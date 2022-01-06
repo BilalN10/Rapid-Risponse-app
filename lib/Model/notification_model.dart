@@ -5,15 +5,21 @@ class NotifitcatioModel {
   String notificaitonBody;
   int responders;
   String date;
+  String eventCreatorId;
+  String chatID;
   NotifitcatioModel(
       {this.notificaitonBody,
       this.notificationTite,
       this.responders,
-      this.date});
+      this.date,
+      this.chatID,
+      this.eventCreatorId});
   NotifitcatioModel.fromJson(DocumentSnapshot snapShotData) {
     notificaitonBody = snapShotData.data()["notificationBody"];
     notificationTite = snapShotData.data()["notificationtitle"];
     responders = snapShotData.data()["responders"];
     date = snapShotData.data()["date"];
+    chatID = snapShotData.data()["chatID"];
+    eventCreatorId = snapShotData.data()["eventCreatorId"];
   }
 }

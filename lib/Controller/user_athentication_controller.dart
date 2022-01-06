@@ -8,9 +8,12 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:one_context/one_context.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:rapid_response/Controller/incident_call_contoller.dart';
 import 'package:rapid_response/Model/user_model.dart';
 import 'package:rapid_response/Views/Authentication/role_define_screen.dart';
 import 'package:rapid_response/Views/Authentication/sign_screen.dart';
+import 'package:rapid_response/Views/Chat/doccotor_message.dart';
+import 'package:rapid_response/Views/Incident_calls/incident_calls_screen.dart';
 import 'package:rapid_response/Views/Rapid_Response/rapid_response.dart';
 import 'package:intl/intl.dart';
 
@@ -70,6 +73,12 @@ class UserAthenticationController extends GetxController {
   String eventCreatorId;
   String chatID;
 
+  RxBool isEventClose = false.obs;
+  RxString eventCreaterUid = "".obs;
+
+  RxBool isResponding = false.obs;
+  RxBool isAvalailable = false.obs;
+
   //Send notificaiton to User list
   Rx<List<String>> sendNotifocationto = Rx<List<String>>([]);
   List<String> get sendNotifoactions => sendNotifocationto.value;
@@ -95,8 +104,8 @@ class UserAthenticationController extends GetxController {
     OneSignal.shared.setNotificationWillShowInForegroundHandler(
         (OSNotificationReceivedEvent event) {
       print("my event data is ${event.notification.additionalData}");
-      eventCreatorId = event.notification.additionalData["eventCreatorId"];
-      chatID = event.notification.additionalData["broadCastChatID"];
+      //eventCreatorId = event.notification.additionalData["eventCreatorId"];
+      //chatID = event.notification.additionalData["broadCastChatID"];
 
       print("Notificaiton Received");
       DateTime now = DateTime.now();
@@ -106,11 +115,14 @@ class UserAthenticationController extends GetxController {
           .collection("Users")
           .doc(users.uid)
           .collection("Notifications")
-          .add({
+          .doc(event.notification.additionalData["broadCastChatID"])
+          .set({
         "notificationBody": event.notification.body,
         "notificationtitle": event.notification.title,
         "responders": 0,
-        "date": formattedDate
+        "date": formattedDate,
+        "eventCreatorId": event.notification.additionalData["eventCreatorId"],
+        "chatID": event.notification.additionalData["broadCastChatID"]
       });
       //Get.to(() => ConfirmClients());
       // Will be called whenever a notification is received in foreground
@@ -119,7 +131,28 @@ class UserAthenticationController extends GetxController {
     });
     OneSignal.shared
         .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
+      // eventCreatorId = result.notification.additionalData["eventCreatorId"];
+      //chatID = result.notification.additionalData["broadCastChatID"];
+
+      DateTime now = DateTime.now();
+      String formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(now);
+
       print("i am here");
+      firebaseFirestore
+          .collection("Users")
+          .doc(users.uid)
+          .collection("Notifications")
+          .doc(result.notification.additionalData["broadCastChatID"])
+          .set({
+        "notificationBody": result.notification.body,
+        "notificationtitle": result.notification.title,
+        "responders": 0,
+        "date": formattedDate,
+        "eventCreatorId": result.notification.additionalData["eventCreatorId"],
+        "chatID": result.notification.additionalData["broadCastChatID"]
+      }).then((value) {
+        Get.to(() => IncidentCallsScreen());
+      });
       //Get.to(() => ConfirmClients());
       // Will be called whenever a notification is opened/button pressed.
     });
@@ -158,19 +191,79 @@ class UserAthenticationController extends GetxController {
     }
   }
 
+  void checkIsEventClosed() async {
+    print("event is $eventCreatorId");
+    print("chat is $chatID");
+    DocumentSnapshot doc = await firebaseFirestore
+        .collection("Users")
+        .doc(eventCreatorId)
+        .collection("BroadcastChat")
+        .doc(chatID)
+        .get()
+        .then((value) {
+      isEventClose.value = value.data()["isEventClose"];
+      eventCreaterUid.value = value.data()["uid"];
+
+      print("evevent is ${isEventClose.value}");
+    });
+  }
+
+  void closeEvent() {
+    firebaseFirestore
+        .collection("Users")
+        .doc(eventCreatorId)
+        .collection("BroadcastChat")
+        .doc(chatID)
+        .update({"isEventClose": true}).then((value) {
+      print("Event Closed");
+      checkIsEventClosed();
+    });
+  }
+
 // Broadcast Methode
-  void sendMessage(String txtMessage) {
+  void sendMessage(String txtMessage, String status) {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(now);
+
     firebaseFirestore
         .collection("Users")
         .doc(eventCreatorId)
         .collection("BroadcastChat")
         .doc(chatID)
         .collection("Conversation")
-        .add({"txtMessage": txtMessage}).then((value) {
+        .add({
+      "txtMessage": txtMessage,
+      "messageSenderID": users.uid,
+      "senderName": user.name,
+      "role": user.role,
+      "satus": status ?? "",
+      "date": DateTime.now()
+    }).then((value) {
       messageController.clear();
       print("message sent");
     }).catchError((e) {
       print("message not send error is $e");
+    });
+  }
+  //Available  responder methode
+
+  void availabeResponderMthode(String status) {
+    firebaseFirestore
+        .collection("Users")
+        .doc(eventCreatorId)
+        .collection("BroadcastChat")
+        .doc(chatID)
+        .collection("AvailablRespoder")
+        .doc(users.uid)
+        .set({
+      "responderName": user.name,
+      "role": user.role,
+      "status": status,
+      "dateTime": DateTime.now()
+    }).then((value) {
+      Get.to(() => DoctorMessage(
+            availableStatus: status,
+          ));
     });
   }
 
@@ -224,8 +317,11 @@ class UserAthenticationController extends GetxController {
         .collection("Users")
         .doc(users.uid)
         .collection("BroadcastChat")
-        .add({"eventTitle": dialogNotifiactionTitelController.text}).then(
-            (value) {
+        .add({
+      "eventTitle": dialogNotifiactionTitelController.text,
+      "isEventClose": false,
+      "uid": users.uid
+    }).then((value) {
       broadCastCChatId = value.id;
       OneSignal.shared
           .postNotification(OSCreateNotification(
@@ -246,7 +342,13 @@ class UserAthenticationController extends GetxController {
             .collection("BroadcastChat")
             .doc(broadCastCChatId)
             .collection("Conversation")
-            .add({"txtMessage": dialogNotifiactionController.text});
+            .add({
+          "txtMessage": dialogNotifiactionController.text,
+          "messageSenderID": users.uid,
+          "senderName": user.name,
+          "role": user.role,
+          "date": DateTime.now()
+        });
       }).then((value) {
         dialogNotifiactionController.clear();
         dialogNotifiactionTitelController.clear();
