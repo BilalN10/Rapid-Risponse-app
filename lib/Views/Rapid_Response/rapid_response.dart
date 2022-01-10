@@ -10,6 +10,7 @@ import 'package:rapid_response/Model/bottom_navbar_model.dart';
 import 'package:rapid_response/Model/item_model.dart';
 import 'package:rapid_response/SizeConfig/size_config.dart';
 import 'package:rapid_response/Views/Chat/doccotor_message.dart';
+import 'package:rapid_response/Views/ClosedEvents/closed_events.dart';
 import 'package:rapid_response/Views/Constants/colors.dart';
 import 'package:rapid_response/Views/Dispatch_Screen/dispatch_screen.dart';
 import 'package:rapid_response/Views/GoogleMap/google_map_Screen.dart';
@@ -229,6 +230,16 @@ class _RapidResponseScreenState extends State<RapidResponseScreen>
                       //Get.to(() => GooleMapsScreen());
                       // OneContext().pushNamed(Routes.facility_code_screen);
                     },
+                  ),
+                  Obx(
+                    () => userAthenticationController.user.assignNumber == 111
+                        ? ListTile(
+                            title: const Text('Closed Event'),
+                            onTap: () {
+                              Get.to(() => ClosedEventsScreen());
+                            },
+                          )
+                        : SizedBox(),
                   ),
                   ListTile(
                     title: const Text('Sign out'),
@@ -552,7 +563,7 @@ class _RapidResponseScreenState extends State<RapidResponseScreen>
                                                   OneContext().showDialog(
                                                       builder: (BuildContext
                                                           context) {
-                                                    return RapidResponseDialog(
+                                                    return const RapidResponseDialog(
                                                         blur: false);
                                                   });
                                                   //Get.to(() => const FacilityCode());

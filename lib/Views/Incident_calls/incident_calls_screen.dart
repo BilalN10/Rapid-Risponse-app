@@ -42,14 +42,14 @@ class _IncidentCallsScreenState extends State<IncidentCallsScreen> {
             centerTitle: true,
             // leading: BackButton(color: JssColors.judul),
             leading: Container(
-              margin: EdgeInsets.only(left: 16.0),
-              decoration: new BoxDecoration(
+              margin: const EdgeInsets.only(left: 16.0),
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: MyColors.bg_button_back,
               ),
               alignment: Alignment.center,
               child: IconButton(
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_back_ios,
                   color: MyColors.grey_3,
                   size: 20.0,

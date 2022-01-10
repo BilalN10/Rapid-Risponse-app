@@ -24,6 +24,8 @@ class _messagesState extends State<DoctorMessage> {
   @override
   void initState() {
     userAthenticationController.checkIsEventClosed();
+    chatController.getAdminStream();
+
     super.initState();
   }
 
@@ -107,6 +109,8 @@ class _messagesState extends State<DoctorMessage> {
                           height: 56,
                           onPressed: () async {
                             userAthenticationController.isResponding.value =
+                                false;
+                            userAthenticationController.isAvalailable.value =
                                 false;
                             Get.back();
                             //userAthenticationController.closeEvent();
@@ -281,7 +285,7 @@ class _messagesState extends State<DoctorMessage> {
                                                                           56,
                                                                       onPressed:
                                                                           () async {
-                                                                        userAthenticationController
+                                                                        chatController
                                                                             .closeEvent();
                                                                       },
                                                                     ),

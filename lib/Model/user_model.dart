@@ -25,6 +25,7 @@ class UserModel {
       this.tokeID,
       this.roleImage});
   UserModel.fromSnamshot(DocumentSnapshot data) {
+    id = data.id;
     email = data.data()["email"] ?? "";
     image = data.data()["image"] ?? "";
     name = data.data()["name"] ?? "";

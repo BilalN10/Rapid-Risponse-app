@@ -10,9 +10,11 @@ import 'package:one_context/one_context.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:rapid_response/Controller/incident_call_contoller.dart';
 import 'package:rapid_response/Model/user_model.dart';
+import 'package:rapid_response/SizeConfig/size_config.dart';
 import 'package:rapid_response/Views/Authentication/role_define_screen.dart';
 import 'package:rapid_response/Views/Authentication/sign_screen.dart';
 import 'package:rapid_response/Views/Chat/doccotor_message.dart';
+import 'package:rapid_response/Views/Constants/colors.dart';
 import 'package:rapid_response/Views/Incident_calls/incident_calls_screen.dart';
 import 'package:rapid_response/Views/Rapid_Response/rapid_response.dart';
 import 'package:intl/intl.dart';
@@ -22,6 +24,7 @@ class UserAthenticationController extends GetxController {
   void onInit() {
     //sendAlertto(333);
     firebaseUser.bindStream(auth.authStateChanges());
+    adminList.bindStream(getAdminStream());
     //googleSignInAccounts.bindStream(googleSignIn..s);
     print("user is $googleSignInAccount");
     //googleSignInAccount.
@@ -79,6 +82,9 @@ class UserAthenticationController extends GetxController {
   RxBool isResponding = false.obs;
   RxBool isAvalailable = false.obs;
 
+  Rx<List<UserModel>> adminList = Rx<List<UserModel>>([]);
+  List<UserModel> get getadminListforApprove => adminList.value;
+
   //Send notificaiton to User list
   Rx<List<String>> sendNotifocationto = Rx<List<String>>([]);
   List<String> get sendNotifoactions => sendNotifocationto.value;
@@ -103,27 +109,47 @@ class UserAthenticationController extends GetxController {
     // });
     OneSignal.shared.setNotificationWillShowInForegroundHandler(
         (OSNotificationReceivedEvent event) {
-      print("my event data is ${event.notification.additionalData}");
+      // print("my event data is ${event.notification.additionalData}");
       //eventCreatorId = event.notification.additionalData["eventCreatorId"];
       //chatID = event.notification.additionalData["broadCastChatID"];
 
-      print("Notificaiton Received");
-      DateTime now = DateTime.now();
-      String formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(now);
+      //print("Notificaiton Received");
+      if (event.notification.additionalData["isNotificationforPermission"] ==
+          true) {
+        print(
+            "this notification is for approvr ${event.notification.additionalData["isNotificationforPermission"]}");
+        print("user id ${event.notification.additionalData["userId"]}");
+        for (int i = 0; i < getadminListforApprove.length; i++) {
+          firebaseFirestore
+              .collection("Users")
+              .doc(getadminListforApprove[i].id)
+              .collection("NotificationforApprove")
+              .doc(event.notification.additionalData["userId"])
+              .set({
+            "notificationtitle": event.notification.title,
+            "notificationBody": event.notification.body,
+            "date": DateTime.now(),
+            'userId': event.notification.additionalData["userId"],
+          });
+        }
+      } else {
+        DateTime now = DateTime.now();
+        String formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(now);
 
-      firebaseFirestore
-          .collection("Users")
-          .doc(users.uid)
-          .collection("Notifications")
-          .doc(event.notification.additionalData["broadCastChatID"])
-          .set({
-        "notificationBody": event.notification.body,
-        "notificationtitle": event.notification.title,
-        "responders": 0,
-        "date": formattedDate,
-        "eventCreatorId": event.notification.additionalData["eventCreatorId"],
-        "chatID": event.notification.additionalData["broadCastChatID"]
-      });
+        firebaseFirestore
+            .collection("Users")
+            .doc(users.uid)
+            .collection("Notifications")
+            .doc(event.notification.additionalData["broadCastChatID"])
+            .set({
+          "notificationBody": event.notification.body,
+          "notificationtitle": event.notification.title,
+          "responders": 0,
+          "date": formattedDate,
+          "eventCreatorId": event.notification.additionalData["eventCreatorId"],
+          "chatID": event.notification.additionalData["broadCastChatID"]
+        });
+      }
       //Get.to(() => ConfirmClients());
       // Will be called whenever a notification is received in foreground
       // Display Notification, pass null param for not displaying the notification
@@ -133,26 +159,45 @@ class UserAthenticationController extends GetxController {
         .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
       // eventCreatorId = result.notification.additionalData["eventCreatorId"];
       //chatID = result.notification.additionalData["broadCastChatID"];
+      if (result.notification.additionalData["isNotificationforPermission"] ==
+          true) {
+        print("user id ${result.notification.additionalData["userId"]}");
+        for (int i = 0; i < getadminListforApprove.length; i++) {
+          firebaseFirestore
+              .collection("Users")
+              .doc(getadminListforApprove[i].id)
+              .collection("NotificationforApprove")
+              .doc(result.notification.additionalData["userId"])
+              .set({
+            "notificationtitle": result.notification.title,
+            "notificationBody": result.notification.body,
+            "date": DateTime.now(),
+            'userId': result.notification.additionalData["userId"],
+          });
+        }
+      } else {
+        DateTime now = DateTime.now();
+        String formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(now);
 
-      DateTime now = DateTime.now();
-      String formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(now);
+        print("i am here");
+        firebaseFirestore
+            .collection("Users")
+            .doc(users.uid)
+            .collection("Notifications")
+            .doc(result.notification.additionalData["broadCastChatID"])
+            .set({
+          "notificationBody": result.notification.body,
+          "notificationtitle": result.notification.title,
+          "responders": 0,
+          "date": formattedDate,
+          "eventCreatorId":
+              result.notification.additionalData["eventCreatorId"],
+          "chatID": result.notification.additionalData["broadCastChatID"]
+        }).then((value) {
+          Get.to(() => IncidentCallsScreen());
+        });
+      }
 
-      print("i am here");
-      firebaseFirestore
-          .collection("Users")
-          .doc(users.uid)
-          .collection("Notifications")
-          .doc(result.notification.additionalData["broadCastChatID"])
-          .set({
-        "notificationBody": result.notification.body,
-        "notificationtitle": result.notification.title,
-        "responders": 0,
-        "date": formattedDate,
-        "eventCreatorId": result.notification.additionalData["eventCreatorId"],
-        "chatID": result.notification.additionalData["broadCastChatID"]
-      }).then((value) {
-        Get.to(() => IncidentCallsScreen());
-      });
       //Get.to(() => ConfirmClients());
       // Will be called whenever a notification is opened/button pressed.
     });
@@ -191,6 +236,23 @@ class UserAthenticationController extends GetxController {
     }
   }
 
+  //get
+  Stream<List<UserModel>> getAdminStream() {
+    return firebaseFirestore
+        .collection('Users')
+        .where("assignNumber", isEqualTo: 111)
+        .snapshots()
+        .map((QuerySnapshot query) {
+      List<UserModel> retVal = List();
+      query.docs.forEach((element) {
+        retVal.add(UserModel.fromSnamshot(element));
+      });
+
+      print('admin list is ${retVal.length}');
+      return retVal;
+    });
+  }
+
   void checkIsEventClosed() async {
     print("event is $eventCreatorId");
     print("chat is $chatID");
@@ -205,18 +267,6 @@ class UserAthenticationController extends GetxController {
       eventCreaterUid.value = value.data()["uid"];
 
       print("evevent is ${isEventClose.value}");
-    });
-  }
-
-  void closeEvent() {
-    firebaseFirestore
-        .collection("Users")
-        .doc(eventCreatorId)
-        .collection("BroadcastChat")
-        .doc(chatID)
-        .update({"isEventClose": true}).then((value) {
-      print("Event Closed");
-      checkIsEventClosed();
     });
   }
 
@@ -269,6 +319,9 @@ class UserAthenticationController extends GetxController {
 
   //Google sign In Methode
   void googleLogin() async {
+    var status = await OneSignal.shared.getDeviceState();
+    String tokenID = status.userId;
+//
     final GoogleSignInAccount googleUser = await googleSignIn.signIn();
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
@@ -285,6 +338,8 @@ class UserAthenticationController extends GetxController {
       "phoneNumber": authResult.user.phoneNumber,
       "role": defineRole,
       "assignNumber": assignNumber,
+      "roleImage": roleImage,
+      "tokenId": tokenID,
     };
     var now = DateTime.now();
     var _updateTime = DateTime(
@@ -418,10 +473,6 @@ class UserAthenticationController extends GetxController {
     try {
       var status = await OneSignal.shared.getDeviceState();
       String tokenID = status.userId;
-//       OSPermissionSubscriptionState status = OneSignal.getPermissionSubscriptionState();
-// status.getSubscriptionStatus().getUserId();
-
-      // String UUID = OneSignal.getPermissionSubscriptionState().getSubscriptionStatus().getUserId()
 
       await auth
           .createUserWithEmailAndPassword(
@@ -435,15 +486,44 @@ class UserAthenticationController extends GetxController {
           "role": defineRole,
           "assignNumber": assignNumber,
           "roleImage": roleImage,
-          "tokenId": tokenID + value.user.uid,
+          "tokenId": tokenID,
+          "isaAccountapprove": false,
           "image":
               "https://firebasestorage.googleapis.com/v0/b/rapid-response-app-ae749.appspot.com/o/profile-deleted.png?alt=media&token=30a9321f-ff58-4f80-899e-3c6db7896746"
         });
+        OneSignal.shared
+            .postNotification(OSCreateNotification(
+          additionalData: {
+            "userId": value.user.uid,
+            'isNotificationforPermission': true,
+          },
+          heading: "Request for approve account ",
+          // subtitle: dialogNotifiactionTitelController.text,
+          playerIds: sendNotifoactions,
+          content: "$userName a $defineRole is waiting for your response",
+        ))
+            .then((value) {
+          Get.defaultDialog(
+              title: "Wait for account approve ",
+              middleText: "Your account is not approve yet",
+              confirm: GestureDetector(
+                onTap: () {
+                  OneContext().popDialog();
+                  Get.back();
+                },
+                child: Text(
+                  "OK",
+                  style: TextStyle(
+                      color: MyColors.primary,
+                      fontSize: 2 * SizeConfig.textMultiplier),
+                ),
+              ));
+        });
+        // .then((value) async {});
 
-        print("account Created");
         isSignUpLoading.value = false;
         clearSignIpController();
-        Get.to(() => RapidResponseScreen());
+        //Get.to(() => RapidResponseScreen());
       }).catchError((e) {
         Get.snackbar("Error", e.toString());
         isSignUpLoading.value = false;
@@ -515,12 +595,21 @@ class UserAthenticationController extends GetxController {
       await auth
           .signInWithEmailAndPassword(email: email.trim(), password: password)
           .then((value) {
+        firebaseFirestore
+            .collection("Users")
+            .doc(value.user.uid)
+            .get()
+            .then((value) {
+          print(value.data()["isaAccountapprove"]);
+          print(value.data()["name"]);
+        });
+
         print("login Succesfully");
         isSignInLoading.value = false;
-        clearSignInController();
-        Get.to(() => RapidResponseScreen(
-              isRespospoding: false,
-            ));
+        // clearSignInController();
+        // Get.to(() => RapidResponseScreen(
+        //       isRespospoding: false,
+        //     ));
         //getUser();
 
         // Get.to(BDObottomNaveBar());

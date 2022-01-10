@@ -9,10 +9,23 @@ import 'package:rapid_response/Views/Widgets/my_button.dart';
 import 'package:rapid_response/Views/Widgets/mytextfield.dart';
 import 'package:rapid_response/Views/Widgets/smart_button_indicator.dart';
 
-class SignupScreen extends StatelessWidget {
+class SignupScreen extends StatefulWidget {
   SignupScreen({Key key}) : super(key: key);
+
+  @override
+  State<SignupScreen> createState() => _SignupScreenState();
+}
+
+class _SignupScreenState extends State<SignupScreen> {
   final UserAthenticationController userAthenticationController =
       Get.put(UserAthenticationController());
+
+  @override
+  void initState() {
+    userAthenticationController.sendAlertDialog(111);
+    super.initState();
+  }
+
   final _formKey = GlobalKey<FormState>();
 
   @override
