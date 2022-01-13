@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rapid_response/Controller/user_athentication_controller.dart';
 import 'package:rapid_response/SizeConfig/size_config.dart';
-import 'package:rapid_response/Views/Authentication/facility_code.dart';
 import 'package:rapid_response/Views/Constants/colors.dart';
 import 'package:rapid_response/Views/Widgets/app_bar_widget.dart';
 import 'package:rapid_response/Views/Widgets/my_button.dart';

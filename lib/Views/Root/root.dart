@@ -15,10 +15,17 @@ class Root extends StatelessWidget {
         Get.put<UserAthenticationController>(UserAthenticationController());
       },
       builder: (_) {
-        if (Get.find<UserAthenticationController>().users != null) {
-          return RapidResponseScreen(
-            isRespospoding: false,
-          );
+        if (Get.find<UserAthenticationController>().users != null
+            //  &&
+            //     // Get.find<UserAthenticationController>().user.isaAccountapprove !=
+            //     //     null &&
+            //     Get.find<UserAthenticationController>().user.isaAccountapprove
+            ) {
+          // Get.find<UserAthenticationController>()
+          return DefineRoleScreen();
+          // RapidResponseScreen(
+          //   isRespospoding: false,
+          // );
         } else {
           return DefineRoleScreen();
         }

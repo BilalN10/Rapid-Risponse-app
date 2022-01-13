@@ -16,6 +16,7 @@ import 'package:rapid_response/Views/Dispatch_Screen/dispatch_screen.dart';
 import 'package:rapid_response/Views/GoogleMap/google_map_Screen.dart';
 import 'package:rapid_response/Views/GoogleMap/google_map_screen.dart';
 import 'package:rapid_response/Views/Incident_calls/incident_calls_screen.dart';
+import 'package:rapid_response/Views/NotificationForApproveAccount/approve_notificatio_screen.dart';
 import 'package:rapid_response/Views/ResponseScreen/response_screen.dart';
 import 'package:rapid_response/Views/TaskScreen/compnent/assign_task_screen.dart';
 import 'package:rapid_response/Views/TaskScreen/task_screen.dart';
@@ -230,6 +231,16 @@ class _RapidResponseScreenState extends State<RapidResponseScreen>
                       //Get.to(() => GooleMapsScreen());
                       // OneContext().pushNamed(Routes.facility_code_screen);
                     },
+                  ),
+                  Obx(
+                    () => userAthenticationController.user.assignNumber == 111
+                        ? ListTile(
+                            title: const Text('Approve account notificaiton'),
+                            onTap: () {
+                              Get.to(() => ApporveNotificationScreen());
+                            },
+                          )
+                        : const SizedBox(),
                   ),
                   Obx(
                     () => userAthenticationController.user.assignNumber == 111

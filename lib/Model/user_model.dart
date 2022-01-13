@@ -12,6 +12,7 @@ class UserModel {
   String tokeID;
   String roleImage;
   List<String> tokenList;
+  bool isaAccountapprove = false;
 
   UserModel(
       {this.email,
@@ -23,7 +24,8 @@ class UserModel {
       this.id,
       this.role,
       this.tokeID,
-      this.roleImage});
+      this.roleImage,
+      this.isaAccountapprove});
   UserModel.fromSnamshot(DocumentSnapshot data) {
     id = data.id;
     email = data.data()["email"] ?? "";
@@ -35,6 +37,7 @@ class UserModel {
     role = data.data()["role"] ?? "";
     tokeID = data.data()["tokenId"] ?? "";
     roleImage = data.data()["roleImage"] ?? "";
+    isaAccountapprove = data.data()["isaAccountapprove"];
 
     print("user email is $email");
     print("phone Number $phoneNumber");

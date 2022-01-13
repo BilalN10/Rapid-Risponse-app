@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
-import 'package:rapid_response/Controller/user_athentication_controller.dart';
 import 'package:rapid_response/Model/user_model.dart';
 
 class GuardsandMemberController extends GetxController {
@@ -18,7 +17,10 @@ class GuardsandMemberController extends GetxController {
     print("enter in add function");
     return FirebaseFirestore.instance
         .collection('Users')
-        .where("assignNumber", isGreaterThan: 222)
+        .where(
+          "assignNumber",
+          isGreaterThan: 111,
+        )
         //.orderBy('time', descending: true)
         .snapshots()
         .map((QuerySnapshot query) {

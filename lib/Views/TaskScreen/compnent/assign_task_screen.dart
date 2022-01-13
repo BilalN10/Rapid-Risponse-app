@@ -10,6 +10,7 @@ import 'package:rapid_response/Controller/guards_and_commitee_member_controller.
 import 'package:rapid_response/Model/pserson_model.dart';
 import 'package:rapid_response/SizeConfig/size_config.dart';
 import 'package:rapid_response/Views/Constants/colors.dart';
+import 'package:rapid_response/Views/TaskScreen/compnent/change_role_Screen.dart';
 import 'package:rapid_response/Views/Widgets/progress_indicator_widget.dart';
 
 class TaskAssignScreen extends StatefulWidget {
@@ -87,7 +88,12 @@ class _TaskAssignScreenScreenState extends State<TaskAssignScreen> {
                               itemCount: controller.herlperList.length,
                               itemBuilder: (BuildContext context, int index) {
                                 return GestureDetector(
-                                    onTap: () {},
+                                    onTap: () {
+                                      Get.to(() => ChangeRoleScreen(
+                                            userModel:
+                                                controller.herlperList[index],
+                                          ));
+                                    },
                                     child: Container(
                                         margin: EdgeInsets.only(top: 4),
                                         color: MyColors.white,
@@ -148,7 +154,7 @@ class _TaskAssignScreenScreenState extends State<TaskAssignScreen> {
                                                     controller
                                                         .herlperList[index].name
                                                         .toUpperCase(),
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         color:
@@ -163,13 +169,14 @@ class _TaskAssignScreenScreenState extends State<TaskAssignScreen> {
                                                         .roleImage
                                                         .trim()),
                                                     Container(
-                                                      padding: EdgeInsets.only(
-                                                          left: 4),
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 4),
                                                       child: Text(
                                                         controller
                                                             .herlperList[index]
                                                             .role,
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                             color:
                                                                 MyColors.grey),
                                                       ),

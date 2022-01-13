@@ -6,8 +6,22 @@ import 'package:rapid_response/SizeConfig/size_config.dart';
 import 'package:rapid_response/Views/Authentication/sign_screen.dart';
 import 'package:rapid_response/Views/Constants/colors.dart';
 
-class DefineRoleScreen extends StatelessWidget {
+class DefineRoleScreen extends StatefulWidget {
   DefineRoleScreen({Key key}) : super(key: key);
+
+  @override
+  State<DefineRoleScreen> createState() => _DefineRoleScreenState();
+}
+
+class _DefineRoleScreenState extends State<DefineRoleScreen> {
+  @override
+  void initState() {
+    if (userAthenticationController.users != null) {
+      userAthenticationController.checkUserAccountSatus();
+    }
+    super.initState();
+  }
+
   final UserAthenticationController userAthenticationController =
       Get.find<UserAthenticationController>();
 

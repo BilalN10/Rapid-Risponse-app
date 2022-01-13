@@ -7,9 +7,9 @@ class RoleModel {
 
 List<RoleModel> roleModelList = [
   RoleModel(
-      imgPath: "assets/images/guard.png", name: "Guard", assignNumber: 222),
-  RoleModel(
       imgPath: "assets/images/account.png", name: "Admin", assignNumber: 111),
+  RoleModel(
+      imgPath: "assets/images/guard.png", name: "Guard", assignNumber: 222),
   RoleModel(
       imgPath: "assets/images/guard.png",
       name: "Commitee member",

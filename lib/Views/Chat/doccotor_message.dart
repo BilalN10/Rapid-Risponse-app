@@ -318,7 +318,8 @@ class _messagesState extends State<DoctorMessage> {
                           ? Container(
                               height: 40 * SizeConfig.heightMultiplier,
                               width: 100 * SizeConfig.widthMultiplier,
-                              decoration: BoxDecoration(color: MyColors.grey),
+                              decoration:
+                                  const BoxDecoration(color: MyColors.grey),
                               child: Column(
                                 children: [
                                   SizedBox(

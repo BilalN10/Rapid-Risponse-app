@@ -8,7 +8,6 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:one_context/one_context.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
-import 'package:rapid_response/Controller/incident_call_contoller.dart';
 import 'package:rapid_response/Model/user_model.dart';
 import 'package:rapid_response/SizeConfig/size_config.dart';
 import 'package:rapid_response/Views/Authentication/role_define_screen.dart';
@@ -22,11 +21,13 @@ import 'package:intl/intl.dart';
 class UserAthenticationController extends GetxController {
   @override
   void onInit() {
+    getUser();
     //sendAlertto(333);
     firebaseUser.bindStream(auth.authStateChanges());
     adminList.bindStream(getAdminStream());
     //googleSignInAccounts.bindStream(googleSignIn..s);
     print("user is $googleSignInAccount");
+    RxInt frequencyValue = 0.obs;
     //googleSignInAccount.
     super.onInit();
   }
@@ -118,6 +119,11 @@ class UserAthenticationController extends GetxController {
           true) {
         print(
             "this notification is for approvr ${event.notification.additionalData["isNotificationforPermission"]}");
+        print(
+            "this notification is for approvr ${event.notification.additionalData["defineRole"]}");
+        print(
+            "this notification is for approvr ${event.notification.additionalData}");
+
         print("user id ${event.notification.additionalData["userId"]}");
         for (int i = 0; i < getadminListforApprove.length; i++) {
           firebaseFirestore
@@ -130,6 +136,13 @@ class UserAthenticationController extends GetxController {
             "notificationBody": event.notification.body,
             "date": DateTime.now(),
             'userId': event.notification.additionalData["userId"],
+            "email": event.notification.additionalData["email"],
+            "unitCode": event.notification.additionalData["unitCode"],
+            "phoneNumber": event.notification.additionalData["phoneNumber"],
+            "role": event.notification.additionalData["role"],
+            "assignNumber": event.notification.additionalData["assignNumber"],
+            "name": event.notification.additionalData["name"],
+            "tokanId": event.notification.additionalData["tokanId"]
           });
         }
       } else {
@@ -161,6 +174,9 @@ class UserAthenticationController extends GetxController {
       //chatID = result.notification.additionalData["broadCastChatID"];
       if (result.notification.additionalData["isNotificationforPermission"] ==
           true) {
+        print(
+            "this notification is for approvr ${result.notification.additionalData}");
+
         print("user id ${result.notification.additionalData["userId"]}");
         for (int i = 0; i < getadminListforApprove.length; i++) {
           firebaseFirestore
@@ -173,6 +189,13 @@ class UserAthenticationController extends GetxController {
             "notificationBody": result.notification.body,
             "date": DateTime.now(),
             'userId': result.notification.additionalData["userId"],
+            "email": result.notification.additionalData["email"],
+            "unitCode": result.notification.additionalData["unitCode"],
+            "phoneNumber": result.notification.additionalData["phoneNumber"],
+            "role": result.notification.additionalData["role"],
+            "assignNumber": result.notification.additionalData["assignNumber"],
+            "name": result.notification.additionalData["name"],
+            "tokanId": result.notification.additionalData["tokanId"]
           });
         }
       } else {
@@ -217,6 +240,13 @@ class UserAthenticationController extends GetxController {
     });
   }
 
+  RxInt frequencyValue = 0.obs;
+  void updateValue(int value) {
+    frequencyValue.value = value;
+    print("my value is ${frequencyValue.value}");
+    update();
+  }
+
   Rx<UserModel> usermodel = UserModel().obs;
   UserModel get user => usermodel.value;
   set user(UserModel value) => usermodel.value = value;
@@ -250,6 +280,43 @@ class UserAthenticationController extends GetxController {
 
       print('admin list is ${retVal.length}');
       return retVal;
+    });
+  }
+
+  void changeRole(String id, int assigValue) {
+    String role;
+    if (assigValue == 222) {
+      role = "Guard";
+    } else if (assigValue == 333) {
+      role = "Commitee member";
+    } else if (assigValue == 444) {
+      role = "Resident";
+    }
+    firebaseFirestore.collection("Users").doc(id).update({
+      "role": role,
+      "assignNumber": assigValue,
+    }).then((value) {
+      print("Updated");
+      //Get.snackbar("Role Updated", "Role changed successfully");
+      OneContext().popDialog();
+    }).catchError((e) {
+      print("Error $e");
+    });
+  }
+
+  void checkUserAccountSatus() {
+    firebaseFirestore.collection("Users").doc(users.uid).get().then((value) {
+      if (value.data()["assignNumber"] != 111) {
+        if (value.data()["isaAccountapprove"]) {
+          Get.to(() => RapidResponseScreen(
+                isRespospoding: false,
+              ));
+        }
+      } else {
+        Get.to(() => RapidResponseScreen(
+              isRespospoding: false,
+            ));
+      }
     });
   }
 
@@ -436,7 +503,7 @@ class UserAthenticationController extends GetxController {
           retVal.add(element.data()["tokenId"]);
         });
 
-        print(' my  sdj lenght is ${retVal.length}');
+        print(' my  admins lenght is ${retVal.length}');
         return retVal;
       });
     } else {
@@ -471,6 +538,7 @@ class UserAthenticationController extends GetxController {
     String confirmPassword,
   }) async {
     try {
+      String userIdForNotification;
       var status = await OneSignal.shared.getDeviceState();
       String tokenID = status.userId;
 
@@ -478,6 +546,7 @@ class UserAthenticationController extends GetxController {
           .createUserWithEmailAndPassword(
               email: email.trim(), password: password.trim())
           .then((value) {
+        userIdForNotification = value.user.uid;
         firebaseFirestore.collection("Users").doc(value.user.uid).set({
           "name": userName,
           "email": email,
@@ -490,36 +559,44 @@ class UserAthenticationController extends GetxController {
           "isaAccountapprove": false,
           "image":
               "https://firebasestorage.googleapis.com/v0/b/rapid-response-app-ae749.appspot.com/o/profile-deleted.png?alt=media&token=30a9321f-ff58-4f80-899e-3c6db7896746"
+        }).then((value) {
+          OneSignal.shared
+              .postNotification(OSCreateNotification(
+            additionalData: {
+              "userId": userIdForNotification,
+              'isNotificationforPermission': true,
+              "name": userName,
+              "email": email,
+              "unitCode": unitCode,
+              "phoneNumber": phoneNumber,
+              "role": defineRole,
+              "assignNumber": assignNumber,
+              "tokanId": tokenID,
+            },
+            heading: "Request for approve account ",
+            // subtitle: dialogNotifiactionTitelController.text,
+            playerIds: sendNotifoactions,
+            content: "$userName a $defineRole is waiting for your response",
+          ))
+              .then((value) {
+            Get.defaultDialog(
+                title: "Wait for account approve ",
+                middleText: "Your account is not approve yet",
+                confirm: GestureDetector(
+                  onTap: () {
+                    OneContext().popDialog();
+                    Get.back();
+                  },
+                  child: Text(
+                    "OK",
+                    style: TextStyle(
+                        color: MyColors.primary,
+                        fontSize: 2 * SizeConfig.textMultiplier),
+                  ),
+                ));
+          });
+          // .then((value) async {});
         });
-        OneSignal.shared
-            .postNotification(OSCreateNotification(
-          additionalData: {
-            "userId": value.user.uid,
-            'isNotificationforPermission': true,
-          },
-          heading: "Request for approve account ",
-          // subtitle: dialogNotifiactionTitelController.text,
-          playerIds: sendNotifoactions,
-          content: "$userName a $defineRole is waiting for your response",
-        ))
-            .then((value) {
-          Get.defaultDialog(
-              title: "Wait for account approve ",
-              middleText: "Your account is not approve yet",
-              confirm: GestureDetector(
-                onTap: () {
-                  OneContext().popDialog();
-                  Get.back();
-                },
-                child: Text(
-                  "OK",
-                  style: TextStyle(
-                      color: MyColors.primary,
-                      fontSize: 2 * SizeConfig.textMultiplier),
-                ),
-              ));
-        });
-        // .then((value) async {});
 
         isSignUpLoading.value = false;
         clearSignIpController();
@@ -600,9 +677,57 @@ class UserAthenticationController extends GetxController {
             .doc(value.user.uid)
             .get()
             .then((value) {
+          print(value.id);
           print(value.data()["isaAccountapprove"]);
+          if (value.data()["assignNumber"] != assignNumber) {
+            print(
+                "assignnumber from firebase is  ${value.data()["assignNumber"]}");
+            print("assing number is $assignNumber");
+            Get.defaultDialog(
+                title: "Role Errors",
+                middleText:
+                    "Your role is not  $defineRole\n Please Select Your Role Correct ",
+                confirm: GestureDetector(
+                  onTap: () {
+                    OneContext().popDialog();
+                    Get.back();
+                  },
+                  child: Text(
+                    "OK",
+                    style: TextStyle(
+                        color: MyColors.primary,
+                        fontSize: 2 * SizeConfig.textMultiplier),
+                  ),
+                ));
+          } else if (value.data()["isaAccountapprove"] == false) {
+            Get.defaultDialog(
+                title: "Account not Approve ",
+                middleText: "Your account is not approve yet",
+                confirm: GestureDetector(
+                  onTap: () {
+                    OneContext().popDialog();
+                    //Get.back();
+                  },
+                  child: Text(
+                    "OK",
+                    style: TextStyle(
+                        color: MyColors.primary,
+                        fontSize: 2 * SizeConfig.textMultiplier),
+                  ),
+                ));
+          } else if (value.data()["assignNumber"] == 111) {
+            Get.offAll(() => RapidResponseScreen(
+                  isRespospoding: false,
+                ));
+          } else {
+            Get.offAll(() => RapidResponseScreen(
+                  isRespospoding: false,
+                ));
+          }
+
           print(value.data()["name"]);
         });
+        clearSignInController();
 
         print("login Succesfully");
         isSignInLoading.value = false;

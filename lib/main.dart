@@ -2,16 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:one_context/one_context.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:rapid_response/Controller/user_athentication_controller.dart';
 
 import 'Bindings/auth_bindings.dart';
 import 'SizeConfig/size_config.dart';
-import 'Views/Authentication/role_define_screen.dart';
 import 'Views/Splash_Page/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
-
-import 'google_signin.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:one_context/one_context.dart';
 import 'package:rapid_response/Controller/user_athentication_controller.dart';
-import 'package:rapid_response/Routes/routes.dart';
 import 'package:rapid_response/SizeConfig/size_config.dart';
-import 'package:rapid_response/Views/Authentication/reset_password_screen.dart';
 import 'package:rapid_response/Views/Authentication/sign_up_screen.dart';
 import 'package:rapid_response/Views/Constants/colors.dart';
 import 'package:rapid_response/Views/Rapid_Response/rapid_response.dart';
@@ -12,11 +9,25 @@ import 'package:rapid_response/Views/Widgets/my_button.dart';
 import 'package:rapid_response/Views/Widgets/mytextfield.dart';
 import 'package:rapid_response/Views/Widgets/smart_button_indicator.dart';
 
-class SigninScreen extends StatelessWidget {
+class SigninScreen extends StatefulWidget {
   SigninScreen({Key key}) : super(key: key);
+
+  @override
+  State<SigninScreen> createState() => _SigninScreenState();
+}
+
+class _SigninScreenState extends State<SigninScreen> {
   final UserAthenticationController userAthenticationController =
       Get.put(UserAthenticationController());
+
   final _formKey = GlobalKey<FormState>();
+  //@override
+  // void initState() {
+  //   if (userAthenticationController.users != null) {
+  //     userAthenticationController.checkUserAccountSatus();
+  //   }
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -247,7 +258,7 @@ class SigninScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                      progressWidget: SmartButtonIndicatorWidget(),
+                      progressWidget: const SmartButtonIndicatorWidget(),
                       borderRadius: 12,
                       type: ProgressButtonType.Flat,
                       height: 56,
