@@ -45,13 +45,13 @@ class ApporveNotificationScreen extends StatelessWidget {
                           con.getnotificationForApproveList[index].userId);
                       return GestureDetector(
                         onTap: () {
-                          print(con
-                              .getnotificationForApproveList[index].isApproved);
+                          // print(con
+                          //     .getnotificationForApproveList[index].isApproved);
                           notificationForApproveModel.isApproved;
-                          // Get.to(() => PendingAccountDettail(
-                          //       notificationForApproveModel:
-                          //           con.getnotificationForApproveList[index],
-                          //     ));
+                          Get.to(() => PendingAccountDettail(
+                                notificationForApproveModel:
+                                    con.getnotificationForApproveList[index],
+                              ));
                         },
                         child: Container(
                           margin: const EdgeInsets.all(12),
@@ -94,10 +94,10 @@ class ApporveNotificationScreen extends StatelessWidget {
                                     fontSize: 1.5 * SizeConfig.textMultiplier,
                                   ),
                                 ),
-                                con.getnotificationForApproveList[index]
-                                        .isApproved
-                                    ? Text("Approved")
-                                    : Text("Pending"),
+                                // con.getnotificationForApproveList[index]
+                                //         .isApproved
+                                //     ? Text("Approved")
+                                //     : Text("Pending"),
                               ],
                             ),
                           ),

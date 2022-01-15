@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rapid_response/Controller/user_athentication_controller.dart';
 import 'package:rapid_response/SizeConfig/size_config.dart';
+import 'package:rapid_response/Views/Authentication/reset_password_screen.dart';
 import 'package:rapid_response/Views/Authentication/sign_up_screen.dart';
 import 'package:rapid_response/Views/Constants/colors.dart';
 import 'package:rapid_response/Views/Rapid_Response/rapid_response.dart';
@@ -19,6 +20,13 @@ class SigninScreen extends StatefulWidget {
 class _SigninScreenState extends State<SigninScreen> {
   final UserAthenticationController userAthenticationController =
       Get.put(UserAthenticationController());
+  @override
+  void initState() {
+    userAthenticationController.sendAlertDialog(111);
+    userAthenticationController.auth.signOut();
+    userAthenticationController.googleSignIn.signOut();
+    super.initState();
+  }
 
   final _formKey = GlobalKey<FormState>();
   //@override
@@ -59,7 +67,7 @@ class _SigninScreenState extends State<SigninScreen> {
                   color: Colors.grey.withOpacity(0.2),
                 ),
                 border: InputBorder.none,
-                hintStyle: TextStyle(color: MyColors.hint),
+                hintStyle: const TextStyle(color: MyColors.hint),
                 hintText: "Password"),
             onChanged: (value) {
               //_loginStore.setPassword(value);
@@ -167,7 +175,7 @@ class _SigninScreenState extends State<SigninScreen> {
                         ),
                       ),
                       onPressed: () {
-                        // Get.to(() => ResetPasswordScreen());
+                        Get.to(() => ResetPasswordScreen());
                         // OneContext().pushNamed(Routes.reset_password_screen);
                       },
                     ),

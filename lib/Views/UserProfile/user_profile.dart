@@ -387,25 +387,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               SizedBox(height: 5.0),
                               //phoneNumber,
                               SizedBox(height: 16.0),
-                              DropdownSearch<String>(
-                                  hint: "Guard",
-                                  mode: Mode.BOTTOM_SHEET,
-                                  showSearchBox: true,
-                                  searchBoxDecoration: const InputDecoration(
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.grey, width: 0.4),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.grey, width: 0.4),
-                                    ),
-                                    labelText: "Guard",
-                                  ),
-                                  items: ['Guard'],
-                                  // selectedItem: _store.skpd,
-                                  showClearButton: true,
-                                  onChanged: (value) {}),
+                              // DropdownSearch<String>(
+                              //     hint: "Guard",
+                              //     mode: Mode.BOTTOM_SHEET,
+                              //     showSearchBox: true,
+                              //     searchBoxDecoration: const InputDecoration(
+                              //       focusedBorder: OutlineInputBorder(
+                              //         borderSide: BorderSide(
+                              //             color: Colors.grey, width: 0.4),
+                              //       ),
+                              //       enabledBorder: OutlineInputBorder(
+                              //         borderSide: BorderSide(
+                              //             color: Colors.grey, width: 0.4),
+                              //       ),
+                              //       labelText: "Guard",
+                              //     ),
+                              //     items: ['Guard'],
+                              //     // selectedItem: _store.skpd,
+                              //     showClearButton: true,
+                              //     onChanged: (value) {}),
                               const SizedBox(height: 16.0),
                               con.isProfileChange.value
                                   ? const CircularProgressIndicator()

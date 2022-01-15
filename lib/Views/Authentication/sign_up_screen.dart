@@ -21,7 +21,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   void initState() {
-    userAthenticationController.sendAlertDialog(111);
+    //userAthenticationController.sendAlertDialog(111);
     super.initState();
   }
 

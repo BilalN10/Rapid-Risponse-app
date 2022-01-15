@@ -30,10 +30,10 @@ class _RapidResponseDialogState extends State<RapidResponseDialog> {
       Get.find<UserAthenticationController>();
   bool checkedValue = false;
   static const Map<String, int> frequencyOptions = {
-    "Guard": 444,
+    "Guard": 222,
     "Comitee Members": 333,
     "All": 000,
-    "Resident": 222,
+    "Resident": 444,
   };
 
   int _frequencyValue = 000;

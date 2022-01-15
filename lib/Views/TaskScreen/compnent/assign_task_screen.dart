@@ -10,8 +10,9 @@ import 'package:rapid_response/Controller/guards_and_commitee_member_controller.
 import 'package:rapid_response/Model/pserson_model.dart';
 import 'package:rapid_response/SizeConfig/size_config.dart';
 import 'package:rapid_response/Views/Constants/colors.dart';
-import 'package:rapid_response/Views/TaskScreen/compnent/change_role_Screen.dart';
 import 'package:rapid_response/Views/Widgets/progress_indicator_widget.dart';
+
+import 'change_role.dart';
 
 class TaskAssignScreen extends StatefulWidget {
   static String tag = 'task-page';
@@ -95,9 +96,9 @@ class _TaskAssignScreenScreenState extends State<TaskAssignScreen> {
                                           ));
                                     },
                                     child: Container(
-                                        margin: EdgeInsets.only(top: 4),
+                                        margin: const EdgeInsets.only(top: 4),
                                         color: MyColors.white,
-                                        padding: EdgeInsets.only(
+                                        padding: const EdgeInsets.only(
                                             left: 16,
                                             top: 16,
                                             right: 8,

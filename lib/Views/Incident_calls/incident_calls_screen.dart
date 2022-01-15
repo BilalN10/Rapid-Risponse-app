@@ -12,6 +12,7 @@ import 'package:rapid_response/Controller/user_athentication_controller.dart';
 import 'package:rapid_response/Model/incident_calls_Model.dart';
 import 'package:rapid_response/SizeConfig/size_config.dart';
 import 'package:rapid_response/Views/Constants/colors.dart';
+import 'package:rapid_response/Views/Constants/mydialog.dart';
 import 'package:rapid_response/Views/Rapid_Response/rapid_response.dart';
 
 class IncidentCallsScreen extends StatefulWidget {
@@ -102,138 +103,159 @@ class _IncidentCallsScreenState extends State<IncidentCallsScreen> {
                                           incidentCallController
                                               .getNotificationList[index]
                                               .eventCreatorId;
+                                      MyDialog.doubleButtonDailog(
+                                          title: "Responde",
+                                          middleText:
+                                              "Do you want to responde this event",
+                                          cancelbuttonText: "Cancel",
+                                          confirmbuttonText: "Confirm",
+                                          onCofirmfunction: () {
+                                            OneContext().popDialog();
+                                            print("confirm");
 
-                                      OneContext().showDialog(
-                                          builder: (BuildContext context) {
-                                        return Dialog(
-                                          insetAnimationCurve:
-                                              Curves.linearToEaseOut,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(2),
-                                          ),
-                                          elevation: 0,
-                                          backgroundColor: Colors.transparent,
-                                          child: Container(
-                                            height: 20 *
-                                                SizeConfig.heightMultiplier,
-                                            width:
-                                                10 * SizeConfig.widthMultiplier,
-                                            decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(10)),
-                                            child: Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 2 *
-                                                      SizeConfig
-                                                          .heightMultiplier),
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                // mainAxisAlignment:
-                                                //     MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    incidentCallController
-                                                        .getNotificationList[
-                                                            index]
-                                                        .notificationTite
-                                                        .toUpperCase(),
-                                                    style: TextStyle(
-                                                        fontSize: 2 *
-                                                            SizeConfig
-                                                                .textMultiplier,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color:
-                                                            MyColors.primary),
-                                                  ),
-                                                  Text(
-                                                    "Do you want to response this calls",
-                                                    style: TextStyle(
-                                                      fontSize: 1.5 *
-                                                          SizeConfig
-                                                              .textMultiplier,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      //color: MyColors.primary
-                                                    ),
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceAround,
-                                                    children: [
-                                                      GestureDetector(
-                                                          onTap: () {
-                                                            OneContext()
-                                                                .popDialog();
-                                                          },
-                                                          child: Text(
-                                                            "Cancel",
-                                                            style: TextStyle(
-                                                              color: MyColors
-                                                                  .primary,
-                                                              fontSize: 1.5 *
-                                                                  SizeConfig
-                                                                      .textMultiplier,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              //color: MyColors.primary
-                                                            ),
-                                                          )),
-                                                      GestureDetector(
-                                                          onTap: () {
-                                                            OneContext()
-                                                                .popDialog();
+                                            userAthenticationController
+                                                .isResponding.value = true;
 
-                                                            userAthenticationController
-                                                                .isResponding
-                                                                .value = true;
+                                            Get.offAll(
+                                                () => RapidResponseScreen(
+                                                      isRespospoding: true,
+                                                    ));
+                                          },
+                                          onCancelfunction: () {
+                                            OneContext().popDialog();
+                                          });
 
-                                                            Get.offAll(() =>
-                                                                RapidResponseScreen(
-                                                                  isRespospoding:
-                                                                      true,
-                                                                ));
-                                                            // OneContext()
-                                                            //     .popDialog();
-                                                          },
-                                                          child: Text(
-                                                            "Confirm",
-                                                            style: TextStyle(
-                                                              color:
-                                                                  Colors.green,
-                                                              fontSize: 1.5 *
-                                                                  SizeConfig
-                                                                      .textMultiplier,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              //color: MyColors.primary
-                                                            ),
-                                                          ))
-                                                    ],
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        );
+                                      // OneContext().showDialog(
+                                      //     builder: (BuildContext context) {
+                                      //   return Dialog(
+                                      //     insetAnimationCurve:
+                                      //         Curves.linearToEaseOut,
+                                      //     shape: RoundedRectangleBorder(
+                                      //       borderRadius:
+                                      //           BorderRadius.circular(2),
+                                      //     ),
+                                      //     elevation: 0,
+                                      //     backgroundColor: Colors.transparent,
+                                      //     child: Container(
+                                      //       height: 20 *
+                                      //           SizeConfig.heightMultiplier,
+                                      //       width:
+                                      //           10 * SizeConfig.widthMultiplier,
+                                      //       decoration: BoxDecoration(
+                                      //           color: Colors.white,
+                                      //           borderRadius:
+                                      //               BorderRadius.circular(10)),
+                                      //       child: Padding(
+                                      //         padding: EdgeInsets.symmetric(
+                                      //             vertical: 2 *
+                                      //                 SizeConfig
+                                      //                     .heightMultiplier),
+                                      //         child: Column(
+                                      //           mainAxisAlignment:
+                                      //               MainAxisAlignment
+                                      //                   .spaceBetween,
+                                      //           // mainAxisAlignment:
+                                      //           //     MainAxisAlignment.center,
+                                      //           children: [
+                                      //             Text(
+                                      //               incidentCallController
+                                      //                   .getNotificationList[
+                                      //                       index]
+                                      //                   .notificationTite
+                                      //                   .toUpperCase(),
+                                      //               style: TextStyle(
+                                      //                   fontSize: 2 *
+                                      //                       SizeConfig
+                                      //                           .textMultiplier,
+                                      //                   fontWeight:
+                                      //                       FontWeight.bold,
+                                      //                   color:
+                                      //                       MyColors.primary),
+                                      //             ),
+                                      //             Text(
+                                      //               "Do you want to response this calls",
+                                      //               style: TextStyle(
+                                      //                 fontSize: 1.5 *
+                                      //                     SizeConfig
+                                      //                         .textMultiplier,
+                                      //                 fontWeight:
+                                      //                     FontWeight.bold,
+                                      //                 //color: MyColors.primary
+                                      //               ),
+                                      //             ),
+                                      //             Row(
+                                      //               mainAxisAlignment:
+                                      //                   MainAxisAlignment
+                                      //                       .spaceAround,
+                                      //               children: [
+                                      //                 GestureDetector(
+                                      //                     onTap: () {
+                                      //                       OneContext()
+                                      //                           .popDialog();
+                                      //                     },
+                                      //                     child: Text(
+                                      //                       "Cancel",
+                                      //                       style: TextStyle(
+                                      //                         color: MyColors
+                                      //                             .primary,
+                                      //                         fontSize: 1.5 *
+                                      //                             SizeConfig
+                                      //                                 .textMultiplier,
+                                      //                         fontWeight:
+                                      //                             FontWeight
+                                      //                                 .bold,
+                                      //                         //color: MyColors.primary
+                                      //                       ),
+                                      //                     )),
+                                      //                 GestureDetector(
+                                      //                     onTap: () {
+                                      //                       OneContext()
+                                      //                           .popDialog();
 
-                                        // Container(
-                                        //   height: 100,
-                                        //   width: 100,
-                                        //   color: Colors.white,
-                                        //   child: Column(
-                                        //     children: [Text("hi")],
-                                        //   ),
-                                        // );
-                                      });
-                                      // Get.defaultDialog(
+                                      //                       userAthenticationController
+                                      //                           .isResponding
+                                      //                           .value = true;
+
+                                      //                       Get.offAll(() =>
+                                      //                           RapidResponseScreen(
+                                      //                             isRespospoding:
+                                      //                                 true,
+                                      //                           ));
+                                      //                       // OneContext()
+                                      //                       //     .popDialog();
+                                      //                     },
+                                      //                     child: Text(
+                                      //                       "Confirm",
+                                      //                       style: TextStyle(
+                                      //                         color:
+                                      //                             Colors.green,
+                                      //                         fontSize: 1.5 *
+                                      //                             SizeConfig
+                                      //                                 .textMultiplier,
+                                      //                         fontWeight:
+                                      //                             FontWeight
+                                      //                                 .bold,
+                                      //                         //color: MyColors.primary
+                                      //                       ),
+                                      //                     ))
+                                      //               ],
+                                      //             )
+                                      //           ],
+                                      //         ),
+                                      //       ),
+                                      //     ),
+                                      //   );
+
+                                      //   // Container(
+                                      //   //   height: 100,
+                                      //   //   width: 100,
+                                      //   //   color: Colors.white,
+                                      //   //   child: Column(
+                                      //   //     children: [Text("hi")],
+                                      //   //   ),
+                                      //   // );
+                                      // });
+                                      // // Get.defaultDialog(
                                       //     middleText:
                                       //         "Do you want to response this calls",
                                       //     title: incidentCallController

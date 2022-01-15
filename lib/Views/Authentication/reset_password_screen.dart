@@ -1,11 +1,14 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'package:one_context/one_context.dart';
+import 'package:rapid_response/Controller/user_athentication_controller.dart';
 import 'package:rapid_response/SizeConfig/size_config.dart';
 import 'package:rapid_response/Views/Constants/colors.dart';
 import 'package:rapid_response/Views/Widgets/my_button.dart';
+import 'package:rapid_response/Views/Widgets/mytextfield.dart';
 import 'package:rapid_response/Views/Widgets/smart_button_indicator.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
@@ -16,6 +19,11 @@ class ResetPasswordScreen extends StatefulWidget {
 }
 
 class _ConfirmScreenState extends State<ResetPasswordScreen> {
+  final _formKey = GlobalKey<FormState>();
+
+  UserAthenticationController userAthenticationController =
+      Get.put(UserAthenticationController());
+  TextEditingController resetPasswordEmail = TextEditingController();
   void hideKeyboard(BuildContext context) {
     FocusScopeNode currentFocus = FocusScope.of(context);
     if (!currentFocus.hasPrimaryFocus && currentFocus.focusedChild != null) {
@@ -56,6 +64,7 @@ class _ConfirmScreenState extends State<ResetPasswordScreen> {
         type: ProgressButtonType.Flat,
         height: 56,
         onPressed: () async {
+          _inputValidation();
           // FocusScope.of(context).unfocus();
           // if (_loginStore.userEmail.isNotEmpty &&
           //     _loginStore.password.isNotEmpty) {
@@ -72,13 +81,14 @@ class _ConfirmScreenState extends State<ResetPasswordScreen> {
         },
       ),
     );
-    Widget passwardField(String text) {
+    Widget resetEmailField(String text) {
       return Container(
         padding: const EdgeInsets.fromLTRB(12, 4, 4, 4),
         decoration: BoxDecoration(
             border: Border.all(color: MyColors.input_border),
             borderRadius: BorderRadius.circular(10.0)),
         child: TextField(
+            controller: resetPasswordEmail,
             //obscureText: !_loginStore.passwordVisibility,
             keyboardType: TextInputType.text,
             autofocus: false,
@@ -179,7 +189,7 @@ class _ConfirmScreenState extends State<ResetPasswordScreen> {
                         const Align(
                             alignment: Alignment.center,
                             child: Text(
-                              "Enter your new Password",
+                              "Enter your Email",
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   fontSize: 14,
@@ -190,9 +200,28 @@ class _ConfirmScreenState extends State<ResetPasswordScreen> {
                         SizedBox(
                           height: 8 * SizeConfig.heightMultiplier,
                         ),
-                        passwardField("password"),
+                        Form(
+                          key: _formKey,
+                          child: MyTextField(
+                            isPass: false,
+                            validator: (value) {
+                              if (value.isEmpty || value == null) {
+                                return "Required";
+                              } else if (!GetUtils.isEmail(value)) {
+                                return "Invalid Email";
+                              } else {
+                                return null;
+                              }
+                            },
+                            controller: userAthenticationController
+                                .signinEmailController,
+                            hintText: "E-mail",
+                            icon: Icons.person,
+                            isNumberField: false,
+                          ),
+                        ),
                         const SizedBox(height: 16.0),
-                        passwardField("Confirm password"),
+                        //passwardField("Confirm password"),
                         const SizedBox(height: 5.0),
                         //resendLabel,
                         SizedBox(height: 30 * SizeConfig.heightMultiplier),
@@ -203,5 +232,13 @@ class _ConfirmScreenState extends State<ResetPasswordScreen> {
                 ),
               )),
         ));
+  }
+
+  void _inputValidation() {
+    if (_formKey.currentState.validate()) {
+      userAthenticationController.resetPassword(resetPasswordEmail.text);
+    } else {
+      print("Form is not validate");
+    }
   }
 }

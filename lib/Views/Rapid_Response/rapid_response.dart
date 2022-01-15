@@ -12,6 +12,7 @@ import 'package:rapid_response/SizeConfig/size_config.dart';
 import 'package:rapid_response/Views/Chat/doccotor_message.dart';
 import 'package:rapid_response/Views/ClosedEvents/closed_events.dart';
 import 'package:rapid_response/Views/Constants/colors.dart';
+import 'package:rapid_response/Views/Constants/mydialog.dart';
 import 'package:rapid_response/Views/Dispatch_Screen/dispatch_screen.dart';
 import 'package:rapid_response/Views/GoogleMap/google_map_Screen.dart';
 import 'package:rapid_response/Views/GoogleMap/google_map_screen.dart';
@@ -182,13 +183,13 @@ class _RapidResponseScreenState extends State<RapidResponseScreen>
                       // OneContext().pushNamed(Routes.profile_screen);
                     },
                   ),
-                  ListTile(
-                    title: const Text('Dispatch Screen'),
-                    onTap: () {
-                      Get.to(() => DispatchScreen());
-                      // OneContext().pushNamed(Routes.dispatch_screen);
-                    },
-                  ),
+                  // ListTile(
+                  //   title: const Text('Dispatch Screen'),
+                  //   onTap: () {
+                  //     Get.to(() => DispatchScreen());
+                  //     // OneContext().pushNamed(Routes.dispatch_screen);
+                  //   },
+                  // ),
                   ListTile(
                     title: const Text('Incident Calls Screen'),
                     onTap: () {
@@ -207,51 +208,96 @@ class _RapidResponseScreenState extends State<RapidResponseScreen>
                       // OneContext().pushNamed(Routes.task_screen);
                     },
                   ),
+                  // ListTile(
+                  //   title: const Text('Manage accounts'),
+                  //   onTap: () {
+                  //     Get.to(() => TaskAssignScreen());
+                  //     // OneContext().pushNamed(Routes.facility_code_screen);
+                  //   },
+                  // ),
                   ListTile(
-                    title: const Text('Assign Task'),
+                    title: const Text('Manage accounts'),
                     onTap: () {
-                      Get.to(() => TaskAssignScreen());
-                      // OneContext().pushNamed(Routes.facility_code_screen);
+                      if (userAthenticationController.user.assignNumber ==
+                          111) {
+                        Get.to(() => TaskAssignScreen());
+                      } else {
+                        MyDialog.sigleButtonDailog(
+                            title: "For Admin",
+                            middleText: "This feature is only for addmins",
+                            buttonText: "OK",
+                            function: () {
+                              OneContext().popDialog();
+                            });
+                      }
                     },
                   ),
+                  // Obx(
+                  //   () => userAthenticationController.user.assignNumber == 111
+                  //       ? ListTile(
+                  //           title: const Text('Approve account notificaiton'),
+                  //           onTap: () {
+                  //             Get.to(() => ApporveNotificationScreen());
+                  //           },
+                  //         )
+                  //       : const SizedBox(),
+                  // ),
                   ListTile(
-                    title: const Text('Reponse Screen'),
+                    title: const Text('Approve account notificaiton'),
                     onTap: () {
-                      Get.to(() => MapScreen());
-                      // OneContext().pushNamed(Routes.response_screen);
+                      if (userAthenticationController.user.assignNumber ==
+                          111) {
+                        Get.to(() => ApporveNotificationScreen());
+                      } else {
+                        MyDialog.sigleButtonDailog(
+                            title: "For Admin",
+                            middleText: "This feature is only for addmins",
+                            buttonText: "OK",
+                            function: () {
+                              OneContext().popDialog();
+                            });
+                      }
                     },
                   ),
+                  // ListTile(
+                  //   title: const Text('Reponse Screen'),
+                  //   onTap: () {
+                  //     Get.to(() => MapScreen());
+                  //     // OneContext().pushNamed(Routes.response_screen);
+                  //   },
+                  // ),
+                  // ListTile(
+                  //   title: const Text('Maps'),
+                  //   onTap: () {
+                  //     // Navigator.push(
+                  //     //     context,
+                  //     //     MaterialPageRoute(
+                  //     //         builder: ((context) => TaskAssignScreen())));
+                  //     //Get.to(() => GooleMapsScreen());
+                  //     // OneContext().pushNamed(Routes.facility_code_screen);
+                  //   },
+                  // ),
                   ListTile(
-                    title: const Text('Maps'),
+                    title: const Text('Closed Event'),
                     onTap: () {
-                      // Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //         builder: ((context) => TaskAssignScreen())));
-                      //Get.to(() => GooleMapsScreen());
-                      // OneContext().pushNamed(Routes.facility_code_screen);
+                      if (userAthenticationController.user.assignNumber ==
+                          111) {
+                        Get.to(() => ClosedEventsScreen());
+                      } else {
+                        MyDialog.sigleButtonDailog(
+                            title: "For Admin",
+                            middleText: "This feature is only for addmins",
+                            buttonText: "OK",
+                            function: () {
+                              OneContext().popDialog();
+                            });
+                      }
                     },
                   ),
-                  Obx(
-                    () => userAthenticationController.user.assignNumber == 111
-                        ? ListTile(
-                            title: const Text('Approve account notificaiton'),
-                            onTap: () {
-                              Get.to(() => ApporveNotificationScreen());
-                            },
-                          )
-                        : const SizedBox(),
-                  ),
-                  Obx(
-                    () => userAthenticationController.user.assignNumber == 111
-                        ? ListTile(
-                            title: const Text('Closed Event'),
-                            onTap: () {
-                              Get.to(() => ClosedEventsScreen());
-                            },
-                          )
-                        : SizedBox(),
-                  ),
+
+                  // Obx(() =>
+                  //     // : SizedBox(),
+                  //     ),
                   ListTile(
                     title: const Text('Sign out'),
                     onTap: () {
@@ -349,7 +395,7 @@ class _RapidResponseScreenState extends State<RapidResponseScreen>
                                             style: TextStyle(
                                                 color: MyColors.primary,
                                                 fontWeight: FontWeight.bold))
-                                        : SizedBox()),
+                                        : const SizedBox()),
                                   ],
                                 ),
                                 const SizedBox(height: 10.0),
@@ -497,8 +543,11 @@ class _RapidResponseScreenState extends State<RapidResponseScreen>
                                     height: 5 * SizeConfig.heightMultiplier),
                                 Obx(
                                   () => userAthenticationController
-                                              .user.assignNumber ==
-                                          333
+                                                  .user.assignNumber ==
+                                              333 ||
+                                          userAthenticationController
+                                                  .user.assignNumber ==
+                                              444
                                       ? SizedBox()
                                       : Row(
                                           mainAxisAlignment:
@@ -515,7 +564,7 @@ class _RapidResponseScreenState extends State<RapidResponseScreen>
                                                       color: MyColors.grey,
                                                       defaultWidget: Container(
                                                         child: Text(
-                                                          "General",
+                                                          "All Calls",
                                                           textAlign:
                                                               TextAlign.right,
                                                           style: TextStyle(
@@ -536,13 +585,13 @@ class _RapidResponseScreenState extends State<RapidResponseScreen>
                                                           .Flat,
                                                       height: 56,
                                                       onPressed: () async {
-                                                        print(
-                                                            "Event creater id is ${userAthenticationController.eventCreatorId}");
-                                                        print(
-                                                            "chat id is ${userAthenticationController.chatID}");
-
-                                                        //     .googleSignout();
-                                                        //Get.to(() => const FacilityCode());
+                                                        OneContext().showDialog(
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                          return const RapidResponseDialog(
+                                                              blur: false);
+                                                        });
                                                       },
                                                     ),
                                                   )

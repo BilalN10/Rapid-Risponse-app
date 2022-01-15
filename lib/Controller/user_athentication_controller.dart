@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:one_context/one_context.dart';
@@ -14,9 +15,12 @@ import 'package:rapid_response/Views/Authentication/role_define_screen.dart';
 import 'package:rapid_response/Views/Authentication/sign_screen.dart';
 import 'package:rapid_response/Views/Chat/doccotor_message.dart';
 import 'package:rapid_response/Views/Constants/colors.dart';
+import 'package:rapid_response/Views/Constants/mydialog.dart';
 import 'package:rapid_response/Views/Incident_calls/incident_calls_screen.dart';
 import 'package:rapid_response/Views/Rapid_Response/rapid_response.dart';
 import 'package:intl/intl.dart';
+import 'package:rapid_response/Views/Widgets/my_button.dart';
+import 'package:rapid_response/Views/Widgets/smart_button_indicator.dart';
 
 class UserAthenticationController extends GetxController {
   @override
@@ -283,6 +287,24 @@ class UserAthenticationController extends GetxController {
     });
   }
 
+  void resetPassword(String email) {
+    auth.sendPasswordResetEmail(email: email.trim()).then((value) {
+      MyDialog.sigleButtonDailog(
+          middleText:
+              "Change Password request is sent on your email address please check your Gamil",
+          title: "Email Send",
+          buttonText: "Ok",
+          function: () {
+            print("ok");
+          });
+
+      print("Email Sent");
+    }).catchError((e) {
+      print("Error is $e");
+      Get.snackbar("Error", e.toString());
+    });
+  }
+
   void changeRole(String id, int assigValue) {
     String role;
     if (assigValue == 222) {
@@ -392,6 +414,7 @@ class UserAthenticationController extends GetxController {
     final GoogleSignInAccount googleUser = await googleSignIn.signIn();
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
+
     final AuthCredential credential = GoogleAuthProvider.credential(
         idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
     print("user credential ${credential.token}");
@@ -407,22 +430,98 @@ class UserAthenticationController extends GetxController {
       "assignNumber": assignNumber,
       "roleImage": roleImage,
       "tokenId": tokenID,
+      "isaAccountapprove": false,
+      "unitCode": "",
     };
     var now = DateTime.now();
-    var _updateTime = DateTime(
-        now.year, now.month, now.day - 1, now.hour, now.minute, now.second);
+    // var _updateTime = DateTime(
+    //     now.year, now.month, now.day - 1, now.hour, now.minute, now.second);
     if (authResult.additionalUserInfo.isNewUser) {
+      String userIdForNotification;
+
       FirebaseFirestore.instance
           .collection("Users")
           .doc(authResult.user.uid)
           .set(userdata)
           .then((value) async {
-        Get.to(SigninScreen());
+        userIdForNotification = authResult.user.uid;
+        OneSignal.shared
+            .postNotification(OSCreateNotification(
+          additionalData: {
+            "userId": userIdForNotification,
+            'isNotificationforPermission': true,
+            "name": authResult.user.displayName,
+            "email": authResult.user.email,
+            "unitCode": "",
+            "phoneNumber": authResult.user.phoneNumber,
+            "role": defineRole,
+            "assignNumber": assignNumber,
+            "tokanId": tokenID,
+          },
+          heading: "Request for approve account ",
+          // subtitle: dialogNotifiactionTitelController.text,
+          playerIds: sendNotifoactions,
+          content:
+              "${authResult.user.displayName} a $defineRole is waiting for your response",
+        ))
+            .then((value) {
+          MyDialog.sigleButtonDailog(
+              buttonText: "OK",
+              middleText: "Your account is not approve yet ",
+              title: "Wait for account approve",
+              function: () {
+                OneContext().popDialog();
+                Get.back();
+              });
+        }).catchError((e) {
+          Get.snackbar("Error", e.toString());
+        });
+
+        //Get.to(SigninScreen());
       });
     } else {
-      Get.offAll(RapidResponseScreen(
-        isRespospoding: false,
-      ));
+      firebaseFirestore.collection("Users").doc(users.uid).get().then((value) {
+        if (value.data()["assignNumber"] != assignNumber) {
+          print(
+              "assignnumber from firebase is  ${value.data()["assignNumber"]}");
+          print("assing number is $assignNumber");
+          MyDialog.sigleButtonDailog(
+              buttonText: "OK",
+              middleText:
+                  "Your role is not  $defineRole\n Please Select Your Role Correct ",
+              title: "Role Errors",
+              function: () {
+                OneContext().popDialog();
+                Get.back();
+              });
+        } else if (value.data()["isaAccountapprove"] == false) {
+          MyDialog.sigleButtonDailog(
+              buttonText: "OK",
+              middleText: "Your account is not approve yet",
+              title: "Account not Approve",
+              function: () {
+                OneContext().popDialog();
+              });
+        } else if (value.data()["assignNumber"] == 111) {
+          Get.offAll(() => RapidResponseScreen(
+                isRespospoding: false,
+              ));
+        } else {
+          Get.offAll(() => RapidResponseScreen(
+                isRespospoding: false,
+              ));
+        }
+        isSignInLoading.value = false;
+
+        print(value.data()["name"]);
+      }).catchError((e) {
+        isSignInLoading.value = false;
+
+        Get.snackbar("Error", e.toString());
+      });
+      // Get.offAll(RapidResponseScreen(
+      //   isRespospoding: false,
+      // ));
     }
   }
 
@@ -579,21 +678,14 @@ class UserAthenticationController extends GetxController {
             content: "$userName a $defineRole is waiting for your response",
           ))
               .then((value) {
-            Get.defaultDialog(
-                title: "Wait for account approve ",
-                middleText: "Your account is not approve yet",
-                confirm: GestureDetector(
-                  onTap: () {
-                    OneContext().popDialog();
-                    Get.back();
-                  },
-                  child: Text(
-                    "OK",
-                    style: TextStyle(
-                        color: MyColors.primary,
-                        fontSize: 2 * SizeConfig.textMultiplier),
-                  ),
-                ));
+            MyDialog.sigleButtonDailog(
+                buttonText: "OK",
+                middleText: "Your account is not approve yet ",
+                title: "Wait for account approve",
+                function: () {
+                  OneContext().popDialog();
+                  Get.back();
+                });
           });
           // .then((value) async {});
         });
@@ -614,7 +706,7 @@ class UserAthenticationController extends GetxController {
 
   void signOut() {
     auth.signOut().then((value) {
-      Get.to(() => DefineRoleScreen());
+      googleSignout();
     });
   }
 
@@ -630,8 +722,10 @@ class UserAthenticationController extends GetxController {
 
   void googleSignout() {
     googleSignIn.signOut().then((value) {
-      print("Sign out");
-      Get.to(() => SigninScreen());
+      print("Google Sign out");
+      Get.to(() => DefineRoleScreen());
+
+      //Get.to(() => SigninScreen());
     });
   }
 
@@ -650,7 +744,14 @@ class UserAthenticationController extends GetxController {
         'phoneNumber': phoneNumber ?? 0,
       }).then((value) {
         isProfileChange.value = false;
-        Get.defaultDialog(title: "Profile added");
+        MyDialog.sigleButtonDailog(
+            buttonText: "OK",
+            middleText: "Profile change succesfully",
+            title: "Profile change",
+            function: () {
+              OneContext().popDialog();
+            });
+        //Get.defaultDialog(title: "Profile added");
         print("Data added");
 
         //Get.put(UserController()).getUser();
@@ -683,38 +784,23 @@ class UserAthenticationController extends GetxController {
             print(
                 "assignnumber from firebase is  ${value.data()["assignNumber"]}");
             print("assing number is $assignNumber");
-            Get.defaultDialog(
-                title: "Role Errors",
+            MyDialog.sigleButtonDailog(
+                buttonText: "OK",
                 middleText:
                     "Your role is not  $defineRole\n Please Select Your Role Correct ",
-                confirm: GestureDetector(
-                  onTap: () {
-                    OneContext().popDialog();
-                    Get.back();
-                  },
-                  child: Text(
-                    "OK",
-                    style: TextStyle(
-                        color: MyColors.primary,
-                        fontSize: 2 * SizeConfig.textMultiplier),
-                  ),
-                ));
+                title: "Role Errors",
+                function: () {
+                  OneContext().popDialog();
+                  Get.back();
+                });
           } else if (value.data()["isaAccountapprove"] == false) {
-            Get.defaultDialog(
-                title: "Account not Approve ",
+            MyDialog.sigleButtonDailog(
+                buttonText: "OK",
                 middleText: "Your account is not approve yet",
-                confirm: GestureDetector(
-                  onTap: () {
-                    OneContext().popDialog();
-                    //Get.back();
-                  },
-                  child: Text(
-                    "OK",
-                    style: TextStyle(
-                        color: MyColors.primary,
-                        fontSize: 2 * SizeConfig.textMultiplier),
-                  ),
-                ));
+                title: "Account not Approve",
+                function: () {
+                  OneContext().popDialog();
+                });
           } else if (value.data()["assignNumber"] == 111) {
             Get.offAll(() => RapidResponseScreen(
                   isRespospoding: false,
@@ -731,13 +817,10 @@ class UserAthenticationController extends GetxController {
 
         print("login Succesfully");
         isSignInLoading.value = false;
-        // clearSignInController();
-        // Get.to(() => RapidResponseScreen(
-        //       isRespospoding: false,
-        //     ));
-        //getUser();
+      }).catchError((e) {
+        isSignInLoading.value = false;
 
-        // Get.to(BDObottomNaveBar());
+        Get.snackbar("Error", e.toString());
       });
     } catch (e) {
       isSignInLoading.value = false;
