@@ -22,7 +22,7 @@ class IncidentCallController extends GetxController {
         .collection('Users')
         .doc(userAthenticationController.users.uid)
         .collection("Notifications")
-        //.orderBy('time', descending: true)
+        .orderBy('date', descending: true)
         .snapshots()
         .map((QuerySnapshot query) {
       List<NotifitcatioModel> retVal = List();

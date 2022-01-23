@@ -29,7 +29,7 @@ class GuardsandMemberController extends GetxController {
         retVal.add(UserModel.fromSnamshot(element));
       });
 
-      print('lenght is ${retVal.length}');
+      print('all user length is  lenght is ${retVal.length}');
       return retVal;
     });
   }

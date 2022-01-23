@@ -153,7 +153,7 @@ class _ConfirmScreenState extends State<ResetPasswordScreen> {
                   size: 20.0,
                 ),
                 onPressed: () {
-                  OneContext().pop();
+                  Get.back();
                 },
               ),
             ),
@@ -214,7 +214,7 @@ class _ConfirmScreenState extends State<ResetPasswordScreen> {
                               }
                             },
                             controller: userAthenticationController
-                                .signinEmailController,
+                                .resetEmailController,
                             hintText: "E-mail",
                             icon: Icons.person,
                             isNumberField: false,
@@ -236,7 +236,8 @@ class _ConfirmScreenState extends State<ResetPasswordScreen> {
 
   void _inputValidation() {
     if (_formKey.currentState.validate()) {
-      userAthenticationController.resetPassword(resetPasswordEmail.text);
+      userAthenticationController
+          .resetPassword(userAthenticationController.resetEmailController.text);
     } else {
       print("Form is not validate");
     }

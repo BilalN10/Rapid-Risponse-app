@@ -53,6 +53,8 @@ class UserAthenticationController extends GetxController {
   //Sign in Controller
   TextEditingController signinEmailController = TextEditingController();
   TextEditingController signinPasswordController = TextEditingController();
+//Reset email Textfield
+  TextEditingController resetEmailController = TextEditingController();
 
 //edit profile Controller
   TextEditingController editmail = TextEditingController();
@@ -122,11 +124,7 @@ class UserAthenticationController extends GetxController {
       if (event.notification.additionalData["isNotificationforPermission"] ==
           true) {
         print(
-            "this notification is for approvr ${event.notification.additionalData["isNotificationforPermission"]}");
-        print(
-            "this notification is for approvr ${event.notification.additionalData["defineRole"]}");
-        print(
-            "this notification is for approvr ${event.notification.additionalData}");
+            "this notification is for approvr ${event.notification.additionalData["tokanId"]}");
 
         print("user id ${event.notification.additionalData["userId"]}");
         for (int i = 0; i < getadminListforApprove.length; i++) {
@@ -146,7 +144,9 @@ class UserAthenticationController extends GetxController {
             "role": event.notification.additionalData["role"],
             "assignNumber": event.notification.additionalData["assignNumber"],
             "name": event.notification.additionalData["name"],
-            "tokanId": event.notification.additionalData["tokanId"]
+            "tokanId": event.notification.additionalData["tokanId"],
+            "isaAccountapprove":
+                event.notification.additionalData["isaAccountapprove"],
           });
         }
       } else {
@@ -180,6 +180,8 @@ class UserAthenticationController extends GetxController {
           true) {
         print(
             "this notification is for approvr ${result.notification.additionalData}");
+        print(
+            "this notification is for approvr ${result.notification.additionalData["tokanId"]}");
 
         print("user id ${result.notification.additionalData["userId"]}");
         for (int i = 0; i < getadminListforApprove.length; i++) {
@@ -199,7 +201,10 @@ class UserAthenticationController extends GetxController {
             "role": result.notification.additionalData["role"],
             "assignNumber": result.notification.additionalData["assignNumber"],
             "name": result.notification.additionalData["name"],
-            "tokanId": result.notification.additionalData["tokanId"]
+            "tokanId": result.notification.additionalData["tokanId"],
+            "isaAccountapprove":
+                result.notification.additionalData["isaAccountapprove"],
+            //"date" : DateTime.now(),
           });
         }
       } else {
@@ -295,6 +300,7 @@ class UserAthenticationController extends GetxController {
           title: "Email Send",
           buttonText: "Ok",
           function: () {
+            OneContext().popDialog();
             print("ok");
           });
 
@@ -363,6 +369,7 @@ class UserAthenticationController extends GetxController {
   void sendMessage(String txtMessage, String status) {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(now);
+    checkIsEventClosed();
 
     firebaseFirestore
         .collection("Users")
@@ -425,13 +432,14 @@ class UserAthenticationController extends GetxController {
       "name": authResult.user.displayName,
       "email": authResult.user.email,
       "image": authResult.user.photoURL,
-      "phoneNumber": authResult.user.phoneNumber,
+      "phoneNumber": authResult.user.phoneNumber ?? 0,
       "role": defineRole,
       "assignNumber": assignNumber,
       "roleImage": roleImage,
       "tokenId": tokenID,
-      "isaAccountapprove": false,
+      "isaAccountapprove": assignNumber == 111 ? true : false,
       "unitCode": "",
+      "date": DateTime.now()
     };
     var now = DateTime.now();
     // var _updateTime = DateTime(
@@ -445,38 +453,44 @@ class UserAthenticationController extends GetxController {
           .set(userdata)
           .then((value) async {
         userIdForNotification = authResult.user.uid;
-        OneSignal.shared
-            .postNotification(OSCreateNotification(
-          additionalData: {
-            "userId": userIdForNotification,
-            'isNotificationforPermission': true,
-            "name": authResult.user.displayName,
-            "email": authResult.user.email,
-            "unitCode": "",
-            "phoneNumber": authResult.user.phoneNumber,
-            "role": defineRole,
-            "assignNumber": assignNumber,
-            "tokanId": tokenID,
-          },
-          heading: "Request for approve account ",
-          // subtitle: dialogNotifiactionTitelController.text,
-          playerIds: sendNotifoactions,
-          content:
-              "${authResult.user.displayName} a $defineRole is waiting for your response",
-        ))
-            .then((value) {
-          MyDialog.sigleButtonDailog(
-              buttonText: "OK",
-              middleText: "Your account is not approve yet ",
-              title: "Wait for account approve",
-              function: () {
-                OneContext().popDialog();
-                Get.back();
-              });
-        }).catchError((e) {
-          Get.snackbar("Error", e.toString());
-        });
-
+        if (assignNumber != 111) {
+          OneSignal.shared
+              .postNotification(OSCreateNotification(
+            additionalData: {
+              "userId": userIdForNotification,
+              'isNotificationforPermission': true,
+              "name": authResult.user.displayName,
+              "email": authResult.user.email,
+              "unitCode": "",
+              "phoneNumber": authResult.user.phoneNumber,
+              "role": defineRole,
+              "assignNumber": assignNumber,
+              "tokanId": tokenID,
+              "isaAccountapprove": false,
+            },
+            heading: "Request for approve account ",
+            // subtitle: dialogNotifiactionTitelController.text,
+            playerIds: sendNotifoactions,
+            content:
+                "${authResult.user.displayName} a $defineRole is waiting for your response",
+          ))
+              .then((value) {
+            MyDialog.sigleButtonDailog(
+                buttonText: "OK",
+                middleText: "Your account is not approve yet ",
+                title: "Wait for account approve",
+                function: () {
+                  OneContext().popDialog();
+                  Get.back();
+                });
+          }).catchError((e) {
+            Get.snackbar("Error", e.toString());
+          });
+        } else {
+          Get.to(() => RapidResponseScreen(
+                isRespospoding: false,
+              ));
+        }
         //Get.to(SigninScreen());
       });
     } else {
@@ -531,8 +545,6 @@ class UserAthenticationController extends GetxController {
   // Send Notification methode
   sendNotification() {
     print("title is ${dialogNotifiactionTitelController.text}");
-    // print("user token is${userController.userToken}");
-    //for(int i = 0; i<userAthenticationController.herlperList.length; i++){}
 
     firebaseFirestore
         .collection("Users")
@@ -575,6 +587,8 @@ class UserAthenticationController extends GetxController {
         dialogNotifiactionTitelController.clear();
         OneContext().popDialog();
       });
+    }).catchError((e) {
+      Get.snackbar("Error", e.toString());
     });
 
     print("back");
@@ -615,12 +629,12 @@ class UserAthenticationController extends GetxController {
         print(query.docs.length);
         List<String> retVal = List();
         query.docs.forEach((element) {
-          print(element.data()["tokenId"]);
+          debugPrint(element.data()["tokenId"]);
 
           retVal.add(element.data()["tokenId"]);
         });
 
-        print(' my  sdj lenght is ${retVal.length}');
+        debugPrint(' my  sdj lenght is ${retVal.length}');
         return retVal;
       });
     }
@@ -655,39 +669,48 @@ class UserAthenticationController extends GetxController {
           "assignNumber": assignNumber,
           "roleImage": roleImage,
           "tokenId": tokenID,
-          "isaAccountapprove": false,
+          "isaAccountapprove": assignNumber == 111 ? true : false,
+          "date": DateTime.now(),
           "image":
               "https://firebasestorage.googleapis.com/v0/b/rapid-response-app-ae749.appspot.com/o/profile-deleted.png?alt=media&token=30a9321f-ff58-4f80-899e-3c6db7896746"
         }).then((value) {
-          OneSignal.shared
-              .postNotification(OSCreateNotification(
-            additionalData: {
-              "userId": userIdForNotification,
-              'isNotificationforPermission': true,
-              "name": userName,
-              "email": email,
-              "unitCode": unitCode,
-              "phoneNumber": phoneNumber,
-              "role": defineRole,
-              "assignNumber": assignNumber,
-              "tokanId": tokenID,
-            },
-            heading: "Request for approve account ",
-            // subtitle: dialogNotifiactionTitelController.text,
-            playerIds: sendNotifoactions,
-            content: "$userName a $defineRole is waiting for your response",
-          ))
-              .then((value) {
-            MyDialog.sigleButtonDailog(
-                buttonText: "OK",
-                middleText: "Your account is not approve yet ",
-                title: "Wait for account approve",
-                function: () {
-                  OneContext().popDialog();
-                  Get.back();
-                });
-          });
           // .then((value) async {});
+          if (assignNumber != 111) {
+            print("singinUP token id $tokenID");
+            OneSignal.shared
+                .postNotification(OSCreateNotification(
+              additionalData: {
+                "userId": userIdForNotification,
+                'isNotificationforPermission': true,
+                "name": userName,
+                "email": email,
+                "unitCode": unitCode,
+                "phoneNumber": phoneNumber,
+                "role": defineRole,
+                "assignNumber": assignNumber,
+                "tokanId": tokenID,
+                "isaAccountapprove": false,
+              },
+              heading: "Request for approve account ",
+              // subtitle: dialogNotifiactionTitelController.text,
+              playerIds: sendNotifoactions,
+              content: "$userName a $defineRole is waiting for your response",
+            ))
+                .then((value) {
+              MyDialog.sigleButtonDailog(
+                  buttonText: "OK",
+                  middleText: "Your account is not approve yet ",
+                  title: "Wait for account approve",
+                  function: () {
+                    OneContext().popDialog();
+                    Get.back();
+                  });
+            });
+          } else {
+            Get.to(() => RapidResponseScreen(
+                  isRespospoding: false,
+                ));
+          }
         });
 
         isSignUpLoading.value = false;
@@ -723,7 +746,7 @@ class UserAthenticationController extends GetxController {
   void googleSignout() {
     googleSignIn.signOut().then((value) {
       print("Google Sign out");
-      Get.to(() => DefineRoleScreen());
+      Get.offAll(() => DefineRoleScreen());
 
       //Get.to(() => SigninScreen());
     });
@@ -732,35 +755,63 @@ class UserAthenticationController extends GetxController {
   void updateUserProfileData(
       {String email, String name, int phoneNumber}) async {
     try {
-      final ref =
-          FirebaseStorage.instance.ref().child('user-images').child(users.uid);
-      await ref.putFile(image);
-      final url = await ref.getDownloadURL();
-      print('Url is: $url');
-      await firebaseFirestore.collection('Users').doc(users.uid).update({
-        'image': url ?? "",
-        'name': name ?? "",
-        'email': email ?? '',
-        'phoneNumber': phoneNumber ?? 0,
-      }).then((value) {
-        isProfileChange.value = false;
-        MyDialog.sigleButtonDailog(
-            buttonText: "OK",
-            middleText: "Profile change succesfully",
-            title: "Profile change",
-            function: () {
-              OneContext().popDialog();
-            });
-        //Get.defaultDialog(title: "Profile added");
-        print("Data added");
+      if (image != null) {
+        final ref = FirebaseStorage.instance
+            .ref()
+            .child('user-images')
+            .child(users.uid);
+        await ref.putFile(image);
+        final url = await ref.getDownloadURL();
+        print('Url is: $url');
+        await firebaseFirestore.collection('Users').doc(users.uid).update({
+          'image': url ?? "",
+          'name': name ?? "",
+          'email': email ?? '',
+          'phoneNumber': phoneNumber ?? 0,
+        }).then((value) {
+          isProfileChange.value = false;
+          getUser();
+          MyDialog.sigleButtonDailog(
+              buttonText: "OK",
+              middleText: "Profile change succesfully",
+              title: "Profile change",
+              function: () {
+                OneContext().popDialog();
+              });
+          //Get.defaultDialog(title: "Profile added");
+          print("Data added");
 
-        //Get.put(UserController()).getUser();
-        //Get.back();
-      });
+          //Get.put(UserController()).getUser();
+          //Get.back();
+        });
+      } else {
+        await firebaseFirestore.collection('Users').doc(users.uid).update({
+          //'image': url ?? "",
+          'name': name ?? "",
+          'email': email ?? '',
+          'phoneNumber': phoneNumber ?? 0,
+        }).then((value) {
+          isProfileChange.value = false;
+          getUser();
+          MyDialog.sigleButtonDailog(
+              buttonText: "OK",
+              middleText: "Profile change succesfully",
+              title: "Profile change",
+              function: () {
+                OneContext().popDialog();
+              });
+          //Get.defaultDialog(title: "Profile added");
+          print("Data added");
+
+          //Get.put(UserController()).getUser();
+          //Get.back();
+        });
+      }
 
       //return true;
     } catch (e) {
       isProfileChange.value = false;
+      print("Error is  $e");
 
       print(e);
       Get.snackbar('Error', e.toString());

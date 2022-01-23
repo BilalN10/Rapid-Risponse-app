@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:rapid_response/Controller/chat_controller.dart';
 import 'package:rapid_response/Controller/user_athentication_controller.dart';
@@ -21,6 +22,8 @@ class _messagesState extends State<DoctorMessage> {
   UserAthenticationController userAthenticationController =
       Get.find<UserAthenticationController>();
   ChatController chatController = Get.put(ChatController());
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     userAthenticationController.checkIsEventClosed();
@@ -134,6 +137,7 @@ class _messagesState extends State<DoctorMessage> {
                                 if (chatController != null &&
                                     chatController.getchatList != null) {
                                   return ListView.builder(
+                                      controller: _scrollController,
                                       scrollDirection: Axis.vertical,
                                       itemCount:
                                           chatController.getchatList.length + 1,
@@ -198,7 +202,7 @@ class _messagesState extends State<DoctorMessage> {
                                                           //     : Alignment.centerLeft,
                                                           constraints:
                                                               BoxConstraints(
-                                                            maxWidth: 40 *
+                                                            maxWidth: 80 *
                                                                 SizeConfig
                                                                     .widthMultiplier,
                                                             // maxHeight: 8 *
@@ -397,31 +401,18 @@ class _messagesState extends State<DoctorMessage> {
                               ))
                           : SizedBox()),
                       Positioned(
-                        bottom: 1,
+                        bottom: 0,
                         child: Container(
+                          width: 100 * SizeConfig.widthMultiplier,
                           color: Colors.white,
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(
-                                  child: IconButton(
-                                      onPressed: () {},
-                                      icon: Icon(
-                                        Icons.file_present,
-                                        // color: kLightyellow,
-                                      ))),
-                              Container(
-                                  margin: EdgeInsets.only(left: 5),
-                                  child: IconButton(
-                                      onPressed: () {},
-                                      icon: Icon(
-                                        Icons.camera_alt_sharp,
-                                        // color: kLightyellow,
-                                      ))),
-                              Container(
-                                margin: EdgeInsets.only(left: 5),
+                                // margin: EdgeInsets.only(left: 5),
                                 height:
                                     MediaQuery.of(context).size.width * 0.07,
-                                width: MediaQuery.of(context).size.width * 0.6,
+                                width: MediaQuery.of(context).size.width * 0.8,
                                 child: TextFormField(
                                   maxLines: null,
                                   keyboardType: TextInputType.multiline,
@@ -430,7 +421,7 @@ class _messagesState extends State<DoctorMessage> {
                                   decoration: InputDecoration(
                                       hintText: "Enter message",
                                       contentPadding: const EdgeInsets.only(
-                                          top: 5, bottom: 5, left: 5),
+                                          top: 5, bottom: 5, left: 8),
                                       isDense: true,
                                       filled: true,
                                       fillColor: Colors.grey[300],
@@ -441,25 +432,31 @@ class _messagesState extends State<DoctorMessage> {
                                       )),
                                 ),
                               ),
-                              Container(
-                                  margin: const EdgeInsets.only(left: 5),
-                                  child: IconButton(
-                                      onPressed: () {
-                                        if (userAthenticationController
-                                            .messageController
-                                            .text
-                                            .isNotEmpty) {
+                              IconButton(
+                                  onPressed: () async {
+                                    if (userAthenticationController
+                                        .messageController.text.isNotEmpty) {
+                                      userAthenticationController.sendMessage(
                                           userAthenticationController
-                                              .sendMessage(
-                                                  userAthenticationController
-                                                      .messageController.text,
-                                                  widget.availableStatus);
-                                        }
-                                      },
-                                      icon: const Icon(
-                                        Icons.send,
-                                        //  color: kLightyellow,
-                                      ))),
+                                              .messageController.text,
+                                          widget.availableStatus);
+                                      await Future.delayed(
+                                          const Duration(milliseconds: 300));
+                                      SchedulerBinding.instance
+                                          ?.addPostFrameCallback((_) {
+                                        _scrollController.animateTo(
+                                            _scrollController
+                                                .position.maxScrollExtent,
+                                            duration: const Duration(
+                                                milliseconds: 400),
+                                            curve: Curves.fastOutSlowIn);
+                                      });
+                                    }
+                                  },
+                                  icon: const Icon(
+                                    Icons.send,
+                                    //  color: kLightyellow,
+                                  )),
                             ],
                           ),
                         ),

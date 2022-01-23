@@ -31,7 +31,7 @@ class UserModel {
     email = data.data()["email"] ?? "";
     image = data.data()["image"] ?? "";
     name = data.data()["name"] ?? "";
-    phoneNumber = data.data()["phoneNumber"].toString() ?? "";
+    phoneNumber = data.data()["phoneNumber"].toString();
     uniCode = data.data()["unitCode"] ?? "";
     assignNumber = data.data()["assignNumber"] ?? 0;
     role = data.data()["role"] ?? "";

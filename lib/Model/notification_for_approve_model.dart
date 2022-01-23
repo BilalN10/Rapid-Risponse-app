@@ -4,6 +4,7 @@ class NotificationForApproveModel {
   String notificationtitle;
 
   String notificationBody;
+  String notificatinId;
 
   Timestamp date;
   String userId;
@@ -17,6 +18,7 @@ class NotificationForApproveModel {
   bool isApproved = false;
 
   NotificationForApproveModel({
+    this.notificatinId,
     this.assignNumber,
     this.date,
     this.email,
@@ -30,6 +32,7 @@ class NotificationForApproveModel {
     this.isApproved,
   });
   NotificationForApproveModel.fromJson(DocumentSnapshot snapShotData) {
+    notificatinId = snapShotData.id;
     notificationtitle = snapShotData.data()["notificationtitle"] ?? "";
     notificationBody = snapShotData.data()["notificationBody"] ?? "";
     date = snapShotData.data()["date"];
@@ -40,7 +43,7 @@ class NotificationForApproveModel {
     role = snapShotData.data()["role"] ?? "";
     assignNumber = snapShotData.data()["assignNumber"] ?? 0;
     name = snapShotData.data()["name"] ?? "";
-    tokanId = snapShotData.data()["tokanId"];
+    tokanId = snapShotData.data()["tokanId"] ?? "";
     isApproved = snapShotData.data()["isaAccountapprove"] ?? false;
     print("Is approved is $isApproved");
     print(name);

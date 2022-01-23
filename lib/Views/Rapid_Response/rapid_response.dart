@@ -318,12 +318,12 @@ class _RapidResponseScreenState extends State<RapidResponseScreen>
                   shape: BoxShape.circle,
                 ),
                 alignment: Alignment.center,
-                child: IconButton(
-                  icon: Image.asset('assets/images/home.png'),
-                  onPressed: () {
-                    //OneContext().pushNamed(LoginScreen.tag);
-                  },
-                ),
+                // child: IconButton(
+                //   icon: Image.asset('assets/images/home.png'),
+                //   onPressed: () {
+                //     //OneContext().pushNamed(LoginScreen.tag);
+                //   },
+                // ),
               ),
               title: const Text(
                 "Rapid Response",

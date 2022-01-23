@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'doccotor_message.dart';
+import 'package:rapid_response/Views/Chat/doccotor_message.dart';
 
 class Meassge extends StatefulWidget {
   const Meassge({Key key}) : super(key: key);

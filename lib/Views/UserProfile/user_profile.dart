@@ -356,7 +356,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         border: InputBorder.none,
                                         hintStyle:
                                             TextStyle(color: MyColors.hint),
-                                        hintText: con.user.phoneNumber),
+                                        hintText: con.user.phoneNumber == 'null'
+                                            ? "0000"
+                                            : con.user.phoneNumber),
                                     onChanged: (value) {}),
                               ),
 

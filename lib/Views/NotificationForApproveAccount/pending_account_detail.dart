@@ -5,6 +5,7 @@ import 'package:rapid_response/Controller/notifiaciton_for_approve_account_contr
 import 'package:rapid_response/Model/notification_for_approve_model.dart';
 import 'package:rapid_response/SizeConfig/size_config.dart';
 import 'package:rapid_response/Views/Constants/colors.dart';
+import 'package:rapid_response/Views/Constants/mydialog.dart';
 import 'package:rapid_response/Views/Rapid_Response/Components/rappid_response_dialog.dart';
 import 'package:rapid_response/Views/Widgets/my_button.dart';
 import 'package:rapid_response/Views/Widgets/smart_button_indicator.dart';
@@ -168,10 +169,10 @@ class PendingAccountDettail extends StatelessWidget {
               height: 5 * SizeConfig.heightMultiplier,
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Container(
-                  width: 47 * SizeConfig.widthMultiplier,
+                  width: 35 * SizeConfig.widthMultiplier,
                   child: ProgressButton(
                     color: MyColors.grey,
                     defaultWidget: Container(
@@ -189,13 +190,14 @@ class PendingAccountDettail extends StatelessWidget {
                     type: ProgressButtonType.Flat,
                     height: 56,
                     onPressed: () async {
+                      Get.back();
                       //     .googleSignout();
                       //Get.to(() => const FacilityCode());
                     },
                   ),
                 ),
                 Container(
-                  width: 47 * SizeConfig.widthMultiplier,
+                  width: 35 * SizeConfig.widthMultiplier,
                   child: ProgressButton(
                     color: MyColors.primary,
                     defaultWidget: Container(
@@ -213,9 +215,32 @@ class PendingAccountDettail extends StatelessWidget {
                     type: ProgressButtonType.Flat,
                     height: 56,
                     onPressed: () async {
-                      notificationForApprovrAccount.approveAccount(
-                          notificationForApproveModel.userId,
-                          notificationForApproveModel.tokanId);
+                      // MyDialog.doubleButtonDailog(
+                      //     cancelbuttonText: "NO",
+                      //     confirmbuttonText: "Yes",
+                      //     middleText: "Do you want to approve this account",
+                      //     title: "Account Approve",
+                      //     onCancelfunction: () {
+                      //       OneContext().popDialog();
+                      //     },
+                      //     onCofirmfunction: (){
+
+                      //     }
+                      //     );
+                      if (notificationForApproveModel.isApproved) {
+                        MyDialog.sigleButtonDailog(
+                            buttonText: "OK",
+                            middleText: "This account is already approved",
+                            title: "Account Approved",
+                            function: () {
+                              OneContext().popDialog();
+                            });
+                      } else {
+                        notificationForApprovrAccount.approveAccount(
+                            notificationForApproveModel.userId,
+                            notificationForApproveModel.tokanId,
+                            notificationForApproveModel.notificatinId);
+                      }
                     },
                   ),
                 ),

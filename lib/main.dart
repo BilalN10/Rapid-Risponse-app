@@ -3,11 +3,15 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:one_context/one_context.dart';
 import 'package:rapid_response/Controller/user_athentication_controller.dart';
+import 'package:rapid_response/prayer_time_screen.dart';
 
 import 'Bindings/auth_bindings.dart';
 import 'SizeConfig/size_config.dart';
 import 'Views/Splash_Page/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+
+import 'my_screen.dart';
+import 'nav_bar.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,7 +52,11 @@ class _MyAppState extends State<MyApp> {
               fontFamily: 'Montserrat',
             ),
             debugShowCheckedModeBanner: false,
-            home: SplashScreen());
+            home:
+
+                //const PrayerTimeScreen(),
+                //ProvidedStylesExample(),
+                SplashScreen());
       });
     });
   }

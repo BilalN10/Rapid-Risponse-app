@@ -47,7 +47,7 @@ class ApporveNotificationScreen extends StatelessWidget {
                         onTap: () {
                           // print(con
                           //     .getnotificationForApproveList[index].isApproved);
-                          notificationForApproveModel.isApproved;
+                          //notificationForApproveModel.isApproved;
                           Get.to(() => PendingAccountDettail(
                                 notificationForApproveModel:
                                     con.getnotificationForApproveList[index],
@@ -55,7 +55,7 @@ class ApporveNotificationScreen extends StatelessWidget {
                         },
                         child: Container(
                           margin: const EdgeInsets.all(12),
-                          height: 8 * SizeConfig.heightMultiplier,
+                          height: 10 * SizeConfig.heightMultiplier,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(15),
                               color: Colors.white,
@@ -87,13 +87,39 @@ class ApporveNotificationScreen extends StatelessWidget {
                                     ),
                                   ],
                                 ),
-                                Text(
-                                  con.getnotificationForApproveList[index]
-                                      .notificationBody,
-                                  style: TextStyle(
-                                    fontSize: 1.5 * SizeConfig.textMultiplier,
+                                Container(
+                                  height: 4 * SizeConfig.heightMultiplier,
+                                  width: 80 * SizeConfig.widthMultiplier,
+                                  child: Text(
+                                    con.getnotificationForApproveList[index]
+                                        .notificationBody,
+                                    style: TextStyle(
+                                      fontSize: 1.5 * SizeConfig.textMultiplier,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    con.getnotificationForApproveList[index]
+                                            .isApproved
+                                        ? Text(
+                                            "Account approved",
+                                            style: TextStyle(
+                                                fontSize: 1.4 *
+                                                    SizeConfig.textMultiplier),
+                                          )
+                                        : Text(
+                                            "Account not approve",
+                                            style: TextStyle(
+                                                color: MyColors.primary,
+                                                fontSize: 1.4 *
+                                                    SizeConfig.textMultiplier),
+                                          )
+                                  ],
+                                )
                                 // con.getnotificationForApproveList[index]
                                 //         .isApproved
                                 //     ? Text("Approved")
