@@ -8,7 +8,7 @@ class SmartDoubleBounceIndicatorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SpinKitDoubleBounce(
+    return const SpinKitDoubleBounce(
       color: Colors.white,
     );
   }

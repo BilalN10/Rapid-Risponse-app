@@ -10,17 +10,12 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:one_context/one_context.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:rapid_response/Model/user_model.dart';
-import 'package:rapid_response/SizeConfig/size_config.dart';
 import 'package:rapid_response/Views/Authentication/role_define_screen.dart';
-import 'package:rapid_response/Views/Authentication/sign_screen.dart';
-import 'package:rapid_response/Views/Chat/doccotor_message.dart';
-import 'package:rapid_response/Views/Constants/colors.dart';
+import 'package:rapid_response/Views/Chat/message_screen.dart';
 import 'package:rapid_response/Views/Constants/mydialog.dart';
 import 'package:rapid_response/Views/Incident_calls/incident_calls_screen.dart';
 import 'package:rapid_response/Views/Rapid_Response/rapid_response.dart';
 import 'package:intl/intl.dart';
-import 'package:rapid_response/Views/Widgets/my_button.dart';
-import 'package:rapid_response/Views/Widgets/smart_button_indicator.dart';
 
 class UserAthenticationController extends GetxController {
   @override
@@ -252,7 +247,7 @@ class UserAthenticationController extends GetxController {
   RxInt frequencyValue = 0.obs;
   void updateValue(int value) {
     frequencyValue.value = value;
-    print("my value is ${frequencyValue.value}");
+    debugPrint("my value is ${frequencyValue.value}");
     update();
   }
 
@@ -269,9 +264,9 @@ class UserAthenticationController extends GetxController {
       editmail.text = user.email;
       editname.text = user.name;
       editPhonenumber.text = user.phoneNumber;
-      print("my user email is ${user.email} ");
+      debugPrint("my user email is ${user.email} ");
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
     }
   }
 
@@ -282,12 +277,12 @@ class UserAthenticationController extends GetxController {
         .where("assignNumber", isEqualTo: 111)
         .snapshots()
         .map((QuerySnapshot query) {
-      List<UserModel> retVal = List();
-      query.docs.forEach((element) {
+      List<UserModel> retVal = [];
+      for (var element in query.docs) {
         retVal.add(UserModel.fromSnamshot(element));
-      });
+      }
 
-      print('admin list is ${retVal.length}');
+      debugPrint('admin list is ${retVal.length}');
       return retVal;
     });
   }
@@ -301,12 +296,12 @@ class UserAthenticationController extends GetxController {
           buttonText: "Ok",
           function: () {
             OneContext().popDialog();
-            print("ok");
+            debugPrint("ok");
           });
 
-      print("Email Sent");
+      debugPrint("Email Sent");
     }).catchError((e) {
-      print("Error is $e");
+      debugPrint("Error is $e");
       Get.snackbar("Error", e.toString());
     });
   }
@@ -324,11 +319,11 @@ class UserAthenticationController extends GetxController {
       "role": role,
       "assignNumber": assigValue,
     }).then((value) {
-      print("Updated");
+      debugPrint("Updated");
       //Get.snackbar("Role Updated", "Role changed successfully");
       OneContext().popDialog();
     }).catchError((e) {
-      print("Error $e");
+      debugPrint("Error $e");
     });
   }
 
@@ -610,11 +605,11 @@ class UserAthenticationController extends GetxController {
           .map((QuerySnapshot query) {
         print(query.docs.length);
         List<String> retVal = List();
-        query.docs.forEach((element) {
+        for (var element in query.docs) {
           print(element.data()["tokenId"]);
 
           retVal.add(element.data()["tokenId"]);
-        });
+        }
 
         print(' my  admins lenght is ${retVal.length}');
         return retVal;
@@ -628,11 +623,11 @@ class UserAthenticationController extends GetxController {
           .map((QuerySnapshot query) {
         print(query.docs.length);
         List<String> retVal = List();
-        query.docs.forEach((element) {
+        for (var element in query.docs) {
           debugPrint(element.data()["tokenId"]);
 
           retVal.add(element.data()["tokenId"]);
-        });
+        }
 
         debugPrint(' my  sdj lenght is ${retVal.length}');
         return retVal;
@@ -800,11 +795,6 @@ class UserAthenticationController extends GetxController {
               function: () {
                 OneContext().popDialog();
               });
-          //Get.defaultDialog(title: "Profile added");
-          print("Data added");
-
-          //Get.put(UserController()).getUser();
-          //Get.back();
         });
       }
 
@@ -879,7 +869,6 @@ class UserAthenticationController extends GetxController {
       Get.snackbar(
         "Error signing in",
         e.message,
-        //snackPosition: SnackPosition.BOTTOM,
       );
     }
   }

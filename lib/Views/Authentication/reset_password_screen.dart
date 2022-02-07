@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:one_context/one_context.dart';
 import 'package:rapid_response/Controller/user_athentication_controller.dart';
 import 'package:rapid_response/SizeConfig/size_config.dart';
 import 'package:rapid_response/Views/Constants/colors.dart';
@@ -34,14 +33,14 @@ class _ConfirmScreenState extends State<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     final name = Container(
-      padding: EdgeInsets.fromLTRB(12, 4, 4, 4),
+      padding: const EdgeInsets.fromLTRB(12, 4, 4, 4),
       decoration: BoxDecoration(
           border: Border.all(color: MyColors.input_border),
           borderRadius: BorderRadius.circular(10.0)),
       child: TextField(
           keyboardType: TextInputType.text,
           autofocus: false,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
               border: InputBorder.none,
               hintStyle: TextStyle(color: MyColors.hint),
               hintText: "Password"),
@@ -49,17 +48,17 @@ class _ConfirmScreenState extends State<ResetPasswordScreen> {
     );
 
     final continueButton = Padding(
-      padding: EdgeInsets.symmetric(vertical: 5),
+      padding: const EdgeInsets.symmetric(vertical: 5),
       child: ProgressButton(
         color: MyColors.primary,
         defaultWidget: Container(
-          child: Text(
+          child: const Text(
             "Continue",
             textAlign: TextAlign.right,
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
           ),
         ),
-        progressWidget: SmartButtonIndicatorWidget(),
+        progressWidget: const SmartButtonIndicatorWidget(),
         borderRadius: 12,
         type: ProgressButtonType.Flat,
         height: 56,
@@ -108,7 +107,7 @@ class _ConfirmScreenState extends State<ResetPasswordScreen> {
                 //   color: Colors.grey.withOpacity(0.2),
                 // ),
                 border: InputBorder.none,
-                hintStyle: TextStyle(color: MyColors.hint),
+                hintStyle: const TextStyle(color: MyColors.hint),
                 hintText: text),
             onChanged: (value) {
               //_loginStore.setPassword(value);
@@ -117,7 +116,7 @@ class _ConfirmScreenState extends State<ResetPasswordScreen> {
     }
 
     final resendLabel = TextButton(
-      child: Align(
+      child: const Align(
         alignment: Alignment.center,
         child: Text(
           'Resend Code',
@@ -140,14 +139,14 @@ class _ConfirmScreenState extends State<ResetPasswordScreen> {
           appBar: AppBar(
             // leading: BackButton(color: JssColors.judul),
             leading: Container(
-              margin: EdgeInsets.only(left: 16.0),
-              decoration: new BoxDecoration(
+              margin: const EdgeInsets.only(left: 16.0),
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: MyColors.bg_button_back,
               ),
               alignment: Alignment.center,
               child: IconButton(
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_back_ios,
                   color: MyColors.grey_3,
                   size: 20.0,
@@ -239,7 +238,7 @@ class _ConfirmScreenState extends State<ResetPasswordScreen> {
       userAthenticationController
           .resetPassword(userAthenticationController.resetEmailController.text);
     } else {
-      print("Form is not validate");
+      debugPrint("Form is not validate");
     }
   }
 }

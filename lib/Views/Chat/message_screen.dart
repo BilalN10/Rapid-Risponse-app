@@ -41,7 +41,7 @@ class _messagesState extends State<DoctorMessage> {
             centerTitle: true,
             backgroundColor: MyColors.primary,
             leading: GestureDetector(
-              child: Icon(
+              child: const Icon(
                 Icons.arrow_back_ios,
                 // color: kLightyellow,
               ),
@@ -49,7 +49,7 @@ class _messagesState extends State<DoctorMessage> {
                 Navigator.pop(context);
               },
             ),
-            title: Text(
+            title: const Text(
               "Broadcast Chat",
               //style:simplestyle()
             ),
@@ -181,7 +181,7 @@ class _messagesState extends State<DoctorMessage> {
                                                                   SizeConfig
                                                                       .heightMultiplier,
                                                             )
-                                                          : SizedBox(),
+                                                          : const SizedBox(),
                                                       Container(
                                                           decoration: BoxDecoration(
                                                               color:
@@ -191,8 +191,8 @@ class _messagesState extends State<DoctorMessage> {
                                                                       .circular(
                                                                           10)),
                                                           margin:
-                                                              EdgeInsets.all(
-                                                                  10),
+                                                              const EdgeInsets
+                                                                  .all(10),
                                                           // alignment: userAthenticationController
                                                           //             .users.uid ==
                                                           //         chatController
@@ -242,7 +242,7 @@ class _messagesState extends State<DoctorMessage> {
                                                         padding:
                                                             const EdgeInsets
                                                                 .all(10.0),
-                                                        child: Container(
+                                                        child: SizedBox(
                                                           width: 90 *
                                                               SizeConfig
                                                                   .widthMultiplier,
@@ -253,9 +253,9 @@ class _messagesState extends State<DoctorMessage> {
                                                                     MainAxisAlignment
                                                                         .spaceBetween,
                                                                 children: [
-                                                                  Text(
+                                                                  const Text(
                                                                       "Do you want to close this event "),
-                                                                  Container(
+                                                                  SizedBox(
                                                                     height: 5 *
                                                                         SizeConfig
                                                                             .heightMultiplier,
@@ -296,7 +296,7 @@ class _messagesState extends State<DoctorMessage> {
                                                                   ),
                                                                 ],
                                                               ),
-                                                              Divider()
+                                                              const Divider()
                                                             ],
                                                           ),
                                                         ),
@@ -470,7 +470,7 @@ class _messagesState extends State<DoctorMessage> {
   Container senderMessage(BuildContext cntxt, String path, String message,
       double width, double height) {
     return Container(
-      margin: EdgeInsets.only(left: 20, top: 30, right: 10),
+      margin: const EdgeInsets.only(left: 20, top: 30, right: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -479,7 +479,7 @@ class _messagesState extends State<DoctorMessage> {
               height: height,
               decoration: BoxDecoration(
                   color: Colors.grey[200],
-                  borderRadius: BorderRadius.only(
+                  borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20),
                       bottomLeft: Radius.circular(20))),
@@ -490,7 +490,7 @@ class _messagesState extends State<DoctorMessage> {
                 ),
               )),
           Container(
-            margin: EdgeInsets.only(top: 30),
+            margin: const EdgeInsets.only(top: 30),
             child: CircleAvatar(
               backgroundImage: AssetImage(path),
             ),
@@ -502,24 +502,24 @@ class _messagesState extends State<DoctorMessage> {
 
   Container messageList(BuildContext context, String path, String doctorName,
       String message, String time,
-      {int DoctorMessage}) {
+      {int doctorMessage}) {
     return Container(
-      margin: EdgeInsets.only(top: 20, left: 20),
+      margin: const EdgeInsets.only(top: 20, left: 20),
       child: Row(
         children: [
-          Container(
+          SizedBox(
             child: CircleAvatar(
               radius: 30,
               backgroundImage: AssetImage(path),
             ),
           ),
           Container(
-            margin: EdgeInsets.only(top: 10, left: 10),
+            margin: const EdgeInsets.only(top: 10, left: 10),
             width: MediaQuery.of(context).size.width * 0.5,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(child: Text(doctorName)),
+                SizedBox(child: Text(doctorName)),
                 Text(
                   message,
                   style: TextStyle(color: Colors.grey[400]),
@@ -528,28 +528,25 @@ class _messagesState extends State<DoctorMessage> {
             ),
           ),
           Container(
-            margin: EdgeInsets.only(left: 30),
+            margin: const EdgeInsets.only(left: 30),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Container(
+                SizedBox(
                   child: Text(
                     time,
-                    style: TextStyle(
-                        //color: kLightyellow,
-                        ),
                   ),
                 ),
                 Container(
                     // width: 20,
-                    padding: EdgeInsets.all(3),
+                    padding: const EdgeInsets.all(3),
                     decoration: BoxDecoration(
                         // color:
                         //     DoctorMessage != null ? kLightyellow : Colors.white,
                         borderRadius: BorderRadius.circular(100)),
                     child: Center(
                         child: DoctorMessage != null
-                            ? Text(DoctorMessage.toString())
+                            ? Text(doctorMessage.toString())
                             : null))
               ],
             ),
@@ -562,11 +559,11 @@ class _messagesState extends State<DoctorMessage> {
   Container receiver(BuildContext cntxt, String img, String message,
       double height, double width) {
     return Container(
-      margin: EdgeInsets.only(left: 20, top: 30),
+      margin: const EdgeInsets.only(left: 20, top: 30),
       child: Row(
         children: [
           Container(
-            margin: EdgeInsets.only(top: 10),
+            margin: const EdgeInsets.only(top: 10),
             child: CircleAvatar(
               backgroundImage: AssetImage(img),
             ),
@@ -576,8 +573,8 @@ class _messagesState extends State<DoctorMessage> {
             child: Container(
                 height: height,
                 width: width,
-                margin: EdgeInsets.only(left: 5),
-                decoration: BoxDecoration(
+                margin: const EdgeInsets.only(left: 5),
+                decoration: const BoxDecoration(
                     //  color: kLightyellow,
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(20),
@@ -586,7 +583,7 @@ class _messagesState extends State<DoctorMessage> {
                 child: Center(
                   child: Text(
                     message,
-                    style: TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white),
                   ),
                 )),
           )

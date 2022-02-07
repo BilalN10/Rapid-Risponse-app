@@ -28,7 +28,8 @@ Widget authenticateAppbar(String title) {
     ),
     title: Text(
       title,
-      style: TextStyle(color: MyColors.primary, fontWeight: FontWeight.bold),
+      style:
+          const TextStyle(color: MyColors.primary, fontWeight: FontWeight.bold),
     ),
     elevation: 0,
     backgroundColor: Colors.transparent,
@@ -39,8 +40,8 @@ Widget rapidResponseAppbar() {
   return AppBar(
     // leading: BackButton(color: JssColors.judul),
     leading: Container(
-      margin: EdgeInsets.only(left: 16.0),
-      decoration: new BoxDecoration(
+      margin: const EdgeInsets.only(left: 16.0),
+      decoration: const BoxDecoration(
         shape: BoxShape.circle,
       ),
       alignment: Alignment.center,
@@ -51,7 +52,7 @@ Widget rapidResponseAppbar() {
         },
       ),
     ),
-    title: Text(
+    title: const Text(
       "Rapid Response",
       style: TextStyle(color: MyColors.secondary, fontWeight: FontWeight.bold),
     ),
@@ -59,7 +60,7 @@ Widget rapidResponseAppbar() {
     backgroundColor: Colors.transparent,
     actions: [
       Padding(
-          padding: EdgeInsets.only(right: 20.0),
+          padding: const EdgeInsets.only(right: 20.0),
           child: GestureDetector(
             onTap: () {
               //  _drawerKey.currentState?.openDrawer();

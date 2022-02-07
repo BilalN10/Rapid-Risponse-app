@@ -35,9 +35,9 @@ class Routes {
     //reset_password_screen: (BuildContext context) => ResetPasswordScreen(),
     rapid_response_screen: (BuildContext context) => RapidResponseScreen(),
     dispatch_screen: (BuildContext context) => DispatchScreen(),
-    profile_screen: (BuildContext context) => ProfileScreen(),
+    profile_screen: (BuildContext context) => const ProfileScreen(),
     incident_calls_screen: (BuildContext context) => IncidentCallsScreen(),
-    task_screen: (BuildContext context) => TaskScreen(),
+    task_screen: (BuildContext context) => const TaskScreen(),
     assign_task_screen: (BuildContext context) => TaskAssignScreen(),
     response_screen: (BuildContext context) => MapScreen(),
   };

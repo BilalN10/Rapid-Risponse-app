@@ -186,7 +186,7 @@ class _SigninScreenState extends State<SigninScreen> {
                     // Login Button
                     Obx(
                       () => userAthenticationController.isSignInLoading.value
-                          ? CircularProgressIndicator()
+                          ? const CircularProgressIndicator()
                           : ProgressButton(
                               color: MyColors.primary,
                               defaultWidget: Container(
@@ -273,7 +273,6 @@ class _SigninScreenState extends State<SigninScreen> {
                       onPressed: () async {
                         // userAthenticationController.googleSignout()
                         Get.to(() => RapidResponseScreen());
-                        print(userAthenticationController.assignNumber);
                       },
                     ),
                     SizedBox(
@@ -285,7 +284,7 @@ class _SigninScreenState extends State<SigninScreen> {
                         child: Container(
                             margin:
                                 const EdgeInsets.only(left: 10.0, right: 20.0),
-                            child: Divider(
+                            child: const Divider(
                               color: Colors.grey,
                               height: 36,
                             )),
@@ -344,7 +343,6 @@ class _SigninScreenState extends State<SigninScreen> {
           userAthenticationController.signinPasswordController.text);
     } else {
       userAthenticationController.isSignInLoading.value = false;
-      print("Form is not validate");
     }
   }
 }

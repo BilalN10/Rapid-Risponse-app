@@ -9,7 +9,7 @@ class SignIN extends StatefulWidget {
 class _HomePageState extends State<SignIN> {
   bool _isLoggedIn = false;
   GoogleSignInAccount _userObj;
-  GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class _HomePageState extends State<SignIN> {
               )
             : Center(
                 child: ElevatedButton(
-                  child: Text("Login with Google"),
+                  child: const Text("Login with Google"),
                   onPressed: () {
                     _googleSignIn.signIn().then((userData) {
                       setState(() {

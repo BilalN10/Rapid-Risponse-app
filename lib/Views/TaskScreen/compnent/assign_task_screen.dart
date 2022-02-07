@@ -1,11 +1,9 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:one_context/one_context.dart';
 import 'package:rapid_response/Controller/guards_and_commitee_member_controller.dart';
 import 'package:rapid_response/Model/pserson_model.dart';
 import 'package:rapid_response/SizeConfig/size_config.dart';
@@ -41,14 +39,14 @@ class _TaskAssignScreenScreenState extends State<TaskAssignScreen> {
             centerTitle: true,
             // leading: BackButton(color: JssColors.judul),
             leading: Container(
-              margin: EdgeInsets.only(left: 16.0),
-              decoration: new BoxDecoration(
+              margin: const EdgeInsets.only(left: 16.0),
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: MyColors.bg_button_back,
               ),
               alignment: Alignment.center,
               child: IconButton(
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_back_ios,
                   color: MyColors.grey_3,
                   size: 20.0,
@@ -60,7 +58,7 @@ class _TaskAssignScreenScreenState extends State<TaskAssignScreen> {
                 },
               ),
             ),
-            title: Text(
+            title: const Text(
               "Assign Tasks to",
               style: TextStyle(
                   color: MyColors.grey_3, fontWeight: FontWeight.bold),
@@ -195,7 +193,7 @@ class _TaskAssignScreenScreenState extends State<TaskAssignScreen> {
                                                 height: 20,
                                                 width: 20,
                                                 alignment: Alignment.center,
-                                                child: Icon(
+                                                child: const Icon(
                                                   Icons.keyboard_arrow_right,
                                                   color: MyColors.grey,
                                                 ),
@@ -213,7 +211,6 @@ class _TaskAssignScreenScreenState extends State<TaskAssignScreen> {
         ));
   }
 
-  //TODO : Load Data from API
   List<Person> itemData = <Person>[
     Person('Andrew Parker', 'assets/images/profile-deleted.png', 'Guard',
         'assets/images/guard.png'),

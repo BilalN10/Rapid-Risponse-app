@@ -1,8 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -97,7 +95,6 @@ class _IncidentCallsScreenState extends State<IncidentCallsScreen> {
                                           incidentCallController
                                               .getNotificationList[index]
                                               .chatID;
-                                      print(userAthenticationController.chatID);
                                       userAthenticationController
                                               .eventCreatorId =
                                           incidentCallController
@@ -111,7 +108,6 @@ class _IncidentCallsScreenState extends State<IncidentCallsScreen> {
                                           confirmbuttonText: "Confirm",
                                           onCofirmfunction: () {
                                             OneContext().popDialog();
-                                            print("confirm");
 
                                             userAthenticationController
                                                 .isResponding.value = true;
@@ -333,7 +329,7 @@ class _IncidentCallsScreenState extends State<IncidentCallsScreen> {
                                                             index]
                                                         .notificationTite
                                                         .toUpperCase(),
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         color:
@@ -360,17 +356,19 @@ class _IncidentCallsScreenState extends State<IncidentCallsScreen> {
                                                         children: [
                                                           Container(
                                                             margin:
-                                                                EdgeInsets.only(
+                                                                const EdgeInsets
+                                                                        .only(
                                                                     right: 4),
                                                             height: 16,
                                                             width: 16,
                                                             alignment: Alignment
                                                                 .center,
-                                                            decoration: BoxDecoration(
-                                                                color: MyColors
-                                                                    .grey_2,
-                                                                shape: BoxShape
-                                                                    .circle),
+                                                            decoration:
+                                                                const BoxDecoration(
+                                                                    color: MyColors
+                                                                        .grey_2,
+                                                                    shape: BoxShape
+                                                                        .circle),
                                                             child: Text(
                                                               incidentCallController
                                                                   .getNotificationList[
@@ -419,7 +417,7 @@ class _IncidentCallsScreenState extends State<IncidentCallsScreen> {
                                                     ],
                                                   ),
                                                 ),
-                                                Divider()
+                                                const Divider()
                                               ],
                                             )),
                                             // Align(
@@ -441,7 +439,7 @@ class _IncidentCallsScreenState extends State<IncidentCallsScreen> {
                                         )));
                               });
                         } else {
-                          return CircularProgressIndicator();
+                          return const CircularProgressIndicator();
                         }
                       }),
                 ),
@@ -449,7 +447,6 @@ class _IncidentCallsScreenState extends State<IncidentCallsScreen> {
         ));
   }
 
-  //TODO : Load Data from API
   List<IncidentCalls> itemData = <IncidentCalls>[
     IncidentCalls(
         'Medical Emergency',

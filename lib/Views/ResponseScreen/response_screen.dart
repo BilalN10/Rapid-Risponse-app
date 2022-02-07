@@ -44,11 +44,13 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     BitmapDescriptor.fromAssetImage(
-            ImageConfiguration(size: Size(12, 12)), 'assets/images/pin.png')
+            const ImageConfiguration(size: Size(12, 12)),
+            'assets/images/pin.png')
         .then((d) {
       pinSource = d;
     });
-    BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(12, 12)),
+    BitmapDescriptor.fromAssetImage(
+            const ImageConfiguration(size: Size(12, 12)),
             'assets/images/pin_dest.png')
         .then((d) {
       pinDest = d;
@@ -76,7 +78,7 @@ class _MapScreenState extends State<MapScreen> {
         child: GestureDetector(
           onTap: () {
             OneContext().showDialog(builder: (BuildContext context) {
-              return RapidResponseDialog(blur: false);
+              return const RapidResponseDialog(blur: false);
             });
           },
           child: ResponseWidget(),
@@ -138,18 +140,17 @@ class _MapScreenState extends State<MapScreen> {
                         initialCameraPosition: _initialCameraPosition,
                         onMapCreated: (controller) {
                           _googleMapController = controller;
-                          var sourceLatLng = LatLng(-7.8079182, 110.3887332);
-                          var destLatLng = LatLng(-7.8050712, 110.3902453);
+                          var sourceLatLng =
+                              const LatLng(-7.8079182, 110.3887332);
+                          var destLatLng =
+                              const LatLng(-7.8050712, 110.3902453);
                           _addMarker(sourceLatLng);
                           _addMarker(destLatLng);
                           LatLngBounds bound = LatLngBounds(
                               southwest: sourceLatLng, northeast: destLatLng);
                           CameraUpdate u2 =
                               CameraUpdate.newLatLngBounds(bound, 50);
-                          this
-                              ._googleMapController
-                              .animateCamera(u2)
-                              .then((void v) {
+                          _googleMapController.animateCamera(u2).then((void v) {
                             check(u2, this._googleMapController);
                           });
                         },
@@ -197,8 +198,8 @@ class _MapScreenState extends State<MapScreen> {
                               ],
                             ),
                           ),
-                          SizedBox(height: 10),
-                          Align(
+                          const SizedBox(height: 10),
+                          const Align(
                             alignment: AlignmentDirectional.centerStart,
                             child: Text('2.5 km',
                                 style: TextStyle(color: MyColors.grey)),
@@ -206,26 +207,26 @@ class _MapScreenState extends State<MapScreen> {
                         ],
                       )),
                       Container(
-                          padding: EdgeInsets.only(
+                          padding: const EdgeInsets.only(
                               left: 8, top: 4, right: 8, bottom: 4),
                           decoration: BoxDecoration(
                             color: MyColors.primary,
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: Text(
+                          child: const Text(
                             'Incident',
                             style: TextStyle(color: MyColors.white),
                           ))
                     ],
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 TextFormField(
                   autofocus: false,
                   minLines: 6,
                   keyboardType: TextInputType.text,
                   maxLines: null,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey, width: 0.4),
                     ),
@@ -238,20 +239,20 @@ class _MapScreenState extends State<MapScreen> {
                   ),
                   onChanged: (value) {},
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: 5),
+                  padding: const EdgeInsets.symmetric(vertical: 5),
                   child: ProgressButton(
                     color: MyColors.primary,
                     defaultWidget: Container(
-                      child: Text(
+                      child: const Text(
                         "Send",
                         textAlign: TextAlign.right,
                         style: TextStyle(
                             fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                     ),
-                    progressWidget: SmartButtonIndicatorWidget(),
+                    progressWidget: const SmartButtonIndicatorWidget(),
                     borderRadius: 12,
                     type: ProgressButtonType.Flat,
                     height: 56,

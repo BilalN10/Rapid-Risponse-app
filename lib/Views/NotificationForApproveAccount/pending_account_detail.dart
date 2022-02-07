@@ -6,7 +6,6 @@ import 'package:rapid_response/Model/notification_for_approve_model.dart';
 import 'package:rapid_response/SizeConfig/size_config.dart';
 import 'package:rapid_response/Views/Constants/colors.dart';
 import 'package:rapid_response/Views/Constants/mydialog.dart';
-import 'package:rapid_response/Views/Rapid_Response/Components/rappid_response_dialog.dart';
 import 'package:rapid_response/Views/Widgets/my_button.dart';
 import 'package:rapid_response/Views/Widgets/smart_button_indicator.dart';
 

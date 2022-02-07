@@ -114,29 +114,9 @@ class _RapidResponseDialogState extends State<RapidResponseDialog> {
                     )
                   ],
                 )),
-
                 const SizedBox(
                   height: 16,
                 ),
-                // DropdownSearch<String>(
-                //     hint: "Send to : All",
-                //     mode: Mode.BOTTOM_SHEET,
-                //     showSearchBox: true,
-                //     searchBoxDecoration: InputDecoration(
-                //       focusedBorder: OutlineInputBorder(
-                //         borderSide: BorderSide(color: Colors.grey, width: 0.4),
-                //       ),
-                //       enabledBorder: OutlineInputBorder(
-                //         borderSide: BorderSide(color: Colors.grey, width: 0.4),
-                //       ),
-                //       labelText: "Send to : All",
-                //     ),
-                //     items: ['All'],
-                //     // selectedItem: _store.skpd,
-                //     showClearButton: true,
-                //     onChanged: (value) {
-
-                //     }),
                 const SizedBox(
                   height: 16,
                 ),
@@ -176,7 +156,6 @@ class _RapidResponseDialogState extends State<RapidResponseDialog> {
                     ),
                   ),
                 ),
-
                 const SizedBox(
                   height: 10,
                 ),
@@ -252,8 +231,7 @@ class _RapidResponseDialogState extends State<RapidResponseDialog> {
                     ),
                   ),
                 ),
-
-                SizedBox(
+                const SizedBox(
                   height: 16,
                 ),
                 GestureDetector(
@@ -264,7 +242,7 @@ class _RapidResponseDialogState extends State<RapidResponseDialog> {
                     alignment: Alignment.center,
                     width: 90 * SizeConfig.widthMultiplier,
                     height: 6 * SizeConfig.heightMultiplier,
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                         color: MyColors.primary,
                         borderRadius: BorderRadius.circular(10),

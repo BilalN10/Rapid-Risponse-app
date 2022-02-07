@@ -12,7 +12,7 @@ class GooleMapsScreen extends StatefulWidget {
 
 class _MyHomePageState extends State<GooleMapsScreen> {
   List<Widget> tabBar = [
-    GoogleMaps(),
+    const GoogleMaps(),
     Container(
       child: Text("2"),
     ),
@@ -32,8 +32,8 @@ class _MyHomePageState extends State<GooleMapsScreen> {
       appBar: AppBar(
         // leading: BackButton(color: JssColors.judul),
         leading: Container(
-          margin: EdgeInsets.only(left: 16.0),
-          decoration: new BoxDecoration(
+          margin: const EdgeInsets.only(left: 16.0),
+          decoration: const BoxDecoration(
             shape: BoxShape.circle,
           ),
           alignment: Alignment.center,
@@ -44,7 +44,7 @@ class _MyHomePageState extends State<GooleMapsScreen> {
             },
           ),
         ),
-        title: Text(
+        title: const Text(
           "Rapid Response",
           style:
               TextStyle(color: MyColors.secondary, fontWeight: FontWeight.bold),
@@ -53,12 +53,12 @@ class _MyHomePageState extends State<GooleMapsScreen> {
         backgroundColor: Colors.transparent,
         actions: [
           Padding(
-              padding: EdgeInsets.only(right: 20.0),
+              padding: const EdgeInsets.only(right: 20.0),
               child: GestureDetector(
                 onTap: () {
                   // _drawerKey.currentState?.openDrawer();
                 },
-                child: Icon(
+                child: const Icon(
                   Icons.menu,
                   color: MyColors.grey_3,
                   size: 26.0,
@@ -73,7 +73,7 @@ class _MyHomePageState extends State<GooleMapsScreen> {
               margin: EdgeInsets.only(top: 8),
               child: Container(
                 height: 57,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.white,
                   boxShadow: [
                     BoxShadow(
@@ -107,7 +107,7 @@ class _MyHomePageState extends State<GooleMapsScreen> {
 
   Widget navItem(String name, int index) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 15, horizontal: 8),
+      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 8),
       child: GestureDetector(
         onTap: () {
           setState(() {

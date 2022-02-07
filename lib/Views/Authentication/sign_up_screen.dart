@@ -333,7 +333,6 @@ class _SignupScreenState extends State<SignupScreen> {
               userAthenticationController.signupPhoneNumberController.text),
           userName: userAthenticationController.signupUserNameController.text);
     } else {
-      print("Form is not validate");
       userAthenticationController.isSignUpLoading.value = false;
     }
   }

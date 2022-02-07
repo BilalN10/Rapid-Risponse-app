@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:rapid_response/Views/Authentication/sign_screen.dart';
 import 'package:rapid_response/Views/Root/root.dart';
 
 class SplashScreen extends StatefulWidget {

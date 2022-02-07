@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:rapid_response/SizeConfig/size_config.dart';
 import 'package:rapid_response/Views/Constants/colors.dart';
 
 class MyTextField extends StatefulWidget {
@@ -11,13 +10,16 @@ class MyTextField extends StatefulWidget {
   final bool isNumberField;
   final bool isPass;
   //final bool isPassword;
+  // ignore: prefer_const_constructors_in_immutables
   MyTextField(
-      {this.isPass,
+      {Key key,
+      this.isPass,
       this.hintText,
       this.icon,
       this.controller,
       this.isNumberField,
-      this.validator});
+      this.validator})
+      : super(key: key);
 
   @override
   State<MyTextField> createState() => _MyTextFieldState();
@@ -64,26 +66,6 @@ class _MyTextFieldState extends State<MyTextField> {
                   borderRadius: BorderRadius.circular(10),
                   borderSide:
                       const BorderSide(width: 2, color: MyColors.input_border)),
-
-              //  widget.isPass
-              //     ? GestureDetector(
-              //         onTap: () {
-              //           setState(() {
-              //             _showPass = !_showPass;
-              //           });
-              //         },
-              //         child: Icon(
-              //           Icons.remove_red_eye,
-              //           color: _showPass ? Colors.pink : Colors.grey,
-              //         ),
-              //       )
-              //     : null,
-              // suffixIcon: Icon(
-              //   widget.icon,
-              //   size: 8 * SizeConfig.imageSizeMultiplier,
-              //   color: Colors.grey.withOpacity(0.2),
-              // ),
-              //border: InputBorder.none,
               hintStyle: const TextStyle(color: MyColors.hint),
               hintText: widget.hintText),
           onChanged: (value) {}),
@@ -99,7 +81,8 @@ class MypassWordField extends StatefulWidget {
   final bool isNumberField;
   final bool isPass;
   //final bool isPassword;
-  MypassWordField(
+  // ignore: use_key_in_widget_constructors
+  const MypassWordField(
       {this.isPass,
       this.hintText,
       this.icon,

@@ -34,10 +34,10 @@ class NotificationForApprovrAccount extends GetxController {
         .orderBy('date', descending: true)
         .snapshots()
         .map((QuerySnapshot query) {
-      List<NotificationForApproveModel> retVal = List();
-      query.docs.forEach((element) {
+      List<NotificationForApproveModel> retVal = [];
+      for (var element in query.docs) {
         retVal.add(NotificationForApproveModel.fromJson(element));
-      });
+      }
 
       print('Apprrove Notificaiton Length is ${retVal.length}');
       return retVal;

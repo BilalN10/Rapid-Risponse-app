@@ -60,7 +60,7 @@ class DrawerContend extends StatelessWidget {
           ListTile(
             title: const Text('Profile'),
             onTap: () {
-              Get.to(() => ProfileScreen());
+              Get.to(() => const ProfileScreen());
               // OneContext().pushNamed(Routes.profile_screen);
             },
           ),
@@ -82,7 +82,7 @@ class DrawerContend extends StatelessWidget {
           ListTile(
             title: const Text('Task Screen'),
             onTap: () {
-              Get.to(() => TaskScreen(
+              Get.to(() => const TaskScreen(
                   //key: _drawerKey,
                   ));
 
@@ -106,7 +106,7 @@ class DrawerContend extends StatelessWidget {
           ListTile(
             title: const Text('Maps'),
             onTap: () {
-              Get.to(() => GooleMapsScreen());
+              Get.to(() => const GooleMapsScreen());
               // OneContext().pushNamed(Routes.facility_code_screen);
             },
           ),

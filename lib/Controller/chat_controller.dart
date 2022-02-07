@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:rapid_response/Controller/user_athentication_controller.dart';
 import 'package:rapid_response/Model/available_person_model.dart';
@@ -60,11 +61,12 @@ class ChatController extends GetxController {
         .map((QuerySnapshot query) {
       List<ChatModel> retVal = List();
 
+      // ignore: avoid_function_literals_in_foreach_calls
       query.docs.forEach((element) {
         retVal.add(ChatModel.fromJason(element));
       });
 
-      print('closed event length is  is ${retVal.length}');
+      debugPrint('closed event length is  is ${retVal.length}');
       return retVal;
     });
   }
@@ -77,11 +79,12 @@ class ChatController extends GetxController {
         .map((QuerySnapshot query) {
       List<AvailableRespoderModel> retVal = List();
 
+      // ignore: avoid_function_literals_in_foreach_calls
       query.docs.forEach((element) {
         retVal.add(AvailableRespoderModel.fromJason(element));
       });
 
-      print('closed event Responsder length is  is ${retVal.length}');
+      debugPrint('closed event Responsder length is  is ${retVal.length}');
       return retVal;
     });
   }
@@ -96,17 +99,18 @@ class ChatController extends GetxController {
       List<ChatReferanceModel> retVal = List();
       DocumentReference documentReference;
 
+      // ignore: avoid_function_literals_in_foreach_calls
       query.docs.forEach((element) {
         retVal.add(ChatReferanceModel.fromJason(element));
       });
 
-      print('chat length is  is ${retVal.length}');
+      debugPrint('chat length is  is ${retVal.length}');
       return retVal;
     });
   }
 
   Stream<List<ChatModel>> getChatStream() {
-    print("enter in add function");
+    debugPrint("enter in add function");
     return FirebaseFirestore.instance
         .collection('Users')
         .doc(userAthenticationController.eventCreatorId)
@@ -117,18 +121,18 @@ class ChatController extends GetxController {
         .orderBy('date', descending: false)
         .snapshots()
         .map((QuerySnapshot query) {
-      List<ChatModel> retVal = List();
-      query.docs.forEach((element) {
+      List<ChatModel> retVal = [];
+      for (var element in query.docs) {
         retVal.add(ChatModel.fromJason(element));
-      });
+      }
 
-      print('chat length is  is ${retVal.length}');
+      debugPrint('chat length is  is ${retVal.length}');
       return retVal;
     });
   }
 
   Stream<List<AvailableRespoderModel>> getAvailableRsponder() {
-    print("enter in add function");
+    debugPrint("enter in add function");
     return FirebaseFirestore.instance
         .collection('Users')
         .doc(userAthenticationController.eventCreatorId)
@@ -140,11 +144,11 @@ class ChatController extends GetxController {
         .snapshots()
         .map((QuerySnapshot query) {
       List<AvailableRespoderModel> retVal = List();
-      query.docs.forEach((element) {
+      for (var element in query.docs) {
         retVal.add(AvailableRespoderModel.fromJason(element));
-      });
+      }
 
-      print('Available repsonder list length   is ${retVal.length}');
+      debugPrint('Available repsonder list length   is ${retVal.length}');
       return retVal;
     });
   }
@@ -163,16 +167,16 @@ class ChatController extends GetxController {
           .doc(userAthenticationController.broadCastCChatId);
 
       for (int i = 0; i < grtadminList.length; i++) {
-        print("admin id is ${grtadminList[i].id}");
+        debugPrint("admin id is ${grtadminList[i].id}");
         userAthenticationController.firebaseFirestore
             .collection("Users")
             .doc(grtadminList[i].id)
             .collection("BroadcastChatEvent")
             .add({"ChatReferance": cahtRef}).then((value) {
-          print("Referance add");
+          debugPrint("Referance add");
         });
       }
-      print("Event Closed");
+      debugPrint("Event Closed");
       userAthenticationController.checkIsEventClosed();
     });
   }
@@ -184,11 +188,11 @@ class ChatController extends GetxController {
         .snapshots()
         .map((QuerySnapshot query) {
       List<UserModel> retVal = List();
-      query.docs.forEach((element) {
+      for (var element in query.docs) {
         retVal.add(UserModel.fromSnamshot(element));
-      });
+      }
 
-      print('admin list is ${retVal.length}');
+      debugPrint('admin list is ${retVal.length}');
       return retVal;
     });
   }

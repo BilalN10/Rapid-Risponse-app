@@ -1,8 +1,5 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:one_context/one_context.dart';
 import 'package:rapid_response/Views/Constants/colors.dart';
 import 'package:rapid_response/Views/Rapid_Response/Components/rappid_response_dialog.dart';
@@ -73,13 +70,13 @@ class _DispatchScreenState extends State<DispatchScreen>
             ],
           ),
         ),
-        progressWidget: SmartButtonIndicatorWidget(),
+        progressWidget: const SmartButtonIndicatorWidget(),
         borderRadius: 12,
         type: ProgressButtonType.Flat,
         height: 56,
         onPressed: () async {
           OneContext().showDialog(builder: (BuildContext context) {
-            return RapidResponseDialog();
+            return const RapidResponseDialog();
           });
         },
       ),
@@ -92,8 +89,8 @@ class _DispatchScreenState extends State<DispatchScreen>
           appBar: AppBar(
             // leading: BackButton(color: JssColors.judul),
             leading: Container(
-              margin: EdgeInsets.only(left: 16.0),
-              decoration: new BoxDecoration(
+              margin: const EdgeInsets.only(left: 16.0),
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
               ),
               alignment: Alignment.center,
@@ -104,7 +101,7 @@ class _DispatchScreenState extends State<DispatchScreen>
                 },
               ),
             ),
-            title: Text(
+            title: const Text(
               "Rapid Response",
               style: TextStyle(
                   color: MyColors.secondary, fontWeight: FontWeight.bold),
@@ -113,10 +110,10 @@ class _DispatchScreenState extends State<DispatchScreen>
             backgroundColor: Colors.transparent,
             actions: [
               Padding(
-                  padding: EdgeInsets.only(right: 20.0),
+                  padding: const EdgeInsets.only(right: 20.0),
                   child: GestureDetector(
                     onTap: () {},
-                    child: Icon(
+                    child: const Icon(
                       Icons.menu,
                       color: MyColors.grey_3,
                       size: 26.0,
@@ -130,7 +127,7 @@ class _DispatchScreenState extends State<DispatchScreen>
             child: Scaffold(
               backgroundColor: MyColors.grey_2,
               appBar: PreferredSize(
-                preferredSize: Size.fromHeight(100),
+                preferredSize: const Size.fromHeight(100),
                 child: Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: AppBar(
@@ -170,7 +167,7 @@ class _DispatchScreenState extends State<DispatchScreen>
                 ),
               ),
               body: TabBarView(controller: tabController, children: [
-                ProfileScreen(),
+                const ProfileScreen(),
                 Container(
                     child: Column(
                   children: [
@@ -195,8 +192,8 @@ class _DispatchScreenState extends State<DispatchScreen>
 
   Widget buildlist(name, image) {
     return Container(
-        padding: EdgeInsets.all(16),
-        margin: EdgeInsets.only(top: 2),
+        padding: const EdgeInsets.all(16),
+        margin: const EdgeInsets.only(top: 2),
         color: MyColors.white,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -207,12 +204,12 @@ class _DispatchScreenState extends State<DispatchScreen>
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Container(
-                        margin: EdgeInsets.only(right: 4),
+                        margin: const EdgeInsets.only(right: 4),
                         child: Visibility(child: Image.asset(image))),
                     GestureDetector(
                         onTap: () {},
                         child: Text(name,
-                            style: TextStyle(color: MyColors.secondary)))
+                            style: const TextStyle(color: MyColors.secondary)))
                   ],
                 )),
             Expanded(
@@ -224,7 +221,7 @@ class _DispatchScreenState extends State<DispatchScreen>
                     height: 20,
                     width: 20,
                     alignment: Alignment.center,
-                    child: Icon(
+                    child: const Icon(
                       Icons.keyboard_arrow_right,
                       color: MyColors.grey,
                     ),

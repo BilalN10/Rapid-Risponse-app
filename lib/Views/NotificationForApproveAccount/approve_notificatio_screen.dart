@@ -8,7 +8,7 @@ import 'package:rapid_response/Views/NotificationForApproveAccount/pending_accou
 
 class ApporveNotificationScreen extends StatelessWidget {
   ApporveNotificationScreen({Key key}) : super(key: key);
-  NotificationForApproveModel notificationForApproveModel =
+  final NotificationForApproveModel notificationForApproveModel =
       NotificationForApproveModel();
 
   @override

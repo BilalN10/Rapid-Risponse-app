@@ -1,11 +1,8 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:one_context/one_context.dart';
 import 'package:rapid_response/Model/task_model.dart';
 import 'package:rapid_response/SizeConfig/size_config.dart';
 import 'package:rapid_response/Views/Constants/colors.dart';
@@ -17,7 +14,7 @@ class TaskScreen extends StatefulWidget {
   const TaskScreen({Key key}) : super(key: key);
 
   @override
-  _TaskScreenScreenState createState() => new _TaskScreenScreenState();
+  _TaskScreenScreenState createState() => _TaskScreenScreenState();
 }
 
 class _TaskScreenScreenState extends State<TaskScreen> {
@@ -39,14 +36,14 @@ class _TaskScreenScreenState extends State<TaskScreen> {
             centerTitle: true,
             // leading: BackButton(color: JssColors.judul),
             leading: Container(
-              margin: EdgeInsets.only(left: 16.0),
-              decoration: new BoxDecoration(
+              margin: const EdgeInsets.only(left: 16.0),
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: MyColors.bg_button_back,
               ),
               alignment: Alignment.center,
               child: IconButton(
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_back_ios,
                   color: MyColors.grey_3,
                   size: 20.0,
@@ -57,7 +54,7 @@ class _TaskScreenScreenState extends State<TaskScreen> {
                 },
               ),
             ),
-            title: Text(
+            title: const Text(
               "Tasks",
               style: TextStyle(
                   color: MyColors.grey_3, fontWeight: FontWeight.bold),
@@ -86,16 +83,16 @@ class _TaskScreenScreenState extends State<TaskScreen> {
                             },
                             child: Container(
                                 height: 10 * SizeConfig.heightMultiplier,
-                                padding:
-                                    EdgeInsets.only(left: 16, top: 8, right: 8),
+                                padding: const EdgeInsets.only(
+                                    left: 16, top: 8, right: 8),
                                 child: Row(
                                   children: [
                                     Container(
-                                      margin: EdgeInsets.only(right: 8),
+                                      margin: const EdgeInsets.only(right: 8),
                                       height: 40,
                                       width: 40,
                                       alignment: Alignment.center,
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                           color: MyColors.primary,
                                           shape: BoxShape.circle),
                                       child: Image.asset(
@@ -111,7 +108,7 @@ class _TaskScreenScreenState extends State<TaskScreen> {
                                               AlignmentDirectional.centerStart,
                                           child: Text(
                                             itemData[index].name,
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 color: MyColors.primary),
                                           ),
@@ -122,7 +119,7 @@ class _TaskScreenScreenState extends State<TaskScreen> {
                                           child:
                                               Text(itemData[index].description),
                                         ),
-                                        Container(
+                                        SizedBox(
                                           child: Row(
                                             children: [
                                               Expanded(
@@ -133,11 +130,11 @@ class _TaskScreenScreenState extends State<TaskScreen> {
                                                           'assets/images/clock-outline.png'),
                                                       Container(
                                                         padding:
-                                                            EdgeInsets.only(
-                                                                left: 4),
+                                                            const EdgeInsets
+                                                                .only(left: 4),
                                                         child: Text(
                                                           itemData[index].date,
-                                                          style: TextStyle(
+                                                          style: const TextStyle(
                                                               color: MyColors
                                                                   .grey),
                                                         ),
@@ -149,14 +146,14 @@ class _TaskScreenScreenState extends State<TaskScreen> {
                                                   child: Row(
                                                     children: [
                                                       Container(
-                                                        margin: EdgeInsets.only(
-                                                            right: 8),
+                                                        margin: const EdgeInsets
+                                                            .only(right: 8),
                                                         height: 16,
                                                         width: 16,
                                                         alignment:
                                                             Alignment.center,
                                                         decoration:
-                                                            BoxDecoration(
+                                                            const BoxDecoration(
                                                                 color: MyColors
                                                                     .primary,
                                                                 shape: BoxShape
@@ -188,7 +185,7 @@ class _TaskScreenScreenState extends State<TaskScreen> {
                                         height: 20,
                                         width: 20,
                                         alignment: Alignment.center,
-                                        child: Icon(
+                                        child: const Icon(
                                           Icons.keyboard_arrow_right,
                                           color: MyColors.grey,
                                         ),
@@ -202,7 +199,6 @@ class _TaskScreenScreenState extends State<TaskScreen> {
         ));
   }
 
-  //TODO : Load Data from API
   List<Task> itemData = <Task>[
     Task('Intruder / Tresspasser', 'Lorem ipsum sir dolor amet consequiteur...',
         '15s ago', 'Waiting Response', 'assets/images/warning-sign.png'),

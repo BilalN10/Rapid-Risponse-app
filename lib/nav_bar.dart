@@ -3,7 +3,8 @@ import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 class ProvidedStylesExample extends StatefulWidget {
   final BuildContext menuScreenContext;
-  ProvidedStylesExample({Key key, this.menuScreenContext}) : super(key: key);
+  const ProvidedStylesExample({Key key, this.menuScreenContext})
+      : super(key: key);
 
   @override
   _ProvidedStylesExampleState createState() => _ProvidedStylesExampleState();
@@ -38,7 +39,7 @@ class _ProvidedStylesExampleState extends State<ProvidedStylesExample> {
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
       PersistentBottomNavBarItem(
-        icon: Icon(
+        icon: const Icon(
           Icons.home,
           size: 35,
         ),
@@ -48,14 +49,14 @@ class _ProvidedStylesExampleState extends State<ProvidedStylesExample> {
         inactiveColorSecondary: Colors.purple,
       ),
       PersistentBottomNavBarItem(
-        icon: Icon(
+        icon: const Icon(
           Icons.search,
           size: 35,
         ),
         title: ("Search"),
         activeColorPrimary: Colors.amber,
         inactiveColorPrimary: Colors.grey,
-        routeAndNavigatorSettings: RouteAndNavigatorSettings(
+        routeAndNavigatorSettings: const RouteAndNavigatorSettings(
             // initialRoute: '/',
             // routes: {
             //   '/first': (context) => LoginPage(),
@@ -64,14 +65,14 @@ class _ProvidedStylesExampleState extends State<ProvidedStylesExample> {
             ),
       ),
       PersistentBottomNavBarItem(
-        icon: Icon(
+        icon: const Icon(
           Icons.add_circle_sharp,
           size: 35,
         ),
         title: ("Messages"),
         activeColorPrimary: Colors.amber,
         inactiveColorPrimary: Colors.grey,
-        routeAndNavigatorSettings: RouteAndNavigatorSettings(
+        routeAndNavigatorSettings: const RouteAndNavigatorSettings(
           initialRoute: '/',
           // routes: {
           //   '/first': (context) => LoginPage(),
@@ -80,14 +81,14 @@ class _ProvidedStylesExampleState extends State<ProvidedStylesExample> {
         ),
       ),
       PersistentBottomNavBarItem(
-        icon: Icon(
+        icon: const Icon(
           Icons.settings,
           size: 35,
         ),
         title: ("Settings"),
         activeColorPrimary: Colors.amber,
         inactiveColorPrimary: Colors.grey,
-        routeAndNavigatorSettings: RouteAndNavigatorSettings(
+        routeAndNavigatorSettings: const RouteAndNavigatorSettings(
             // initialRoute: '/',
             // routes: {
             //   '/first': (context) => LoginPage(),
@@ -96,14 +97,14 @@ class _ProvidedStylesExampleState extends State<ProvidedStylesExample> {
             ),
       ),
       PersistentBottomNavBarItem(
-        icon: Icon(
+        icon: const Icon(
           Icons.settings,
           size: 35,
         ),
         title: ("Settings"),
         activeColorPrimary: Colors.amber,
         inactiveColorPrimary: Colors.grey,
-        routeAndNavigatorSettings: RouteAndNavigatorSettings(
+        routeAndNavigatorSettings: const RouteAndNavigatorSettings(
             // initialRoute: '/',
             // routes: {
             //   '/first': (context) => LoginPage(),
@@ -144,7 +145,7 @@ class _ProvidedStylesExampleState extends State<ProvidedStylesExample> {
         //     ? 0.0
         //     : kBottomNavigationBarHeight,
         hideNavigationBarWhenKeyboardShows: true,
-        margin: EdgeInsets.all(0.0),
+        margin: const EdgeInsets.all(0.0),
         popActionScreens: PopActionScreensType.all,
         bottomScreenMargin: 0.0,
         onWillPop: (context) async {
@@ -156,7 +157,7 @@ class _ProvidedStylesExampleState extends State<ProvidedStylesExample> {
               width: 50.0,
               color: Colors.white,
               child: ElevatedButton(
-                child: Text("Close"),
+                child: const Text("Close"),
                 onPressed: () {
                   Navigator.pop(context);
                 },

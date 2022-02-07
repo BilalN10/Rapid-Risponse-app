@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
-import 'package:rapid_response/Controller/chat_controller.dart';
 
 class ChatReferanceModel {
   RxString eventTitle = "".obs;

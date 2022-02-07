@@ -17,7 +17,6 @@ class IncidentCallController extends GetxController {
   }
 
   Stream<List<NotifitcatioModel>> notificationStream() {
-    print("enter in add function");
     return FirebaseFirestore.instance
         .collection('Users')
         .doc(userAthenticationController.users.uid)

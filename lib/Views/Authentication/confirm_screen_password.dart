@@ -24,14 +24,14 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
   @override
   Widget build(BuildContext context) {
     final name = Container(
-      padding: EdgeInsets.fromLTRB(12, 4, 4, 4),
+      padding: const EdgeInsets.fromLTRB(12, 4, 4, 4),
       decoration: BoxDecoration(
           border: Border.all(color: MyColors.input_border),
           borderRadius: BorderRadius.circular(10.0)),
       child: TextField(
           keyboardType: TextInputType.text,
           autofocus: false,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
               border: InputBorder.none,
               hintStyle: TextStyle(color: MyColors.hint),
               hintText: "Enter Your Code"),
@@ -39,40 +39,26 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
     );
 
     final continueButton = Padding(
-      padding: EdgeInsets.symmetric(vertical: 5),
+      padding: const EdgeInsets.symmetric(vertical: 5),
       child: ProgressButton(
         color: MyColors.primary,
         defaultWidget: Container(
-          child: Text(
+          child: const Text(
             "Continue",
             textAlign: TextAlign.right,
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
           ),
         ),
-        progressWidget: SmartButtonIndicatorWidget(),
+        progressWidget: const SmartButtonIndicatorWidget(),
         borderRadius: 12,
         type: ProgressButtonType.Flat,
         height: 56,
-        onPressed: () async {
-          // FocusScope.of(context).unfocus();
-          // if (_loginStore.userEmail.isNotEmpty &&
-          //     _loginStore.password.isNotEmpty) {
-          //   int score = await Future.delayed(
-          //       const Duration(milliseconds: 1000), () => 42);
-          //   return () {
-          //     _loginStore.login();
-          //   };
-          // } else {
-          //   FocusScope.of(context).unfocus();
-          //   warning("Username dan password tidak boleh kosong");
-          // }
-          //OneContext().pushNamedAndRemoveUntil(Routes.signin_screen,  (Route<dynamic> route) => false);
-        },
+        onPressed: () async {},
       ),
     );
 
     final resendLabel = TextButton(
-      child: Align(
+      child: const Align(
         alignment: Alignment.center,
         child: Text(
           'Resend Code',
@@ -95,14 +81,14 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
           appBar: AppBar(
             // leading: BackButton(color: JssColors.judul),
             leading: Container(
-              margin: EdgeInsets.only(left: 16.0),
-              decoration: new BoxDecoration(
+              margin: const EdgeInsets.only(left: 16.0),
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: MyColors.bg_button_back,
               ),
               alignment: Alignment.center,
               child: IconButton(
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_back_ios,
                   color: MyColors.grey_3,
                   size: 20.0,
@@ -125,11 +111,11 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                 // alignment: Alignment.centerLeft,
                 alignment: Alignment.topCenter,
                 child: SafeArea(
-                  child: new SingleChildScrollView(
-                    padding: EdgeInsets.only(left: 16.0, right: 16.0),
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.only(left: 16.0, right: 16.0),
                     child: Column(
                       children: <Widget>[
-                        Align(
+                        const Align(
                             alignment: Alignment.center,
                             child: Text(
                               "Confrim",
@@ -138,7 +124,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                                   fontWeight: FontWeight.bold,
                                   color: MyColors.title),
                             )),
-                        Align(
+                        const Align(
                             alignment: Alignment.center,
                             child: Text(
                               "We have sent an e-mail with a code for confirmation.",
@@ -148,11 +134,11 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                                   fontWeight: FontWeight.normal,
                                   color: MyColors.title),
                             )),
-                        SizedBox(height: 16.0),
+                        const SizedBox(height: 16.0),
                         name,
-                        SizedBox(height: 5.0),
+                        const SizedBox(height: 5.0),
                         resendLabel,
-                        SizedBox(height: 16.0),
+                        const SizedBox(height: 16.0),
                         continueButton,
                       ],
                     ),

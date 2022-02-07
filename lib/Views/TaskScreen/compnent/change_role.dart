@@ -6,14 +6,11 @@ import 'package:rapid_response/Controller/user_athentication_controller.dart';
 import 'package:rapid_response/Model/user_model.dart';
 import 'package:rapid_response/SizeConfig/size_config.dart';
 import 'package:rapid_response/Views/Constants/colors.dart';
-import 'package:rapid_response/Views/Rapid_Response/Components/rappid_response_dialog.dart';
-import 'package:rapid_response/Views/Widgets/my_button.dart';
 import 'package:rapid_response/Views/Widgets/progress_indicator_widget.dart';
-import 'package:rapid_response/Views/Widgets/smart_button_indicator.dart';
 
 class ChangeRoleScreen extends StatefulWidget {
   final UserModel userModel;
-  ChangeRoleScreen({Key key, this.userModel}) : super(key: key);
+  const ChangeRoleScreen({Key key, this.userModel}) : super(key: key);
   static const Map<String, int> frequencyOptions = {
     "Guard": 222,
     "Comitee Members": 333,
@@ -34,10 +31,10 @@ class _ChangeRoleScreenState extends State<ChangeRoleScreen> {
   void initState() {
     super.initState();
     setState(() {
-      print("assign number is ${widget.userModel.assignNumber}");
+      debugPrint("assign number is ${widget.userModel.assignNumber}");
       _frequencyValue = widget.userModel.assignNumber;
     });
-    print("frequescy is $_frequencyValue");
+    debugPrint("frequescy is $_frequencyValue");
 
     userAthenticationController.updateValue(widget.userModel.assignNumber);
     // print(user)
@@ -65,7 +62,7 @@ class _ChangeRoleScreenState extends State<ChangeRoleScreen> {
       ),
       body: Column(
         children: [
-          Container(
+          SizedBox(
               child: ClipRRect(
             borderRadius: BorderRadius.circular(100),
             child: CachedNetworkImage(
@@ -88,7 +85,7 @@ class _ChangeRoleScreenState extends State<ChangeRoleScreen> {
           infoTile(tile: "Unit Code", description: widget.userModel.uniCode),
           //  infoTile(tile: "Role", description: widget.userModel.role),
           Padding(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             child: Container(
               height: 8 * SizeConfig.heightMultiplier,
               width: 100 * SizeConfig.widthMultiplier,
@@ -101,7 +98,7 @@ class _ChangeRoleScreenState extends State<ChangeRoleScreen> {
                   Padding(
                     padding:
                         EdgeInsets.only(left: 12 * SizeConfig.widthMultiplier),
-                    child: Text("Role"),
+                    child: const Text("Role"),
                   ),
                   // SizedBox(
                   //   width: 7 * SizeConfig.widthMultiplier,
@@ -119,10 +116,10 @@ class _ChangeRoleScreenState extends State<ChangeRoleScreen> {
                         alignment: Alignment.topRight,
 
                         // isExpanded: true,
-                        underline: SizedBox(),
+                        underline: const SizedBox(),
                         items: ChangeRoleScreen.frequencyOptions
                             .map((description, value) {
-                              print(description);
+                              debugPrint(description);
                               return MapEntry(
                                   description,
                                   DropdownMenuItem<int>(
@@ -136,10 +133,10 @@ class _ChangeRoleScreenState extends State<ChangeRoleScreen> {
                         onChanged: (int newValue) {
                           if (newValue != null) {
                             setState(() {
-                              print(
+                              debugPrint(
                                   "role ${ChangeRoleScreen.frequencyOptions}");
 
-                              print(newValue);
+                              debugPrint(newValue.toString());
                               _frequencyValue = newValue;
 
                               Get.defaultDialog(
@@ -159,7 +156,7 @@ class _ChangeRoleScreenState extends State<ChangeRoleScreen> {
                                       onTap: () {
                                         OneContext().popDialog();
                                       },
-                                      child: Text("Cancel")),
+                                      child: const Text("Cancel")),
                                   title: "Change Role",
                                   middleText:
                                       "Do you want to change this role");
@@ -276,7 +273,7 @@ class _ChangeRoleScreenState extends State<ChangeRoleScreen> {
 
   Widget infoTile({String tile, String description}) {
     return Padding(
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       child: Container(
           height: 8 * SizeConfig.heightMultiplier,
           width: 100 * SizeConfig.widthMultiplier,
@@ -287,7 +284,7 @@ class _ChangeRoleScreenState extends State<ChangeRoleScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Text(tile),
-              Text(":"),
+              const Text(":"),
               Text(description),
             ],
           )),
