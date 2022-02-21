@@ -2,15 +2,19 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:one_context/one_context.dart';
+import 'package:rapid_response/Controller/guards_and_commitee_member_controller.dart';
 import 'package:rapid_response/Controller/user_athentication_controller.dart';
 import 'package:rapid_response/Model/user_model.dart';
+import 'package:rapid_response/Model/userinfo_referance_model.dart';
 import 'package:rapid_response/SizeConfig/size_config.dart';
 import 'package:rapid_response/Views/Constants/colors.dart';
 import 'package:rapid_response/Views/Widgets/progress_indicator_widget.dart';
 
 class ChangeRoleScreen extends StatefulWidget {
-  final UserModel userModel;
-  const ChangeRoleScreen({Key key, this.userModel}) : super(key: key);
+  final String userInfoID;
+  final UserInfoReferanceModel userModel;
+  const ChangeRoleScreen({Key key, this.userModel, this.userInfoID})
+      : super(key: key);
   static const Map<String, int> frequencyOptions = {
     "Guard": 222,
     "Comitee Members": 333,
@@ -25,6 +29,9 @@ class ChangeRoleScreen extends StatefulWidget {
 class _ChangeRoleScreenState extends State<ChangeRoleScreen> {
   UserAthenticationController userAthenticationController =
       Get.put(UserAthenticationController());
+  GuardsandMemberController guardsandMemberController =
+      Get.put(GuardsandMemberController());
+
   // int _frequencyValue = 000;
   int _frequencyValue;
   @override
@@ -32,11 +39,12 @@ class _ChangeRoleScreenState extends State<ChangeRoleScreen> {
     super.initState();
     setState(() {
       debugPrint("assign number is ${widget.userModel.assignNumber}");
-      _frequencyValue = widget.userModel.assignNumber;
+      _frequencyValue = widget.userModel.assignNumber.value;
     });
     debugPrint("frequescy is $_frequencyValue");
 
-    userAthenticationController.updateValue(widget.userModel.assignNumber);
+    userAthenticationController
+        .updateValue(widget.userModel.assignNumber.value);
     // print(user)
   }
 
@@ -68,7 +76,7 @@ class _ChangeRoleScreenState extends State<ChangeRoleScreen> {
             child: CachedNetworkImage(
               height: 8 * SizeConfig.heightMultiplier,
               width: 15 * SizeConfig.widthMultiplier,
-              imageUrl: widget.userModel.image,
+              imageUrl: widget.userModel.image.value,
               fit: BoxFit.cover,
               progressIndicatorBuilder: (context, url, downloadProgress) =>
                   const SmartDoubleBounceIndicatorWidget(),
@@ -79,10 +87,12 @@ class _ChangeRoleScreenState extends State<ChangeRoleScreen> {
           )),
           infoTile(
               tile: "Name", description: widget.userModel.name.toUpperCase()),
-          infoTile(tile: "Email", description: widget.userModel.email),
+          infoTile(tile: "Email", description: widget.userModel.email.value),
           infoTile(
-              tile: "Phone Number", description: widget.userModel.phoneNumber),
-          infoTile(tile: "Unit Code", description: widget.userModel.uniCode),
+              tile: "Phone Number",
+              description: widget.userModel.phoneNumber.value),
+          infoTile(
+              tile: "Unit Code", description: widget.userModel.uniCode.value),
           //  infoTile(tile: "Role", description: widget.userModel.role),
           Padding(
             padding: const EdgeInsets.all(8),
@@ -142,8 +152,10 @@ class _ChangeRoleScreenState extends State<ChangeRoleScreen> {
                               Get.defaultDialog(
                                   confirm: GestureDetector(
                                     onTap: () {
-                                      userAthenticationController.changeRole(
-                                          widget.userModel.id, _frequencyValue);
+                                      guardsandMemberController.changeRole(
+                                          widget.userModel.id,
+                                          _frequencyValue,
+                                          widget.userInfoID);
                                     },
                                     child: const Text(
                                       "Yes",

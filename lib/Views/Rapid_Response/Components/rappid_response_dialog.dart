@@ -11,8 +11,10 @@ import 'package:rapid_response/Views/Widgets/mytextfield.dart';
 
 class RapidResponseDialog extends StatefulWidget {
   final blur;
+  final String adminPropertyCode;
 
-  const RapidResponseDialog({Key key, this.blur = true}) : super(key: key);
+  const RapidResponseDialog({Key key, this.blur = true, this.adminPropertyCode})
+      : super(key: key);
 
   @override
   _RapidResponseDialogState createState() => _RapidResponseDialogState();
@@ -23,7 +25,11 @@ class _RapidResponseDialogState extends State<RapidResponseDialog> {
   @override
   void initState() {
     super.initState();
-    userAthenticationController.sendAlertDialog(0);
+    userAthenticationController.sendAlertDialog(
+        userAthenticationController.user.assignNumber == 111
+            ? widget.adminPropertyCode
+            : userAthenticationController.user.propertyCode);
+    print(userAthenticationController.user.propertyCode);
   }
 
   final UserAthenticationController userAthenticationController =
@@ -127,34 +133,42 @@ class _RapidResponseDialogState extends State<RapidResponseDialog> {
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: Colors.grey)),
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: DropdownButton<int>(
-                      isExpanded: true,
-                      underline: SizedBox(),
-                      items: frequencyOptions
-                          .map((description, value) {
-                            return MapEntry(
-                                description,
-                                DropdownMenuItem<int>(
-                                  value: value,
-                                  child: Text(description),
-                                ));
-                          })
-                          .values
-                          .toList(),
-                      value: _frequencyValue,
-                      onChanged: (int newValue) {
-                        if (newValue != null) {
-                          setState(() {
-                            print(newValue);
-                            _frequencyValue = newValue;
-                          });
-                        }
-                        userAthenticationController
-                            .sendAlertDialog(_frequencyValue);
-                      },
-                    ),
-                  ),
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text("Property Code :"),
+                          Text(userAthenticationController.user.propertyCode),
+                          SizedBox()
+                        ],
+                      )
+                      // DropdownButton<int>(
+                      //   isExpanded: true,
+                      //   underline: SizedBox(),
+                      //   items: frequencyOptions
+                      //       .map((description, value) {
+                      //         return MapEntry(
+                      //             description,
+                      //             DropdownMenuItem<int>(
+                      //               value: value,
+                      //               child: Text(description),
+                      //             ));
+                      //       })
+                      //       .values
+                      //       .toList(),
+                      //   value: _frequencyValue,
+                      //   onChanged: (int newValue) {
+                      //     if (newValue != null) {
+                      //       setState(() {
+                      //         print(newValue);
+                      //         _frequencyValue = newValue;
+                      //       });
+                      //     }
+                      //     userAthenticationController.sendAlertDialog(
+                      //         userAthenticationController.user.propertyCode);
+                      //   },
+                      // ),
+                      ),
                 ),
                 const SizedBox(
                   height: 10,

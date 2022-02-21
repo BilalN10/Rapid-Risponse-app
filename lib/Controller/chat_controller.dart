@@ -39,7 +39,8 @@ class ChatController extends GetxController {
   void onInit() {
     chatList.bindStream(getChatStream());
     availableRespoderList.bindStream(getAvailableRsponder());
-    adminList.bindStream(getAdminStream());
+    adminList
+        .bindStream(getAdminStream(userAthenticationController.user.adminId));
 
     chatReferance.bindStream(getChatReferanceStream());
 
@@ -165,26 +166,23 @@ class ChatController extends GetxController {
           .doc(userAthenticationController.users.uid)
           .collection("BroadcastChat")
           .doc(userAthenticationController.broadCastCChatId);
+      userAthenticationController.firebaseFirestore
+          .collection("Users")
+          .doc(userAthenticationController.user.adminId)
+          .collection("BroadcastChatEvent")
+          .add({"ChatReferance": cahtRef}).then((value) {
+        debugPrint("Referance add");
+      });
 
-      for (int i = 0; i < grtadminList.length; i++) {
-        debugPrint("admin id is ${grtadminList[i].id}");
-        userAthenticationController.firebaseFirestore
-            .collection("Users")
-            .doc(grtadminList[i].id)
-            .collection("BroadcastChatEvent")
-            .add({"ChatReferance": cahtRef}).then((value) {
-          debugPrint("Referance add");
-        });
-      }
       debugPrint("Event Closed");
       userAthenticationController.checkIsEventClosed();
     });
   }
 
-  Stream<List<UserModel>> getAdminStream() {
+  Stream<List<UserModel>> getAdminStream(String adminId) {
     return FirebaseFirestore.instance
         .collection('Users')
-        .where("assignNumber", isEqualTo: 111)
+        .where("adminId", isEqualTo: adminId)
         .snapshots()
         .map((QuerySnapshot query) {
       List<UserModel> retVal = List();

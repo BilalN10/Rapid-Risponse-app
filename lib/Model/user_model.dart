@@ -13,6 +13,9 @@ class UserModel {
   String roleImage;
   List<String> tokenList;
   bool isaAccountapprove = false;
+  String propertyCode;
+  String adminId;
+  String adminTokenId;
 
   UserModel(
       {this.email,
@@ -38,6 +41,10 @@ class UserModel {
     tokeID = data.data()["tokenId"] ?? "";
     roleImage = data.data()["roleImage"] ?? "";
     isaAccountapprove = data.data()["isaAccountapprove"];
+    propertyCode = data.data()["propertyCode"];
+    adminId = data.data()["adminId"];
+    adminTokenId = data.data()["adminTokenId"];
+    print("Admin id is  $adminId");
 
     print("user email is $email");
     print("phone Number $phoneNumber");

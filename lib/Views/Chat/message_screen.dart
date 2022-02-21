@@ -27,7 +27,7 @@ class _messagesState extends State<DoctorMessage> {
   @override
   void initState() {
     userAthenticationController.checkIsEventClosed();
-    chatController.getAdminStream();
+    chatController.getAdminStream(userAthenticationController.user.adminId);
 
     super.initState();
   }

@@ -8,14 +8,14 @@ import 'package:rapid_response/Views/Widgets/my_button.dart';
 import 'package:rapid_response/Views/Widgets/mytextfield.dart';
 import 'package:rapid_response/Views/Widgets/smart_button_indicator.dart';
 
-class SignupScreen extends StatefulWidget {
-  SignupScreen({Key key}) : super(key: key);
+class CreatePropertyScreen extends StatefulWidget {
+  CreatePropertyScreen({Key key}) : super(key: key);
 
   @override
-  State<SignupScreen> createState() => _SignupScreenState();
+  State<CreatePropertyScreen> createState() => _SignupScreenState();
 }
 
-class _SignupScreenState extends State<SignupScreen> {
+class _SignupScreenState extends State<CreatePropertyScreen> {
   final UserAthenticationController userAthenticationController =
       Get.put(UserAthenticationController());
 
@@ -58,10 +58,9 @@ class _SignupScreenState extends State<SignupScreen> {
                         return null;
                       }
                     },
-                    controller:
-                        userAthenticationController.signupUserNameController,
-                    hintText: "Name",
-                    icon: Icons.person,
+                    controller: userAthenticationController.addressController,
+                    hintText: "Address",
+                    icon: null,
                     isNumberField: false,
                   ),
                   // MyTextField(
@@ -80,16 +79,17 @@ class _SignupScreenState extends State<SignupScreen> {
                     validator: (value) {
                       if (value.isEmpty || value == null) {
                         return "Required";
-                      } else if (!GetUtils.isEmail(value)) {
-                        return "Invalid Email";
-                      } else {
+                      }
+                      //  else if (!GetUtils.isEmail(value)) {
+                      //   return "Invalid Email";
+                      // }
+                      else {
                         return null;
                       }
                     },
-                    controller:
-                        userAthenticationController.signupEmailController,
-                    hintText: "E-mail",
-                    icon: Icons.person,
+                    controller: userAthenticationController.cityController,
+                    hintText: "City",
+                    icon: null,
                     isNumberField: false,
                   ),
 
@@ -116,10 +116,9 @@ class _SignupScreenState extends State<SignupScreen> {
                         return null;
                       }
                     },
-                    controller:
-                        userAthenticationController.signupUnitCodeController,
-                    hintText: "Unit Code",
-                    icon: Icons.qr_code,
+                    controller: userAthenticationController.provinceController,
+                    hintText: "Province",
+                    icon: null,
                     isNumberField: false,
                   ),
 
@@ -148,35 +147,33 @@ class _SignupScreenState extends State<SignupScreen> {
                       }
                     },
                     controller:
-                        userAthenticationController.signupPhoneNumberController,
-                    hintText: "Phone Number",
-                    icon: Icons.phone_iphone_sharp,
+                        userAthenticationController.postalCodeController,
+                    hintText: "Postal code",
+                    icon: null,
                     isNumberField: true,
                   ),
                   SizedBox(
                     height: 1 * SizeConfig.heightMultiplier,
                   ),
-                  userAthenticationController.assignNumber == 111
-                      ? SizedBox()
-                      : MyTextField(
-                          isPass: false,
-                          validator: (value) {
-                            if (value.isEmpty || value == null) {
-                              return "Required";
-                            }
-                            //  else if (!GetUtils.isEmail(value)) {
-                            //   return "Invalid Email";
-                            // }
-                            else {
-                              return null;
-                            }
-                          },
-                          controller: userAthenticationController
-                              .signupPropertyCodeController,
-                          hintText: "Property code",
-                          icon: null,
-                          isNumberField: false,
-                        ),
+                  MyTextField(
+                    isPass: false,
+                    validator: (value) {
+                      if (value.isEmpty || value == null) {
+                        return "Required";
+                      }
+                      //  else if (!GetUtils.isEmail(value)) {
+                      //   return "Invalid Email";
+                      // }
+                      else {
+                        return null;
+                      }
+                    },
+                    controller:
+                        userAthenticationController.propertyCodeController,
+                    hintText: "Property code",
+                    icon: null,
+                    isNumberField: false,
+                  ),
 
                   // MyTextField(
                   //   isNumberField: true,
@@ -190,57 +187,57 @@ class _SignupScreenState extends State<SignupScreen> {
                     height: 1 * SizeConfig.heightMultiplier,
                   ),
                   //Password textField
-                  MypassWordField(
-                    isPass: true,
-                    validator: (value) {
-                      if (value.isEmpty || value == null) {
-                        return "Required";
-                      } else if (value.length < 8) {
-                        return "Password too short";
-                      } else {
-                        return null;
-                      }
-                    },
-                    controller:
-                        userAthenticationController.signupPasswordController,
-                    hintText: "Password",
-                    icon: Icons.lock,
-                    isNumberField: false,
-                  ),
-
-                  // MyTextField(
-                  //   isNumberField: false,
-                  //   hintText: "Password",
-                  //   icon: Icons.lock,
+                  // MypassWordField(
+                  //   isPass: true,
+                  //   validator: (value) {
+                  //     if (value.isEmpty || value == null) {
+                  //       return "Required";
+                  //     } else if (value.length < 8) {
+                  //       return "Password too short";
+                  //     } else {
+                  //       return null;
+                  //     }
+                  //   },
                   //   controller:
                   //       userAthenticationController.signupPasswordController,
+                  //   hintText: "Password",
+                  //   icon: Icons.lock,
+                  //   isNumberField: false,
                   // ),
-                  SizedBox(
-                    height: 1 * SizeConfig.heightMultiplier,
-                  ),
-                  //User name textField
-                  MypassWordField(
-                    isPass: true,
-                    validator: (value) {
-                      if (value.isEmpty || value == null) {
-                        return "Required";
-                      } else if (value.length < 8) {
-                        return "Password too short";
-                      } else if (userAthenticationController
-                              .signupPasswordController.text !=
-                          userAthenticationController
-                              .signupConfirmPasswordController.text) {
-                        return "Password did not macth";
-                      } else {
-                        return null;
-                      }
-                    },
-                    controller: userAthenticationController
-                        .signupConfirmPasswordController,
-                    hintText: "Password Confirmation",
-                    icon: Icons.lock,
-                    isNumberField: false,
-                  ),
+
+                  // // MyTextField(
+                  // //   isNumberField: false,
+                  // //   hintText: "Password",
+                  // //   icon: Icons.lock,
+                  // //   controller:
+                  // //       userAthenticationController.signupPasswordController,
+                  // // ),
+                  // SizedBox(
+                  //   height: 1 * SizeConfig.heightMultiplier,
+                  // ),
+                  // //User name textField
+                  // MypassWordField(
+                  //   isPass: true,
+                  //   validator: (value) {
+                  //     if (value.isEmpty || value == null) {
+                  //       return "Required";
+                  //     } else if (value.length < 8) {
+                  //       return "Password too short";
+                  //     } else if (userAthenticationController
+                  //             .signupPasswordController.text !=
+                  //         userAthenticationController
+                  //             .signupConfirmPasswordController.text) {
+                  //       return "Password did not macth";
+                  //     } else {
+                  //       return null;
+                  //     }
+                  //   },
+                  //   controller: userAthenticationController
+                  //       .signupConfirmPasswordController,
+                  //   hintText: "Password Confirmation",
+                  //   icon: Icons.lock,
+                  //   isNumberField: false,
+                  // ),
 
                   // MyTextField(
                   //   isNumberField: false,
@@ -259,7 +256,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             color: MyColors.primary,
                             defaultWidget: Container(
                               child: Text(
-                                "Sign up",
+                                "Create Property",
                                 textAlign: TextAlign.right,
                                 style: TextStyle(
                                     fontSize: 1.6 * SizeConfig.textMultiplier,
@@ -272,8 +269,8 @@ class _SignupScreenState extends State<SignupScreen> {
                             type: ProgressButtonType.Flat,
                             height: 56,
                             onPressed: () async {
-                              userAthenticationController
-                                  .isSignUpLoading.value = true;
+                              // userAthenticationController
+                              //     .isSignUpLoading.value = true;
 
                               _inputValidation();
 
@@ -319,23 +316,23 @@ class _SignupScreenState extends State<SignupScreen> {
                   SizedBox(
                     height: 1.5 * SizeConfig.heightMultiplier,
                   ),
-                  TextButton(
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        'I Already have accout, Login Now.',
-                        style: TextStyle(
-                            color: MyColors.grey,
-                            fontSize: 1.5 * SizeConfig.textMultiplier,
-                            decoration: TextDecoration.underline,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    onPressed: () {
-                      Get.back();
-                      //OneContext().pop();
-                    },
-                  ),
+                  // TextButton(
+                  //   child: Align(
+                  //     alignment: Alignment.center,
+                  //     child: Text(
+                  //       'I Already have accout, Login Now.',
+                  //       style: TextStyle(
+                  //           color: MyColors.grey,
+                  //           fontSize: 1.5 * SizeConfig.textMultiplier,
+                  //           decoration: TextDecoration.underline,
+                  //           fontWeight: FontWeight.bold),
+                  //     ),
+                  //   ),
+                  //   onPressed: () {
+                  //     Get.back();
+                  //     //OneContext().pop();
+                  //   },
+                  // ),
                 ],
               ),
             ),
@@ -347,19 +344,9 @@ class _SignupScreenState extends State<SignupScreen> {
 
   void _inputValidation() {
     if (_formKey.currentState.validate()) {
-      userAthenticationController.signUP(
-          propertyCode:
-              userAthenticationController.signupPropertyCodeController.text,
-          password: userAthenticationController.signupPasswordController.text,
-          confirmPassword:
-              userAthenticationController.signupPasswordController.text,
-          email: userAthenticationController.signupEmailController.text,
-          unitCode: userAthenticationController.signupUnitCodeController.text,
-          phoneNumber: int.parse(
-              userAthenticationController.signupPhoneNumberController.text),
-          userName: userAthenticationController.signupUserNameController.text);
+      userAthenticationController.createProerty();
     } else {
-      userAthenticationController.isSignUpLoading.value = false;
+      // userAthenticationController.isSignUpLoading.value = false;
     }
   }
 }

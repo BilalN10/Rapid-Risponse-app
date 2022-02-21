@@ -14,6 +14,8 @@ import 'change_role.dart';
 
 class TaskAssignScreen extends StatefulWidget {
   static String tag = 'task-page';
+  final String userInfoID;
+  TaskAssignScreen({this.userInfoID});
 
   @override
   _TaskAssignScreenScreenState createState() =>
@@ -21,6 +23,15 @@ class TaskAssignScreen extends StatefulWidget {
 }
 
 class _TaskAssignScreenScreenState extends State<TaskAssignScreen> {
+  GuardsandMemberController guardsandMemberController =
+      Get.put(GuardsandMemberController());
+
+  @override
+  void initState() {
+    guardsandMemberController.getuserInfo(widget.userInfoID);
+    super.initState();
+  }
+
   void hideKeyboard(BuildContext context) {
     FocusScopeNode currentFocus = FocusScope.of(context);
     if (!currentFocus.hasPrimaryFocus && currentFocus.focusedChild != null) {
@@ -67,147 +78,175 @@ class _TaskAssignScreenScreenState extends State<TaskAssignScreen> {
             backgroundColor: Colors.transparent,
           ),
           backgroundColor: Colors.white,
-          body: GestureDetector(
-              onTap: () {
-                // When running in iOS, dismiss the keyboard when any Tap happens outside a TextField
-                if (Platform.isIOS) hideKeyboard(context);
-              },
-              child: Container(
-                color: MyColors.grey_2,
-                // alignment: Alignment.centerLeft,
-                alignment: Alignment.topCenter,
-                child: SafeArea(
-                  child: GetX<GuardsandMemberController>(
-                      init: Get.find<GuardsandMemberController>(),
-                      builder: (controller) {
-                        if (controller != null &&
-                            controller.herlperList != null) {
-                          return ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: controller.herlperList.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return GestureDetector(
-                                    onTap: () {
-                                      Get.to(() => ChangeRoleScreen(
-                                            userModel:
-                                                controller.herlperList[index],
-                                          ));
-                                    },
-                                    child: Container(
-                                        margin: const EdgeInsets.only(top: 4),
-                                        color: MyColors.white,
-                                        padding: const EdgeInsets.only(
-                                            left: 16,
-                                            top: 16,
-                                            right: 8,
-                                            bottom: 16),
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                                child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(100),
-                                              child: CachedNetworkImage(
-                                                height: 8 *
-                                                    SizeConfig.heightMultiplier,
-                                                width: 15 *
-                                                    SizeConfig.widthMultiplier,
-                                                imageUrl: controller
-                                                    .herlperList[index].image,
-                                                fit: BoxFit.cover,
-                                                progressIndicatorBuilder: (context,
-                                                        url,
-                                                        downloadProgress) =>
-                                                    const SmartDoubleBounceIndicatorWidget(),
-                                                errorWidget: (context, url,
-                                                        error) =>
-                                                    Image.asset(
-                                                        'assets/images/profile-deleted.png',
-                                                        fit: BoxFit.cover),
-                                              ),
-                                            )),
-                                            // Container(
-                                            //   margin: EdgeInsets.only(right: 8),
-                                            //   height: 56,
-                                            //   width: 56,
-                                            //   alignment: Alignment.center,
-                                            //   decoration: BoxDecoration(
-                                            //       color: MyColors.primary,
-                                            //       shape: BoxShape.circle),
-                                            //   child: Image.asset(controller
-                                            //       .herlperList[index]
-                                            //       .roleImage ),
-                                            // ),
-                                            SizedBox(
-                                              width: 2 *
-                                                  SizeConfig.widthMultiplier,
-                                            ),
-                                            Expanded(
-                                                child: Column(
-                                              children: [
-                                                Align(
-                                                  alignment:
-                                                      AlignmentDirectional
-                                                          .centerStart,
-                                                  child: Text(
-                                                    controller
-                                                        .herlperList[index].name
-                                                        .toUpperCase(),
-                                                    style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color:
-                                                            MyColors.primary),
-                                                  ),
-                                                ),
-                                                Container(
-                                                    child: Row(
-                                                  children: [
-                                                    Image.asset(controller
-                                                        .herlperList[index]
-                                                        .roleImage
-                                                        .trim()),
-                                                    Container(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 4),
-                                                      child: Text(
-                                                        controller
-                                                            .herlperList[index]
-                                                            .role,
-                                                        style: const TextStyle(
-                                                            color:
-                                                                MyColors.grey),
-                                                      ),
+          body:
+              // Container()
+              GestureDetector(
+                  onTap: () {
+                    // When running in iOS, dismiss the keyboard when any Tap happens outside a TextField
+                    if (Platform.isIOS) hideKeyboard(context);
+                  },
+                  child: Container(
+                    color: MyColors.grey_2,
+                    // alignment: Alignment.centerLeft,
+                    alignment: Alignment.topCenter,
+                    child: SafeArea(
+                      child: GetX<GuardsandMemberController>(
+                          init: Get.find<GuardsandMemberController>(),
+                          builder: (controller) {
+                            if (controller != null &&
+                                controller.getuserInfoList != null) {
+                              return ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: controller.getuserInfoList.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return GestureDetector(
+                                        onTap: () {
+                                          Get.to(() => ChangeRoleScreen(
+                                                userInfoID: widget.userInfoID,
+                                                userModel: controller
+                                                    .getuserInfoList[index],
+                                              ));
+                                        },
+                                        child: Container(
+                                            margin:
+                                                const EdgeInsets.only(top: 4),
+                                            color: MyColors.white,
+                                            padding: const EdgeInsets.only(
+                                                left: 16,
+                                                top: 16,
+                                                right: 8,
+                                                bottom: 16),
+                                            child: Obx(
+                                              () => controller
+                                                          .getuserInfoList[
+                                                              index]
+                                                          .roleImage
+                                                          .value !=
+                                                      null
+                                                  ? Row(
+                                                      children: [
+                                                        Container(
+                                                            child: ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      100),
+                                                          child:
+                                                              CachedNetworkImage(
+                                                            height: 8 *
+                                                                SizeConfig
+                                                                    .heightMultiplier,
+                                                            width: 15 *
+                                                                SizeConfig
+                                                                    .widthMultiplier,
+                                                            imageUrl: controller
+                                                                .getuserInfoList[
+                                                                    index]
+                                                                .image
+                                                                .value,
+                                                            fit: BoxFit.cover,
+                                                            progressIndicatorBuilder:
+                                                                (context, url,
+                                                                        downloadProgress) =>
+                                                                    const SmartDoubleBounceIndicatorWidget(),
+                                                            errorWidget: (context,
+                                                                    url,
+                                                                    error) =>
+                                                                Image.asset(
+                                                                    'assets/images/profile-deleted.png',
+                                                                    fit: BoxFit
+                                                                        .cover),
+                                                          ),
+                                                        )),
+                                                        SizedBox(
+                                                          width: 2 *
+                                                              SizeConfig
+                                                                  .widthMultiplier,
+                                                        ),
+                                                        Expanded(
+                                                            child: Column(
+                                                          children: [
+                                                            Align(
+                                                              alignment:
+                                                                  AlignmentDirectional
+                                                                      .centerStart,
+                                                              child: Text(
+                                                                controller
+                                                                    .getuserInfoList[
+                                                                        index]
+                                                                    .name
+                                                                    .toUpperCase(),
+                                                                style: const TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: MyColors
+                                                                        .primary),
+                                                              ),
+                                                            ),
+                                                            Center(
+                                                              child: Container(
+                                                                  child: Row(
+                                                                children: [
+                                                                  Image.asset(controller
+                                                                      .getuserInfoList[
+                                                                          index]
+                                                                      .roleImage
+                                                                      .value),
+                                                                  Container(
+                                                                    padding: const EdgeInsets
+                                                                            .only(
+                                                                        left:
+                                                                            4),
+                                                                    child: Text(
+                                                                      controller
+                                                                          .getuserInfoList[
+                                                                              index]
+                                                                          .role
+                                                                          .value,
+                                                                      style: const TextStyle(
+                                                                          color:
+                                                                              MyColors.grey),
+                                                                    ),
+                                                                  )
+                                                                ],
+                                                              )),
+                                                            ),
+                                                          ],
+                                                        )),
+                                                        Align(
+                                                          alignment:
+                                                              AlignmentDirectional
+                                                                  .centerEnd,
+                                                          child: Container(
+                                                            margin:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    left: 8.0),
+                                                            height: 20,
+                                                            width: 20,
+                                                            alignment: Alignment
+                                                                .center,
+                                                            child: const Icon(
+                                                              Icons
+                                                                  .keyboard_arrow_right,
+                                                              color:
+                                                                  MyColors.grey,
+                                                            ),
+                                                          ),
+                                                        )
+                                                      ],
                                                     )
-                                                  ],
-                                                )),
-                                              ],
-                                            )),
-                                            Align(
-                                              alignment: AlignmentDirectional
-                                                  .centerEnd,
-                                              child: Container(
-                                                margin: const EdgeInsets.only(
-                                                    left: 8.0),
-                                                height: 20,
-                                                width: 20,
-                                                alignment: Alignment.center,
-                                                child: const Icon(
-                                                  Icons.keyboard_arrow_right,
-                                                  color: MyColors.grey,
-                                                ),
-                                              ),
-                                            )
-                                          ],
-                                        )));
-                              });
-                        } else {
-                          return const CircularProgressIndicator();
-                        }
-                      }),
-                ),
-              )),
+                                                  : CircularProgressIndicator(),
+                                            )));
+                                  });
+                            } else {
+                              return const CircularProgressIndicator();
+                            }
+                          }),
+                    ),
+                  )),
         ));
   }
 

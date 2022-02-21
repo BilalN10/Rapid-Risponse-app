@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:one_context/one_context.dart';
+import 'package:rapid_response/Controller/guards_and_commitee_member_controller.dart';
 import 'package:rapid_response/Controller/user_athentication_controller.dart';
 import 'package:rapid_response/Model/bottom_navbar_model.dart';
 import 'package:rapid_response/Model/item_model.dart';
@@ -10,9 +11,11 @@ import 'package:rapid_response/SizeConfig/size_config.dart';
 import 'package:rapid_response/Views/ClosedEvents/closed_events.dart';
 import 'package:rapid_response/Views/Constants/colors.dart';
 import 'package:rapid_response/Views/Constants/mydialog.dart';
+import 'package:rapid_response/Views/CreateProperty/create_property_screen.dart';
 import 'package:rapid_response/Views/Incident_calls/incident_calls_screen.dart';
 import 'package:rapid_response/Views/NotificationForApproveAccount/approve_notificatio_screen.dart';
 import 'package:rapid_response/Views/TaskScreen/compnent/assign_task_screen.dart';
+import 'package:rapid_response/Views/TaskScreen/property_screen.dart';
 import 'package:rapid_response/Views/TaskScreen/task_screen.dart';
 import 'package:rapid_response/Views/UserProfile/user_profile.dart';
 import 'package:rapid_response/Views/Widgets/my_button.dart';
@@ -39,6 +42,8 @@ class _RapidResponseScreenState extends State<RapidResponseScreen>
   ];
   UserAthenticationController userAthenticationController =
       Get.find<UserAthenticationController>();
+  GuardsandMemberController guardsandMemberController =
+      Get.put(GuardsandMemberController());
 
   TabController tabController;
   int selectedIndex = 0;
@@ -49,6 +54,7 @@ class _RapidResponseScreenState extends State<RapidResponseScreen>
   void initState() {
     super.initState();
     userAthenticationController.getUser();
+
     print("user data is ${userAthenticationController.googleSignInAccount}");
 
     tabController = TabController(length: 2, vsync: this);
@@ -213,7 +219,8 @@ class _RapidResponseScreenState extends State<RapidResponseScreen>
                     onTap: () {
                       if (userAthenticationController.user.assignNumber ==
                           111) {
-                        Get.to(() => TaskAssignScreen());
+                        Get.to(() => PropertyScreen() //TaskAssignScreen()
+                            );
                       } else {
                         MyDialog.sigleButtonDailog(
                             title: "For Admin",
@@ -252,6 +259,24 @@ class _RapidResponseScreenState extends State<RapidResponseScreen>
                       }
                     },
                   ),
+                  ListTile(
+                    title: const Text('Create Property'),
+                    onTap: () {
+                      if (userAthenticationController.user.assignNumber ==
+                          111) {
+                        Get.to(() => CreatePropertyScreen());
+                      } else {
+                        MyDialog.sigleButtonDailog(
+                            title: "For Admin",
+                            middleText: "This feature is only for addmins",
+                            buttonText: "OK",
+                            function: () {
+                              OneContext().popDialog();
+                            });
+                      }
+                    },
+                  ),
+
                   // ListTile(
                   //   title: const Text('Reponse Screen'),
                   //   onTap: () {
@@ -578,13 +603,13 @@ class _RapidResponseScreenState extends State<RapidResponseScreen>
                                                           .Flat,
                                                       height: 56,
                                                       onPressed: () async {
-                                                        OneContext().showDialog(
-                                                            builder:
-                                                                (BuildContext
-                                                                    context) {
-                                                          return const RapidResponseDialog(
-                                                              blur: false);
-                                                        });
+                                                        // OneContext().showDialog(
+                                                        //     builder:
+                                                        //         (BuildContext
+                                                        //             context) {
+                                                        //   return const RapidResponseDialog(
+                                                        //       blur: false);
+                                                        // });
                                                       },
                                                     ),
                                                   )
@@ -613,12 +638,21 @@ class _RapidResponseScreenState extends State<RapidResponseScreen>
                                                 type: ProgressButtonType.Flat,
                                                 height: 56,
                                                 onPressed: () async {
-                                                  OneContext().showDialog(
-                                                      builder: (BuildContext
-                                                          context) {
-                                                    return const RapidResponseDialog(
-                                                        blur: false);
-                                                  });
+                                                  userAthenticationController
+                                                              .user
+                                                              .assignNumber ==
+                                                          111
+                                                      ? selectPropertyDialog()
+                                                      : OneContext().showDialog(
+                                                          builder: (BuildContext
+                                                              context) {
+                                                          return RapidResponseDialog(
+                                                              adminPropertyCode:
+                                                                  guardsandMemberController
+                                                                      .adminPropertyCode
+                                                                      .value,
+                                                              blur: false);
+                                                        });
                                                   //Get.to(() => const FacilityCode());
                                                 },
                                               ),
@@ -659,6 +693,115 @@ class _RapidResponseScreenState extends State<RapidResponseScreen>
                 ],
               ),
             )));
+  }
+
+  selectPropertyDialog() {
+    Get.defaultDialog(
+        actions: [
+          guardsandMemberController.propertyList.isEmpty
+              ? const SizedBox()
+              : Obx(
+                  () => DropdownButton<String>(
+                    value: guardsandMemberController.adminPropertyCode.value,
+                    icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                    iconSize: 24,
+                    elevation: 16,
+                    // style: const TextStyle(color: Colors.deepPurple),
+                    // underline: Container(
+                    //   height: 2,
+                    //   //color: Colors.deepPurpleAccent,
+                    // ),
+                    onChanged: (String newValue) {
+                      setState(() {
+                        guardsandMemberController.adminPropertyCode.value =
+                            newValue;
+                      });
+                    },
+                    items: guardsandMemberController.propertyList
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              SizedBox(
+                height: 4 * SizeConfig.heightMultiplier,
+                width: 20 * SizeConfig.widthMultiplier,
+                child: ProgressButton(
+                  color: MyColors.grey,
+                  defaultWidget: Container(
+                    child: const Text(
+                      "Cancel",
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                          // fontWeight: FontWeight.bold
+                          color: Colors.white),
+                    ),
+                  ),
+                  progressWidget: const SmartButtonIndicatorWidget(),
+                  borderRadius: 12,
+                  type: ProgressButtonType.Flat,
+                  height: 56,
+                  onPressed: () {
+                    OneContext().popDialog();
+                  },
+                ),
+              ),
+              SizedBox(
+                height: 4 * SizeConfig.heightMultiplier,
+                width: 20 * SizeConfig.widthMultiplier,
+                child: ProgressButton(
+                  color: MyColors.primary,
+                  defaultWidget: Container(
+                    child: const Text(
+                      "OK",
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                          // fontWeight: FontWeight.bold
+                          color: Colors.white),
+                    ),
+                  ),
+                  progressWidget: const SmartButtonIndicatorWidget(),
+                  borderRadius: 12,
+                  type: ProgressButtonType.Flat,
+                  height: 56,
+                  onPressed: () {
+                    guardsandMemberController.propertyList.isEmpty
+                        ? OneContext().popDialog()
+                        : userAthenticationController.firebaseFirestore
+                            .collection("Users")
+                            .doc(userAthenticationController.users.uid)
+                            .update({
+                            "propertyCode": guardsandMemberController
+                                .adminPropertyCode.value
+                          }).then((value) {
+                            OneContext().popDialog();
+                            print("Updated");
+                            OneContext().showDialog(
+                                builder: (BuildContext context) {
+                              return RapidResponseDialog(
+                                  adminPropertyCode: guardsandMemberController
+                                      .adminPropertyCode.value,
+                                  blur: false);
+                            });
+                          }).catchError((e) {
+                            Get.snackbar("Error", e.toString());
+                          });
+                  },
+                ),
+              ),
+            ],
+          )
+        ],
+        title: "Select the Property code",
+        middleText: guardsandMemberController.propertyList.isEmpty
+            ? "Please create the propety first to send the alert"
+            : "Please Select the property code first to send the alert");
   }
 
   Widget list() {

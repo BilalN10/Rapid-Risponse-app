@@ -5,6 +5,7 @@ import 'package:rapid_response/SizeConfig/size_config.dart';
 import 'package:rapid_response/Views/Authentication/reset_password_screen.dart';
 import 'package:rapid_response/Views/Authentication/sign_up_screen.dart';
 import 'package:rapid_response/Views/Constants/colors.dart';
+import 'package:rapid_response/Views/Constants/mydialog.dart';
 import 'package:rapid_response/Views/Rapid_Response/rapid_response.dart';
 import 'package:rapid_response/Views/Widgets/my_button.dart';
 import 'package:rapid_response/Views/Widgets/mytextfield.dart';
@@ -22,7 +23,7 @@ class _SigninScreenState extends State<SigninScreen> {
       Get.put(UserAthenticationController());
   @override
   void initState() {
-    userAthenticationController.sendAlertDialog(111);
+    // userAthenticationController.sendAlertDialog(111);
     userAthenticationController.auth.signOut();
     userAthenticationController.googleSignIn.signOut();
     super.initState();
@@ -240,7 +241,11 @@ class _SigninScreenState extends State<SigninScreen> {
                       type: ProgressButtonType.Flat,
                       height: 56,
                       onPressed: () async {
-                        userAthenticationController.googleLogin();
+                        userAthenticationController.assignNumber == 111
+                            ? userAthenticationController.googleLogin()
+                            : bottomSheet();
+
+                        // ;
                       },
                     ),
                     SizedBox(
@@ -272,7 +277,7 @@ class _SigninScreenState extends State<SigninScreen> {
                       height: 56,
                       onPressed: () async {
                         // userAthenticationController.googleSignout()
-                        Get.to(() => RapidResponseScreen());
+                        //  Get.to(() => RapidResponseScreen());
                       },
                     ),
                     SizedBox(
@@ -334,6 +339,84 @@ class _SigninScreenState extends State<SigninScreen> {
         ),
       ),
     );
+  }
+
+  bottomSheet() {
+    userAthenticationController.signinPropertyCodeController.clear();
+
+    showModalBottomSheet(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
+        backgroundColor: Colors.white,
+        context: context,
+        isScrollControlled: true,
+        builder: (context) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 18),
+              child: Container(
+                height: 50 * SizeConfig.heightMultiplier,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    // Padding(
+                    //   padding: const EdgeInsets.symmetric(
+                    //       horizontal: 12.0),
+                    //   child: Text(
+                    //     'Enter your address',
+                    //     //style: TextStyles.textBody2
+                    //   ),
+                    // ),
+                    SizedBox(
+                      height: 8.0,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).viewInsets.bottom),
+                      child: TextField(
+                        controller: userAthenticationController
+                            .signinPropertyCodeController,
+                        decoration: const InputDecoration(
+                            //                               border: OutlineInputBorder(
+                            // borderRadius: BorderRadius.circular(10),
+                            // borderSide:
+                            //     const BorderSide(width: 2, color: MyColors.input_border)),
+
+                            hintText: 'Enter Property Code'),
+                        // autofocus: true,
+
+                        // controller: _newMediaLinkAddressController,
+                      ),
+                    ),
+                    SizedBox(height: 30),
+                    ProgressButton(
+                      color: MyColors.primary,
+                      defaultWidget: Container(
+                        child: Text(
+                          "OK",
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                              fontSize: 2 * SizeConfig.textMultiplier,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        ),
+                      ),
+                      progressWidget: const SmartButtonIndicatorWidget(),
+                      borderRadius: 12,
+                      type: ProgressButtonType.Flat,
+                      height: 56,
+                      onPressed: () async {
+                        userAthenticationController.googleLogin();
+                        // userAthenticationController
+                        //     .isSignInLoading.value = true;
+                        // _inputValidation();
+                        //Get.to(() => const RapidResponseScreen());
+                        //OneContext().pushNamed(Routes.rapid_response_screen);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ));
   }
 
   void _inputValidation() {

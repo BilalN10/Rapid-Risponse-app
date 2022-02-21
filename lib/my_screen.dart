@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-class MyScreen extends StatefulWidget {
-  const MyScreen({Key key}) : super(key: key);
+class MyScreen1 extends StatefulWidget {
+  const MyScreen1({Key key}) : super(key: key);
 
   @override
   _MYScreenState createState() => _MYScreenState();
 }
 
-class _MYScreenState extends State<MyScreen> {
+class _MYScreenState extends State<MyScreen1> {
   bool isChecked = false;
   bool isTwoChecked = false;
   bool isThreeChecked = false;

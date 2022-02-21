@@ -37,6 +37,8 @@ class UserAthenticationController extends GetxController {
   TextEditingController signupUserNameController = TextEditingController();
   TextEditingController signupUnitCodeController = TextEditingController();
   TextEditingController signupPhoneNumberController = TextEditingController();
+  TextEditingController signupPropertyCodeController = TextEditingController();
+
   TextEditingController signupConfirmPasswordController =
       TextEditingController();
   TextEditingController email = TextEditingController();
@@ -48,6 +50,8 @@ class UserAthenticationController extends GetxController {
   //Sign in Controller
   TextEditingController signinEmailController = TextEditingController();
   TextEditingController signinPasswordController = TextEditingController();
+  TextEditingController signinPropertyCodeController = TextEditingController();
+
 //Reset email Textfield
   TextEditingController resetEmailController = TextEditingController();
 
@@ -56,6 +60,14 @@ class UserAthenticationController extends GetxController {
   TextEditingController editPhonenumber = TextEditingController();
   //Message controller
   TextEditingController messageController = TextEditingController();
+
+  //Create property Controller
+  TextEditingController addressController = TextEditingController();
+  TextEditingController cityController = TextEditingController();
+  TextEditingController provinceController = TextEditingController();
+  TextEditingController postalCodeController = TextEditingController();
+  TextEditingController propertyController = TextEditingController();
+  TextEditingController propertyCodeController = TextEditingController();
 
   // Firebase
   final auth = FirebaseAuth.instance;
@@ -306,27 +318,6 @@ class UserAthenticationController extends GetxController {
     });
   }
 
-  void changeRole(String id, int assigValue) {
-    String role;
-    if (assigValue == 222) {
-      role = "Guard";
-    } else if (assigValue == 333) {
-      role = "Commitee member";
-    } else if (assigValue == 444) {
-      role = "Resident";
-    }
-    firebaseFirestore.collection("Users").doc(id).update({
-      "role": role,
-      "assignNumber": assigValue,
-    }).then((value) {
-      debugPrint("Updated");
-      //Get.snackbar("Role Updated", "Role changed successfully");
-      OneContext().popDialog();
-    }).catchError((e) {
-      debugPrint("Error $e");
-    });
-  }
-
   void checkUserAccountSatus() {
     firebaseFirestore.collection("Users").doc(users.uid).get().then((value) {
       if (value.data()["assignNumber"] != 111) {
@@ -386,6 +377,78 @@ class UserAthenticationController extends GetxController {
       print("message not send error is $e");
     });
   }
+  //Create property mthode
+
+  void createProerty() {
+    Map<String, dynamic> propertyDetail = {
+      "address": addressController.text,
+      "city": cityController.text,
+      "province": provinceController.text,
+      "postalCode": postalCodeController.text,
+      "propertyCode": propertyCodeController.text,
+      "adminId": users.uid,
+      "tokenId": user.tokeID,
+      "date": DateTime.now()
+    };
+
+    // firebaseFirestore.collection("Properties")
+    //     .doc(propertyCodeController.text).get().then((value) => null)
+    DocumentReference docRef = firebaseFirestore
+        .collection('Properties')
+        .doc(propertyCodeController.text);
+    docRef.get().then((value) {
+      if (value.exists) {
+        MyDialog.sigleButtonDailog(
+            buttonText: "Ok",
+            title: "Property alread Created",
+            middleText:
+                "Property alredy created in this code Please change the property code",
+            function: () {
+              OneContext().popDialog();
+            });
+      } else {
+        firebaseFirestore
+            .collection("Properties")
+            .doc(propertyCodeController.text)
+            .set(propertyDetail)
+            .then((value) {
+          firebaseFirestore
+              .collection("Users")
+              .doc(users.uid)
+              .collection("GeneratedProperty")
+              .doc(propertyCodeController.text)
+              .set(propertyDetail)
+              .then((value) {
+            clearController();
+            MyDialog.sigleButtonDailog(
+                buttonText: "Ok",
+                title: "Property Created",
+                middleText: "Property created Succefully",
+                function: () {
+                  OneContext().popDialog();
+                });
+          }).catchError((e) {
+            Get.snackbar("Error", e.toString());
+          });
+        }).catchError((e) {
+          Get.snackbar("Error", e.toString());
+        });
+      }
+    }).catchError((e) {
+      Get.snackbar("Error", e.toString());
+    });
+
+    //
+  }
+
+  //proprty Controller Cleat methode
+  void clearController() {
+    addressController.clear();
+    cityController.clear();
+    propertyCodeController.clear();
+    postalCodeController.clear();
+    provinceController.clear();
+  }
   //Available  responder methode
 
   void availabeResponderMthode(String status) {
@@ -412,125 +475,307 @@ class UserAthenticationController extends GetxController {
   void googleLogin() async {
     var status = await OneSignal.shared.getDeviceState();
     String tokenID = status.userId;
+    String adminId;
+    String adminTokenId;
+
+    if (assignNumber != 111) {
+      DocumentReference docRef = firebaseFirestore
+          .collection('Properties')
+          .doc(signinPropertyCodeController.text);
+
+      docRef.get().then((value) async {
+        if (value.exists) {
+          adminTokenId = value.data()["tokenId"];
+          adminId = value.data()["adminId"];
+
+          final GoogleSignInAccount googleUser = await googleSignIn.signIn();
+          final GoogleSignInAuthentication googleAuth =
+              await googleUser.authentication;
+
+          final AuthCredential credential = GoogleAuthProvider.credential(
+              idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
+          print("user credential ${credential.token}");
+
+          final UserCredential authResult =
+              await auth.signInWithCredential(credential);
+          Map<String, dynamic> userdata = {
+            "adminId": adminId,
+            "adminTokenId": adminTokenId,
+            "name": authResult.user.displayName,
+            "email": authResult.user.email,
+            "image": authResult.user.photoURL,
+            "phoneNumber": authResult.user.phoneNumber ?? 0,
+            "role": defineRole,
+            "assignNumber": assignNumber,
+            "roleImage": roleImage,
+            "tokenId": tokenID,
+            "isaAccountapprove": assignNumber == 111 ? true : false,
+            "unitCode": "",
+            "propertyCode": signinPropertyCodeController.text,
+            "date": DateTime.now()
+          };
+          var now = DateTime.now();
+          // var _updateTime = DateTime(
+          //     now.year, now.month, now.day - 1, now.hour, now.minute, now.second);
+          if (authResult.additionalUserInfo.isNewUser) {
+            String userIdForNotification;
+
+            FirebaseFirestore.instance
+                .collection("Users")
+                .doc(authResult.user.uid)
+                .set(userdata)
+                .then((value) async {
+              userIdForNotification = authResult.user.uid;
+              if (assignNumber != 111) {
+                OneSignal.shared
+                    .postNotification(OSCreateNotification(
+                  additionalData: {
+                    "userId": userIdForNotification,
+                    'isNotificationforPermission': true,
+                    "name": authResult.user.displayName,
+                    "email": authResult.user.email,
+                    "unitCode": "",
+                    "phoneNumber": authResult.user.phoneNumber,
+                    "role": defineRole,
+                    "assignNumber": assignNumber,
+                    "tokanId": tokenID,
+                    "isaAccountapprove": false,
+                  },
+                  heading: "Request for approve account ",
+                  // subtitle: dialogNotifiactionTitelController.text,
+                  playerIds: [adminTokenId],
+                  content:
+                      "${authResult.user.displayName} a $defineRole is waiting for your response",
+                ))
+                    .then((value) {
+                  DocumentReference userDataReference = firebaseFirestore
+                      .collection("Users")
+                      .doc(userIdForNotification);
+                  firebaseFirestore
+                      .collection("Users")
+                      .doc(adminId)
+                      .collection("GeneratedProperty")
+                      .doc(signinPropertyCodeController.text)
+                      .collection("UserInfo")
+                      .doc(userIdForNotification)
+                      .set({
+                    "userDataReferance": userDataReference,
+                  }).then((value) {
+                    Get.back();
+
+                    MyDialog.sigleButtonDailog(
+                        buttonText: "OK",
+                        middleText: "Your account is not approve yet ",
+                        title: "Wait for account approve",
+                        function: () {
+                          OneContext().popDialog();
+                          Get.back();
+                        });
+                  });
+                }).catchError((e) {
+                  Get.snackbar("Error", e.toString());
+                });
+              } else {
+                Get.to(() => RapidResponseScreen(
+                      isRespospoding: false,
+                    ));
+              }
+              //Get.to(SigninScreen());
+            });
+          } else {
+            firebaseFirestore
+                .collection("Users")
+                .doc(users.uid)
+                .get()
+                .then((value) {
+              if (value.data()["assignNumber"] != assignNumber) {
+                print(
+                    "assignnumber from firebase is  ${value.data()["assignNumber"]}");
+                print("assing number is $assignNumber");
+                MyDialog.sigleButtonDailog(
+                    buttonText: "OK",
+                    middleText:
+                        "Your role is not  $defineRole\n Please Select Your Role Correct ",
+                    title: "Role Errors",
+                    function: () {
+                      OneContext().popDialog();
+                      Get.back();
+                      Get.back();
+                    });
+              } else if (value.data()["isaAccountapprove"] == false) {
+                Get.back();
+
+                MyDialog.sigleButtonDailog(
+                    buttonText: "OK",
+                    middleText: "Your account is not approve yet",
+                    title: "Account not Approve",
+                    function: () {
+                      OneContext().popDialog();
+                    });
+              } else if (value.data()["assignNumber"] == 111) {
+                Get.offAll(() => RapidResponseScreen(
+                      isRespospoding: false,
+                    ));
+              } else {
+                Get.offAll(() => RapidResponseScreen(
+                      isRespospoding: false,
+                    ));
+              }
+              isSignInLoading.value = false;
+
+              print(value.data()["name"]);
+            }).catchError((e) {
+              isSignInLoading.value = false;
+
+              Get.snackbar("Error", e.toString());
+            });
+            // Get.offAll(RapidResponseScreen(
+            //   isRespospoding: false,
+            // ));
+          }
+        } else {
+          isSignUpLoading.value = false;
+          Get.back();
+          MyDialog.sigleButtonDailog(
+              buttonText: "OK",
+              middleText:
+                  "Invalid Property code please enter valid property code",
+              title: "Invalid Property code",
+              function: () {
+                OneContext().popDialog();
+              });
+        }
+      });
+
 //
-    final GoogleSignInAccount googleUser = await googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
 
-    final AuthCredential credential = GoogleAuthProvider.credential(
-        idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
-    print("user credential ${credential.token}");
+    } else {
+      final GoogleSignInAccount googleUser = await googleSignIn.signIn();
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
-    final UserCredential authResult =
-        await auth.signInWithCredential(credential);
-    Map<String, dynamic> userdata = {
-      "name": authResult.user.displayName,
-      "email": authResult.user.email,
-      "image": authResult.user.photoURL,
-      "phoneNumber": authResult.user.phoneNumber ?? 0,
-      "role": defineRole,
-      "assignNumber": assignNumber,
-      "roleImage": roleImage,
-      "tokenId": tokenID,
-      "isaAccountapprove": assignNumber == 111 ? true : false,
-      "unitCode": "",
-      "date": DateTime.now()
-    };
-    var now = DateTime.now();
-    // var _updateTime = DateTime(
-    //     now.year, now.month, now.day - 1, now.hour, now.minute, now.second);
-    if (authResult.additionalUserInfo.isNewUser) {
-      String userIdForNotification;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+          idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
+      print("user credential ${credential.token}");
 
-      FirebaseFirestore.instance
-          .collection("Users")
-          .doc(authResult.user.uid)
-          .set(userdata)
-          .then((value) async {
-        userIdForNotification = authResult.user.uid;
-        if (assignNumber != 111) {
-          OneSignal.shared
-              .postNotification(OSCreateNotification(
-            additionalData: {
-              "userId": userIdForNotification,
-              'isNotificationforPermission': true,
-              "name": authResult.user.displayName,
-              "email": authResult.user.email,
-              "unitCode": "",
-              "phoneNumber": authResult.user.phoneNumber,
-              "role": defineRole,
-              "assignNumber": assignNumber,
-              "tokanId": tokenID,
-              "isaAccountapprove": false,
-            },
-            heading: "Request for approve account ",
-            // subtitle: dialogNotifiactionTitelController.text,
-            playerIds: sendNotifoactions,
-            content:
-                "${authResult.user.displayName} a $defineRole is waiting for your response",
-          ))
-              .then((value) {
+      final UserCredential authResult =
+          await auth.signInWithCredential(credential);
+      Map<String, dynamic> userdata = {
+        "name": authResult.user.displayName,
+        "email": authResult.user.email,
+        "image": authResult.user.photoURL,
+        "phoneNumber": authResult.user.phoneNumber ?? 0,
+        "role": defineRole,
+        "assignNumber": assignNumber,
+        "roleImage": roleImage,
+        "tokenId": tokenID,
+        "isaAccountapprove": assignNumber == 111 ? true : false,
+        "unitCode": "",
+        "date": DateTime.now(),
+        "adminId": authResult.user.uid,
+        "adminTokenId": tokenID,
+        "propertyCode": null,
+      };
+      var now = DateTime.now();
+      // var _updateTime = DateTime(
+      //     now.year, now.month, now.day - 1, now.hour, now.minute, now.second);
+      if (authResult.additionalUserInfo.isNewUser) {
+        String userIdForNotification;
+
+        FirebaseFirestore.instance
+            .collection("Users")
+            .doc(authResult.user.uid)
+            .set(userdata)
+            .then((value) async {
+          userIdForNotification = authResult.user.uid;
+          if (assignNumber != 111) {
+            OneSignal.shared
+                .postNotification(OSCreateNotification(
+              additionalData: {
+                "userId": userIdForNotification,
+                'isNotificationforPermission': true,
+                "name": authResult.user.displayName,
+                "email": authResult.user.email,
+                "unitCode": "",
+                "phoneNumber": authResult.user.phoneNumber,
+                "role": defineRole,
+                "assignNumber": assignNumber,
+                "tokanId": tokenID,
+                "isaAccountapprove": false,
+              },
+              heading: "Request for approve account ",
+              // subtitle: dialogNotifiactionTitelController.text,
+              playerIds: sendNotifoactions,
+              content:
+                  "${authResult.user.displayName} a $defineRole is waiting for your response",
+            ))
+                .then((value) {
+              MyDialog.sigleButtonDailog(
+                  buttonText: "OK",
+                  middleText: "Your account is not approve yet ",
+                  title: "Wait for account approve",
+                  function: () {
+                    OneContext().popDialog();
+                    Get.back();
+                  });
+            }).catchError((e) {
+              Get.snackbar("Error", e.toString());
+            });
+          } else {
+            Get.to(() => RapidResponseScreen(
+                  isRespospoding: false,
+                ));
+          }
+          //Get.to(SigninScreen());
+        });
+      } else {
+        firebaseFirestore
+            .collection("Users")
+            .doc(users.uid)
+            .get()
+            .then((value) {
+          if (value.data()["assignNumber"] != assignNumber) {
+            print(
+                "assignnumber from firebase is  ${value.data()["assignNumber"]}");
+            print("assing number is $assignNumber");
             MyDialog.sigleButtonDailog(
                 buttonText: "OK",
-                middleText: "Your account is not approve yet ",
-                title: "Wait for account approve",
+                middleText:
+                    "Your role is not  $defineRole\n Please Select Your Role Correct ",
+                title: "Role Errors",
                 function: () {
                   OneContext().popDialog();
                   Get.back();
                 });
-          }).catchError((e) {
-            Get.snackbar("Error", e.toString());
-          });
-        } else {
-          Get.to(() => RapidResponseScreen(
-                isRespospoding: false,
-              ));
-        }
-        //Get.to(SigninScreen());
-      });
-    } else {
-      firebaseFirestore.collection("Users").doc(users.uid).get().then((value) {
-        if (value.data()["assignNumber"] != assignNumber) {
-          print(
-              "assignnumber from firebase is  ${value.data()["assignNumber"]}");
-          print("assing number is $assignNumber");
-          MyDialog.sigleButtonDailog(
-              buttonText: "OK",
-              middleText:
-                  "Your role is not  $defineRole\n Please Select Your Role Correct ",
-              title: "Role Errors",
-              function: () {
-                OneContext().popDialog();
-                Get.back();
-              });
-        } else if (value.data()["isaAccountapprove"] == false) {
-          MyDialog.sigleButtonDailog(
-              buttonText: "OK",
-              middleText: "Your account is not approve yet",
-              title: "Account not Approve",
-              function: () {
-                OneContext().popDialog();
-              });
-        } else if (value.data()["assignNumber"] == 111) {
-          Get.offAll(() => RapidResponseScreen(
-                isRespospoding: false,
-              ));
-        } else {
-          Get.offAll(() => RapidResponseScreen(
-                isRespospoding: false,
-              ));
-        }
-        isSignInLoading.value = false;
+          } else if (value.data()["isaAccountapprove"] == false) {
+            MyDialog.sigleButtonDailog(
+                buttonText: "OK",
+                middleText: "Your account is not approve yet",
+                title: "Account not Approve",
+                function: () {
+                  OneContext().popDialog();
+                });
+          } else if (value.data()["assignNumber"] == 111) {
+            Get.offAll(() => RapidResponseScreen(
+                  isRespospoding: false,
+                ));
+          } else {
+            Get.offAll(() => RapidResponseScreen(
+                  isRespospoding: false,
+                ));
+          }
+          isSignInLoading.value = false;
 
-        print(value.data()["name"]);
-      }).catchError((e) {
-        isSignInLoading.value = false;
+          print(value.data()["name"]);
+        }).catchError((e) {
+          isSignInLoading.value = false;
 
-        Get.snackbar("Error", e.toString());
-      });
-      // Get.offAll(RapidResponseScreen(
-      //   isRespospoding: false,
-      // ));
+          Get.snackbar("Error", e.toString());
+        });
+        // Get.offAll(RapidResponseScreen(
+        //   isRespospoding: false,
+        // ));
+      }
     }
   }
 
@@ -587,52 +832,55 @@ class UserAthenticationController extends GetxController {
     });
 
     print("back");
-    Get.back();
+    //Get.back();
   }
 
-  void sendAlertDialog(int assignumber) {
-    sendNotifocationto.bindStream(sendAlertto(assignumber));
+  void sendAlertDialog(String propertyCode) {
+    sendNotifocationto.bindStream(sendAlertto(propertyCode));
     // getIdfornotificaiton.bindStream(getIdtoSendNotificaiton(assignumber));
   }
 
-  Stream<List<String>> sendAlertto(int assignNumber) {
-    if (assignNumber != 0) {
-      return FirebaseFirestore.instance
-          .collection('Users')
-          .where("assignNumber", isEqualTo: assignNumber)
-          //.orderBy('time', descending: true)
-          .snapshots()
-          .map((QuerySnapshot query) {
-        print(query.docs.length);
-        List<String> retVal = List();
-        for (var element in query.docs) {
-          print(element.data()["tokenId"]);
+  Stream<List<String>> sendAlertto(String propertyCode) {
+    print("property code is $propertyCode");
 
-          retVal.add(element.data()["tokenId"]);
-        }
+    return FirebaseFirestore.instance
+        .collection('Users')
+        .where("propertyCode", isEqualTo: propertyCode)
+        //.orderBy('time', descending: true)
+        .snapshots()
+        .map((QuerySnapshot query) {
+      print(query.docs.length);
+      List<String> retVal = List();
+      for (var element in query.docs) {
+        print(element.data()["tokenId"]);
 
-        print(' my  admins lenght is ${retVal.length}');
-        return retVal;
-      });
-    } else {
-      return FirebaseFirestore.instance
-          .collection('Users')
-          //.where("assignNumber", isEqualTo: assignNumber)
-          //.orderBy('time', descending: true)
-          .snapshots()
-          .map((QuerySnapshot query) {
-        print(query.docs.length);
-        List<String> retVal = List();
-        for (var element in query.docs) {
-          debugPrint(element.data()["tokenId"]);
+        retVal.add(element.data()["tokenId"]);
+      }
 
-          retVal.add(element.data()["tokenId"]);
-        }
+      print(' my  adm lenght is ${retVal.length}');
+      return retVal;
+    });
 
-        debugPrint(' my  sdj lenght is ${retVal.length}');
-        return retVal;
-      });
-    }
+    // if (assignNumber != 0) {
+    //    } else {
+    //   return FirebaseFirestore.instance
+    //       .collection('Users')
+    //       //.where("assignNumber", isEqualTo: assignNumber)
+    //       //.orderBy('time', descending: true)
+    //       .snapshots()
+    //       .map((QuerySnapshot query) {
+    //     print(query.docs.length);
+    //     List<String> retVal = List();
+    //     for (var element in query.docs) {
+    //       debugPrint(element.data()["tokenId"]);
+
+    //       retVal.add(element.data()["tokenId"]);
+    //     }
+
+    //     debugPrint(' my  sdj lenght is ${retVal.length}');
+    //     return retVal;
+    //   });
+    //}
   }
 
   //final UserCredential authResult =  await auth.signInWithCredential(credential);
@@ -644,77 +892,189 @@ class UserAthenticationController extends GetxController {
     String unitCode,
     int phoneNumber,
     String confirmPassword,
+    String propertyCode,
   }) async {
     try {
       String userIdForNotification;
       var status = await OneSignal.shared.getDeviceState();
       String tokenID = status.userId;
+      String adminId;
+      String adminTokenId;
 
-      await auth
-          .createUserWithEmailAndPassword(
-              email: email.trim(), password: password.trim())
-          .then((value) {
-        userIdForNotification = value.user.uid;
-        firebaseFirestore.collection("Users").doc(value.user.uid).set({
-          "name": userName,
-          "email": email,
-          "unitCode": unitCode,
-          "phoneNumber": phoneNumber,
-          "role": defineRole,
-          "assignNumber": assignNumber,
-          "roleImage": roleImage,
-          "tokenId": tokenID,
-          "isaAccountapprove": assignNumber == 111 ? true : false,
-          "date": DateTime.now(),
-          "image":
-              "https://firebasestorage.googleapis.com/v0/b/rapid-response-app-ae749.appspot.com/o/profile-deleted.png?alt=media&token=30a9321f-ff58-4f80-899e-3c6db7896746"
-        }).then((value) {
-          // .then((value) async {});
-          if (assignNumber != 111) {
-            print("singinUP token id $tokenID");
-            OneSignal.shared
-                .postNotification(OSCreateNotification(
-              additionalData: {
-                "userId": userIdForNotification,
-                'isNotificationforPermission': true,
+      DocumentReference docRef =
+          firebaseFirestore.collection('Properties').doc(propertyCode);
+      if (assignNumber != 111) {
+        docRef.get().then((value) {
+          if (value.exists) {
+            adminTokenId = value.data()["tokenId"];
+            adminId = value.data()["adminId"];
+            print("admin id from snapshot${value.data()["tokenId"]}");
+
+            auth
+                .createUserWithEmailAndPassword(
+                    email: email.trim(), password: password.trim())
+                .then((value) {
+              userIdForNotification = value.user.uid;
+              firebaseFirestore.collection("Users").doc(value.user.uid).set({
+                "adminId": adminId,
+                "adminTokenId": adminTokenId,
                 "name": userName,
                 "email": email,
                 "unitCode": unitCode,
                 "phoneNumber": phoneNumber,
                 "role": defineRole,
                 "assignNumber": assignNumber,
-                "tokanId": tokenID,
-                "isaAccountapprove": false,
-              },
-              heading: "Request for approve account ",
-              // subtitle: dialogNotifiactionTitelController.text,
-              playerIds: sendNotifoactions,
-              content: "$userName a $defineRole is waiting for your response",
-            ))
-                .then((value) {
-              MyDialog.sigleButtonDailog(
-                  buttonText: "OK",
-                  middleText: "Your account is not approve yet ",
-                  title: "Wait for account approve",
-                  function: () {
-                    OneContext().popDialog();
-                    Get.back();
+                "roleImage": roleImage,
+                "tokenId": tokenID,
+                "isaAccountapprove": assignNumber == 111 ? true : false,
+                "date": DateTime.now(),
+                "propertyCode": propertyCode,
+                "image":
+                    "https://firebasestorage.googleapis.com/v0/b/rapid-response-app-ae749.appspot.com/o/profile-deleted.png?alt=media&token=30a9321f-ff58-4f80-899e-3c6db7896746"
+              }).then((value) {
+                print("Admin id is $adminId ");
+                if (assignNumber != 111) {
+                  print("singinUP token id $adminTokenId");
+                  OneSignal.shared
+                      .postNotification(OSCreateNotification(
+                    additionalData: {
+                      "userId": userIdForNotification,
+                      'isNotificationforPermission': true,
+                      "name": userName,
+                      "email": email,
+                      "unitCode": unitCode,
+                      "phoneNumber": phoneNumber,
+                      "role": defineRole,
+                      "assignNumber": assignNumber,
+                      "tokanId": tokenID,
+                      "isaAccountapprove": false,
+                    },
+                    heading: "Request for approve account ",
+                    // subtitle: dialogNotifiactionTitelController.text,
+                    playerIds: [adminTokenId],
+                    content:
+                        "$userName a $defineRole is waiting for your response",
+                  ))
+                      .then((value) {
+                    DocumentReference userDataReference = firebaseFirestore
+                        .collection("Users")
+                        .doc(userIdForNotification);
+                    firebaseFirestore
+                        .collection("Users")
+                        .doc(adminId)
+                        .collection("GeneratedProperty")
+                        .doc(propertyCode)
+                        .collection("UserInfo")
+                        .doc(userIdForNotification)
+                        .set({
+                      "userDataReferance": userDataReference,
+                    }).then((value) {
+                      MyDialog.sigleButtonDailog(
+                          buttonText: "OK",
+                          middleText: "Your account is not approve yet ",
+                          title: "Wait for account approve",
+                          function: () {
+                            OneContext().popDialog();
+                            Get.back();
+                          });
+                    });
                   });
+                } else {
+                  Get.to(() => RapidResponseScreen(
+                        isRespospoding: false,
+                      ));
+                }
+              });
+
+              isSignUpLoading.value = false;
+              clearSignIpController();
+              //Get.to(() => RapidResponseScreen());
+            }).catchError((e) {
+              Get.snackbar("Error", e.toString());
+              isSignUpLoading.value = false;
             });
           } else {
-            Get.to(() => RapidResponseScreen(
-                  isRespospoding: false,
-                ));
+            isSignUpLoading.value = false;
+            MyDialog.sigleButtonDailog(
+                buttonText: "OK",
+                middleText:
+                    "Invalid Property code please enter valid property code",
+                title: "Invalid Property code",
+                function: () {
+                  OneContext().popDialog();
+                });
           }
         });
+      } else {
+        auth
+            .createUserWithEmailAndPassword(
+                email: email.trim(), password: password.trim())
+            .then((value) {
+          userIdForNotification = value.user.uid;
+          firebaseFirestore.collection("Users").doc(value.user.uid).set({
+            "adminId": value.user.uid,
+            "adminTokenId": tokenID,
+            "name": userName,
+            "email": email,
+            "unitCode": unitCode,
+            "phoneNumber": phoneNumber,
+            "role": defineRole,
+            "assignNumber": assignNumber,
+            "roleImage": roleImage,
+            "tokenId": tokenID,
+            "isaAccountapprove": assignNumber == 111 ? true : false,
+            "date": DateTime.now(),
+            "propertyCode": null,
+            "image":
+                "https://firebasestorage.googleapis.com/v0/b/rapid-response-app-ae749.appspot.com/o/profile-deleted.png?alt=media&token=30a9321f-ff58-4f80-899e-3c6db7896746"
+          }).then((value) {
+            print("Admin id is $adminId ");
+            if (assignNumber != 111) {
+              print("singinUP token id $adminTokenId");
+              OneSignal.shared
+                  .postNotification(OSCreateNotification(
+                additionalData: {
+                  "userId": userIdForNotification,
+                  'isNotificationforPermission': true,
+                  "name": userName,
+                  "email": email,
+                  "unitCode": unitCode,
+                  "phoneNumber": phoneNumber,
+                  "role": defineRole,
+                  "assignNumber": assignNumber,
+                  "tokanId": tokenID,
+                  "isaAccountapprove": false,
+                },
+                heading: "Request for approve account ",
+                // subtitle: dialogNotifiactionTitelController.text,
+                playerIds: [adminTokenId],
+                content: "$userName a $defineRole is waiting for your response",
+              ))
+                  .then((value) {
+                MyDialog.sigleButtonDailog(
+                    buttonText: "OK",
+                    middleText: "Your account is not approve yet ",
+                    title: "Wait for account approve",
+                    function: () {
+                      OneContext().popDialog();
+                      Get.back();
+                    });
+              });
+            } else {
+              Get.to(() => RapidResponseScreen(
+                    isRespospoding: false,
+                  ));
+            }
+          });
 
-        isSignUpLoading.value = false;
-        clearSignIpController();
-        //Get.to(() => RapidResponseScreen());
-      }).catchError((e) {
-        Get.snackbar("Error", e.toString());
-        isSignUpLoading.value = false;
-      });
+          isSignUpLoading.value = false;
+          clearSignIpController();
+          //Get.to(() => RapidResponseScreen());
+        }).catchError((e) {
+          Get.snackbar("Error", e.toString());
+          isSignUpLoading.value = false;
+        });
+      }
     } catch (e) {
       isSignUpLoading.value = false;
       print("Error is $e");
@@ -885,5 +1245,6 @@ class UserAthenticationController extends GetxController {
     signupPhoneNumberController.clear();
     signupUnitCodeController.clear();
     signupUserNameController.clear();
+    signupPropertyCodeController.clear();
   }
 }

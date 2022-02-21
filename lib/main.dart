@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:one_context/one_context.dart';
 import 'package:rapid_response/Controller/user_athentication_controller.dart';
+import 'package:rapid_response/my_screen_1.dart';
 
 import 'Bindings/auth_bindings.dart';
 import 'SizeConfig/size_config.dart';
@@ -51,7 +52,8 @@ class _MyAppState extends State<MyApp> {
               fontFamily: 'Montserrat',
             ),
             debugShowCheckedModeBanner: false,
-            home: SplashScreen()
+            home: MyClass()
+            // SplashScreen()
             //OnboardPage());
 
             //const PrayerTimeScreen(),
